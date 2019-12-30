@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val karibudsl_version = "0.7.0"
+val karibudsl_version = "0.7.4"
 
 plugins {
   kotlin("jvm") version "1.3.60"
@@ -17,7 +17,7 @@ repositories {
 
 
 vaadin {
-  version = "14.0.12"
+  version = "14.1.3"
   // submitStatistics=true
 }
 //vaadin.productionMode = true
@@ -57,7 +57,7 @@ dependencies {
   compile("ch.qos.logback:logback-classic:1.2.3")
   compile("org.slf4j:slf4j-api:1.7.25")
   compile("org.slf4j:jul-to-slf4j:1.7.25")
-
+  
   compile("org.sql2o:sql2o:1.6.0")
   compile("mysql:mysql-connector-java:5.1.48")
   compile("com.zaxxer:HikariCP:3.4.1")
@@ -65,7 +65,8 @@ dependencies {
   // logging
   // currently we are logging through the SLF4J API to SLF4J-Simple. See src/main/resources/simplelogger.properties file for the logger configuration
   compile("org.slf4j:slf4j-simple:1.7.28")
-
+  compile("com.github.appreciated:app-layout-addon:3.0.0.beta5")
+  //compile("com.flowingcode.addons.applayout:app-layout-addon:2.0.2")
   compile(kotlin("stdlib-jdk8"))
   //compile("org.jetbrains.kotlin:kotlin-reflect")
   // test support
