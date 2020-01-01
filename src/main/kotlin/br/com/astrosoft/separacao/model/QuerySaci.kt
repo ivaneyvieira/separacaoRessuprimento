@@ -17,7 +17,8 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun verificaPedido(storeno: Int, ordno: Int): Boolean {
+  fun verificaPedido(ordno: Int): Boolean {
+    val storeno = 1
     val sql = "/sqlSaci/verificaPedido.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
@@ -27,7 +28,8 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun proximoNumero(storeno: Int, destino: Int): Int {
+  fun proximoNumero(destino: Int): Int {
+    val storeno = 1
     val sql = "/sqlSaci/proximoNumero.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
@@ -36,7 +38,8 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun listaProduto(storeno: Int, ordno: Int): List<ProdutoPedido> {
+  fun listaProduto(ordno: Int): List<ProdutoPedido> {
+    val storeno = 1
     val sql = "/sqlSaci/listaProdutos.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
@@ -45,7 +48,8 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun listaPedido(storeno: Int): List<Pedido> {
+  fun listaPedido(): List<Pedido> {
+    val storeno = 1
     val sql = "/sqlSaci/listaPedidos.sql"
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
@@ -53,7 +57,8 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun duplicar(storeno: Int, ordno: Int, ordnoNovo: Int) {
+  fun duplicar(ordno: Int, ordnoNovo: Int) {
+    val storeno = 1
     val sql = "/sqlSaci/duplicaPedido.sql"
     script(sql) {q ->
       q.addOptionalParameter("storeno", storeno)
@@ -63,7 +68,8 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun removePedido(storeno: Int, numeroI: Int, numeroF: Int) {
+  fun removePedido(numeroI: Int, numeroF: Int) {
+    val storeno = 1
     val sql = "/sqlSaci/removerPedido.sql"
     script(sql) {q ->
       q.addOptionalParameter("storeno", storeno)
@@ -73,7 +79,8 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun atualizarQuantidade(storeno: Int, ordno: Int, codigo: String, grade: String, quantidade: Double) {
+  fun atualizarQuantidade(ordno: Int, codigo: String, grade: String, quantidade: Double) {
+    val storeno = 1
     val sql = "/sqlSaci/atualizarQuantidade.sql"
     val prdno = codigo.lpad(16, " ")
     val qtty: Int = (quantidade * 1000).toInt()
