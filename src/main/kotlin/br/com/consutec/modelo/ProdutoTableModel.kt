@@ -17,7 +17,7 @@ class ProdutoTableModel: AbstractTableModel() {
             "Tipo",
             "Localização",
             "Quantidade")
-
+  
   override fun getColumnClass(c: Int): Class<*> {
     if(c == 0) {
       return Boolean::class.java
@@ -48,35 +48,35 @@ class ProdutoTableModel: AbstractTableModel() {
     }
     else Any::class.java
   }
-
+  
   override fun isCellEditable(row: Int, col: Int): Boolean {
     return if(col == 8 || col == 0) {
       true
     }
     else false
   }
-
+  
   fun setDados(lista: MutableList<Produto>) {
     dados = lista
   }
-
+  
   fun addRow(prd: Produto) {
     dados.add(prd)
     fireTableDataChanged()
   }
-
+  
   override fun getColumnName(num: Int): String {
     return colunas[num]
   }
-
+  
   override fun getRowCount(): Int {
     return dados.size
   }
-
+  
   override fun getColumnCount(): Int {
     return colunas.size
   }
-
+  
   override fun getValueAt(linha: Int, coluna: Int): Any? {
     when(coluna) {
       0 -> return dados[linha].selecao
@@ -91,7 +91,7 @@ class ProdutoTableModel: AbstractTableModel() {
     }
     return null
   }
-
+  
   override fun setValueAt(value: Any, linha: Int, coluna: Int) {
     if(coluna == 0) {
       dados[linha].selecao = value as Boolean
@@ -204,7 +204,7 @@ class ProdutoTableModel: AbstractTableModel() {
     }
     fireTableCellUpdated(linha, coluna)
   }
-
+  
   init {
     dados = ArrayList()
   }

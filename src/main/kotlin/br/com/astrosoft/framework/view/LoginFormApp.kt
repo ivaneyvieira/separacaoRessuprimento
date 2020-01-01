@@ -16,7 +16,7 @@ class LoginFormApp(appName: String, version: String): LoginOverlay() {
       when {
         user == null                      -> LoginService.logout()
         user.senha == loginEvent.password -> {
-          LoginService.login(LoginInfo(user.name ?: ""))
+          LoginService.login(LoginInfo(user.name))
           close()
         }
         else                              -> LoginService.logout()

@@ -28,7 +28,7 @@ SELECT :storeno AS storeno, @NOVO AS ordno, mult, ipi, freight, icms, auxLong1, 
        cost, 0 AS qttyRcv, 0 AS qttyCancel, qttyVendaMes, qttyVendaMesAnt, qttyVendaMedia,
        qttyPendente, stkDisponivel, qttyAbc, seqno, status, bits, bits2, auxShort1, auxShort2,
        auxShort3, auxShort4, prdno, grade, remarks, padbyte, gradeFechada, obs
-FROM oprd AS O
+FROM oprd
 WHERE (storeno = :storeno) AND
       (ordno = :ordno) AND
       (prdno = :prdno) AND
