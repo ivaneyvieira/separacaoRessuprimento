@@ -30,7 +30,11 @@ class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
       !pedidoDestino.compativel(pedidoOrigem) -> throw EViewModelError("O pedido de destino " +
                                                                        "não é compatível com " +
                                                                        "o pedido de Origem")
-      else                                    -> saci.duplicar(pedidoOrigem.ordno, pedidoDestino.ordno)
+      else                                    -> {
+        saci.duplicar(pedidoOrigem.ordno, pedidoDestino.ordno)
+        if(view.informarNumero == false)
+          view.numeroDestino = proximoNumero()
+      }
     }
     view.showInformation("Pedido duplicado com sucesso. Novo pedido: ${pedidoDestino.ordno}")
   }
