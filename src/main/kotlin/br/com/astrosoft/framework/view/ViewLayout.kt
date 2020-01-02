@@ -13,12 +13,17 @@ import com.vaadin.flow.router.BeforeLeaveEvent
 import com.vaadin.flow.router.BeforeLeaveObserver
 import org.claspina.confirmdialog.ConfirmDialog
 
-abstract class ViewLayout<V: IView, VM: ViewModel<V>>(): VerticalLayout(), IView, BeforeLeaveObserver,
-                                                         BeforeEnterObserver, AfterNavigationObserver {
+abstract class ViewLayout<VM: ViewModel<*>>(): VerticalLayout(), IView, BeforeLeaveObserver,
+                                               BeforeEnterObserver, AfterNavigationObserver {
   abstract val viewModel: VM
   private val appName = RegistryUserInfo.appName
   private val version = "Verssão ${RegistryUserInfo.version}"
   val loginForm = LoginFormApp(appName, version)
+  
+  init {
+    width = "100%"
+    height = "100%"
+  }
   
   override fun showError(msg: String) {
     ConfirmDialog.createError()

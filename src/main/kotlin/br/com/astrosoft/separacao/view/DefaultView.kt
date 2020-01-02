@@ -9,7 +9,7 @@ import com.vaadin.flow.router.Route
 
 @Route(value = "", layout = SeparacaoLayout::class)
 @PageTitle("")
-class DefaultView: ViewLayout<IDefaultView, DefautlViewModel>(), IDefaultView {
+class DefaultView: ViewLayout<DefautlViewModel>(), IDefaultView {
   override val viewModel = DefautlViewModel(this)
   
   override fun beforeEnter(event: BeforeEnterEvent?) {

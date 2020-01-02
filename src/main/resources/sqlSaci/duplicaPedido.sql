@@ -27,4 +27,4 @@ SELECT :storeno AS storeno, :ordnoNovo AS ordno, mult, ipi, freight, icms, auxLo
 FROM oprd
 WHERE (storeno = :storeno) AND
       (ordno = :ordno)
-GROUP BY prdno, grade;
+GROUP BY prdno, grade

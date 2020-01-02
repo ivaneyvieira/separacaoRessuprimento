@@ -12,6 +12,9 @@ open class ViewModel<V: IView>(val view: V) {
       throw e
     }
   }
+  
+  open fun init() {
+  }
 }
 
 interface IView {
