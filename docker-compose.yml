@@ -4,20 +4,20 @@ services:
     image: tomcat:8
     container_name: eng_atacado
     ports:
-      - "8085:8080"
+      - "8086:8080"
     environment:
       TZ: "America/Fortaleza"
       EBEAN_PROPS: /etc/ebean.properties
     volumes:
-      - ./build/libs/engAtacado-1.0.war:/usr/local/tomcat/webapps/engAtacado.war
+      - ./build/libs/separacaoRessuprimento-1.0.war:/usr/local/tomcat/webapps/separacaoRessuprimento.war
       - ./ebean.properties:/etc/ebean.properties
     restart: always
     networks:
       rede_atacado:
-        ipv4_address: 172.37.1.1
+        ipv4_address: 172.38.1.1
 networks:
   rede_atacado:
     ipam:
       driver: default
       config:
-        - subnet: 172.37.0.0/16
+        - subnet: 172.38.0.0/16

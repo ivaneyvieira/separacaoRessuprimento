@@ -6,10 +6,6 @@ import br.com.astrosoft.separacao.viewmodel.IRemoverView
 import br.com.astrosoft.separacao.viewmodel.RemoverViewModel
 import com.github.mvysny.karibudsl.v10.button
 import com.github.mvysny.karibudsl.v10.comboBox
-import com.github.mvysny.karibudsl.v10.em
-import com.github.mvysny.karibudsl.v10.formLayout
-import com.github.mvysny.karibudsl.v10.horizontalLayout
-import com.github.mvysny.karibudsl.v10.isExpand
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.router.PageTitle
@@ -23,11 +19,7 @@ class RemoverView: ViewLayout<RemoverViewModel>(), IRemoverView {
   override val viewModel = RemoverViewModel(this)
   
   init {
-    formLayout {
-      isExpand = true
-      em("Duplicar") {
-        colspan = 2
-      }
+    form("Remover") {
       cmbNumeroInicial = comboBox("Pedido incial") {
         colspan = 1
         setItems(Pedido.pedidosTemporarios)
@@ -43,8 +35,7 @@ class RemoverView: ViewLayout<RemoverViewModel>(), IRemoverView {
         isPreventInvalidInput = false
       }
     }
-    horizontalLayout {
-      width = "100%"
+    toolbar {
       button("Excluir") {
         icon = VaadinIcon.TRASH.create()
         addClickListener {
