@@ -8,7 +8,7 @@ import br.com.astrosoft.separacao.model.saci
 
 class RemoverViewModel(view: IRemoverView): ViewModel<IRemoverView>(view) {
   fun remover() {
-    val pedidoIncial = view.numeroPedidoFinal ?: throw EViewModelError("Pedido inicial não encontrado")
+    val pedidoIncial = view.numeroPedidoInicial ?: throw EViewModelError("Pedido inicial não encontrado")
     val pedidoFinal = view.numeroPedidoFinal ?: throw EViewModelError("Pedido final não encontrado")
     if(!pedidoIncial.compativel(pedidoFinal)) {
       throw EViewModelError("O pedido de destino não é compatível com o pedido de Origem")
