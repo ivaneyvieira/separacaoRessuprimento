@@ -8,11 +8,7 @@ import com.github.mvysny.karibudsl.v10.br
 import com.github.mvysny.karibudsl.v10.button
 import com.github.mvysny.karibudsl.v10.checkBox
 import com.github.mvysny.karibudsl.v10.comboBox
-import com.github.mvysny.karibudsl.v10.em
-import com.github.mvysny.karibudsl.v10.formLayout
-import com.github.mvysny.karibudsl.v10.horizontalLayout
 import com.github.mvysny.karibudsl.v10.integerField
-import com.github.mvysny.karibudsl.v10.isExpand
 import com.vaadin.flow.component.checkbox.Checkbox
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -29,11 +25,7 @@ class DuplicarView: ViewLayout<DuplicarViewModel>(), IDuplicarView {
   override val viewModel = DuplicarViewModel(this)
   
   init {
-    formLayout {
-      isExpand = true
-      em("Duplicar") {
-        colspan = 2
-      }
+    form("Duplicar") {
       cmbPedidoOrigem = comboBox("Pedido origem") {
         colspan = 1
         setItems(Pedido.pedidosTemporarios)
@@ -55,8 +47,7 @@ class DuplicarView: ViewLayout<DuplicarViewModel>(), IDuplicarView {
         colspan = 1
       }
     }
-    horizontalLayout {
-      width = "100%"
+    toolbar {
       button("Duplicar") {
         icon = VaadinIcon.COPY.create()
         addClickListener {
