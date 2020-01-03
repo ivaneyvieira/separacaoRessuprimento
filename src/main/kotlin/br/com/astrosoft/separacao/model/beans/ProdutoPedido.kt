@@ -1,5 +1,7 @@
 package br.com.astrosoft.separacao.model.beans
 
+import br.com.astrosoft.framework.util.lpad
+
 data class ProdutoPedido(
   val prdno: String,
   val grade: String,
@@ -9,4 +11,7 @@ data class ProdutoPedido(
   val localizacao: String,
   val tipo: Int,
   val qtty: Double
-                        )
+                        ) {
+  val codigo
+    get() = prdno.lpad(6, "0")
+}

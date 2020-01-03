@@ -68,6 +68,7 @@ dependencies {
   compile("com.github.appreciated:app-layout-addon:3.0.0.beta5")
   //compile("com.flowingcode.addons.applayout:app-layout-addon:2.0.2")
   compile(kotlin("stdlib-jdk8"))
+  compile(kotlin("reflect"))
   //compile("org.jetbrains.kotlin:kotlin-reflect")
   // test support
   testCompile("com.github.mvysny.kaributesting:karibu-testing-v10:1.1.16")
