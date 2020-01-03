@@ -4,6 +4,7 @@ import br.com.astrosoft.framework.view.ViewLayout
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.viewmodel.IRemoverView
 import br.com.astrosoft.separacao.viewmodel.RemoverViewModel
+import com.github.mvysny.karibudsl.v10.br
 import com.github.mvysny.karibudsl.v10.button
 import com.github.mvysny.karibudsl.v10.comboBox
 import com.vaadin.flow.component.combobox.ComboBox
@@ -27,6 +28,7 @@ class RemoverView: ViewLayout<RemoverViewModel>(), IRemoverView {
         isAllowCustomValue = false
         isPreventInvalidInput = false
       }
+      br()
       cmbNumeroFinal = comboBox("Pedido final") {
         colspan = 1
         setItems(Pedido.pedidosTemporarios)
