@@ -18,7 +18,7 @@ import com.vaadin.flow.component.icon.VaadinIcon.EDIT
 import com.vaadin.flow.component.icon.VaadinIcon.ERASER
 import com.vaadin.flow.component.icon.VaadinIcon.SPLIT
 import com.vaadin.flow.component.page.Push
-import com.vaadin.flow.component.page.Viewport
+import com.vaadin.flow.router.PreserveOnRefresh
 import com.vaadin.flow.server.PWA
 import com.vaadin.flow.theme.Theme
 import com.vaadin.flow.theme.lumo.Lumo
@@ -26,10 +26,10 @@ import kotlin.reflect.KClass
 
 @Theme(value = Lumo::class, variant = Lumo.DARK)
 @Push
-@Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes")
 @PWA(name = "Separação para ressuprimento",
      shortName = "Separação",
      iconPath = "icons/logo.png")
+@PreserveOnRefresh
 class SeparacaoLayout: AppLayoutRouterLayout() {
   init {
     val appMenu = headerMenu(RegistryUserInfo.commpany, "Versão ${RegistryUserInfo.version}")
