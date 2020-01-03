@@ -6,6 +6,8 @@ plugins {
   kotlin("jvm") version "1.3.60"
   id("org.gretty") version "2.3.1"
   id("com.devsoap.vaadin-flow") version "1.2"
+  id("org.springframework.boot") version "2.2.2.RELEASE"
+  id("io.spring.dependency-management") version "1.0.8.RELEASE"
 }
 
 repositories {
@@ -73,6 +75,11 @@ dependencies {
   // test support
   testCompile("com.github.mvysny.kaributesting:karibu-testing-v10:1.1.16")
   testCompile("com.github.mvysny.dynatest:dynatest-engine:0.15")
+  
+  compile("com.vaadin:vaadin-spring-boot-starter:${vaadin.version}")
+  //compile("org.springframework.boot:spring-boot-devtools:2.2.2.RELEASE")
+  compile("org.springframework.security:spring-security-web:5.2.1.RELEASE")
+  compile("org.springframework.security:spring-security-config:5.2.1.RELEASE")
 }
 
 tasks.withType<KotlinCompile> {

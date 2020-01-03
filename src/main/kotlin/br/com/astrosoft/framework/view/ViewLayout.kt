@@ -3,7 +3,6 @@ package br.com.astrosoft.framework.view
 import br.com.astrosoft.framework.model.RegistryUserInfo
 import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
-import br.com.astrosoft.separacao.view.LoginService
 import com.github.mvysny.karibudsl.v10.KFormLayout
 import com.github.mvysny.karibudsl.v10.em
 import com.github.mvysny.karibudsl.v10.formLayout
@@ -24,7 +23,6 @@ abstract class ViewLayout<VM: ViewModel<*>>(): VerticalLayout(), IView, BeforeLe
   abstract val viewModel: VM
   private val appName = RegistryUserInfo.appName
   private val version = "Verssão ${RegistryUserInfo.version}"
-  val loginForm = LoginFormApp(appName, version)
   
   init {
     width = "100%"
@@ -56,7 +54,6 @@ abstract class ViewLayout<VM: ViewModel<*>>(): VerticalLayout(), IView, BeforeLe
   }
   
   override fun beforeEnter(event: BeforeEnterEvent?) {
-    loginForm.isOpened = LoginService.isLogged() == false
   }
   
   override fun afterNavigation(event: AfterNavigationEvent?) {
