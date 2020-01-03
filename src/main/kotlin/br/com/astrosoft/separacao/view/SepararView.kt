@@ -235,7 +235,7 @@ class TextFieldFiltro(val property: KProperty1<ProdutoPedido, Any>): TextField()
     get() = SerializablePredicate<ProdutoPedido> {produto ->
       property.get(produto)
         .toString()
-        .startsWith(value)
+        .startsWith(value, ignoreCase = true)
     }
   
   init {
