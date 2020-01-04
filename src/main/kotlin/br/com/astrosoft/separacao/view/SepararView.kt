@@ -6,11 +6,11 @@ import br.com.astrosoft.separacao.model.beans.ProdutoPedido
 import br.com.astrosoft.separacao.viewmodel.ISepararView
 import br.com.astrosoft.separacao.viewmodel.SepararViewModel
 import com.github.mvysny.karibudsl.v10.addColumnFor
-import com.github.mvysny.karibudsl.v10.br
 import com.github.mvysny.karibudsl.v10.button
 import com.github.mvysny.karibudsl.v10.comboBox
 import com.github.mvysny.karibudsl.v10.getColumnBy
 import com.github.mvysny.karibudsl.v10.grid
+import com.github.mvysny.karibudsl.v10.integerField
 import com.github.mvysny.karibudsl.v10.isExpand
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.grid.ColumnTextAlign
@@ -19,7 +19,11 @@ import com.vaadin.flow.component.grid.Grid.SelectionMode
 import com.vaadin.flow.component.grid.GridSortOrder
 import com.vaadin.flow.component.grid.HeaderRow
 import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.textfield.Autocapitalize
+import com.vaadin.flow.component.textfield.IntegerField
 import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.data.binder.Binder
+import com.vaadin.flow.data.binder.ValidationResult
 import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.data.provider.SortDirection
 import com.vaadin.flow.data.provider.SortDirection.DESCENDING
@@ -35,9 +39,10 @@ import kotlin.reflect.KProperty1
 @Route(layout = SeparacaoLayout::class)
 @PageTitle("Separar")
 class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
+  private lateinit var proximoNumero: IntegerField
+  private var gridProduto: Grid<ProdutoPedido>
   private lateinit var cmbPedido: ComboBox<Pedido>
   override val viewModel = SepararViewModel(this)
-  //ListDataProvider<ProdutoPedido> = ListDataProvider(mutableListOf())
   val dataProviderProdutos = ListDataProvider<ProdutoPedido>(mutableListOf())
   var produtoInicial: ProdutoPedido? = null
   var produtoFinal: ProdutoPedido? = null
@@ -48,21 +53,22 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
       cmbPedido = comboBox<Pedido>("Pedido origem") {
         colspan = 1
         setItems(Pedido.pedidosTemporarios)
-        setItemLabelGenerator {it.ordnoOrigem.toString()}
+        setItemLabelGenerator {
+          "${it.ordnoOrigem.toString()} - ${it.tipoOrigem.descricao}"
+        }
         isAllowCustomValue = false
         isPreventInvalidInput = false
         addValueChangeListener {evento ->
           if(evento.isFromClient) {
-            val value = evento.value
-            dataProviderProdutos.items.clear()
-            dataProviderProdutos.items.addAll(value.produtos)
-            dataProviderProdutos.refreshAll()
+            updateGrid(value)
           }
         }
       }
-      br()
+      proximoNumero = integerField("Próximo número") {
+        isEnabled = false
+      }
     }
-    grid(dataProvider = dataProviderProdutos) {
+    gridProduto = grid(dataProvider = dataProviderProdutos) {
       isExpand = true
       setSelectionMode(SelectionMode.MULTI)
       isMultiSort = true
@@ -88,6 +94,42 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
       edtLocalizacao.addValueChangeListener {
         updateFilter(edtCodigo, edtDescricao, edtGrade, edtFornecedor, edtLocalizacao)
       }
+      val binder = Binder<ProdutoPedido>(ProdutoPedido::class.java)
+      binder.withValidator {value, context ->
+        if(value.quantidadeValida) {
+          ValidationResult.ok()
+        }
+        else {
+          val msg = "A quantidade deveria está entre ${value.qttyMin} e ${value.qttyMax}"
+          showError(msg)
+          ValidationResult.error(msg)
+        }
+      }
+      editor.binder = binder
+      val edtQtty = IntegerField().apply {
+        this.isAutoselect = true
+        this.width = "100%"
+        this.isAutofocus = true
+        this.element
+          .addEventListener("keydown") {event -> this@grid.editor.cancel()}
+          .filter = "event.key === 'Tab' && event.shiftKey"
+      }
+      
+      binder.bind(edtQtty, ProdutoPedido::qttyEdit.name)
+      
+      addItemClickListener {event ->
+        editor.editItem(event.item)
+        edtQtty.focus()
+      }
+      
+      binder.addValueChangeListener {e ->
+        editor.refresh()
+      }
+      
+      editor.addCloseListener {
+        binder.writeBean(it.item)
+      }
+      
       addColumnFor(ProdutoPedido::codigo) {
         setHeader("Código")
         flexGrow = 1
@@ -119,19 +161,25 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
         filterRow.getCell(this)
           .setComponent(edtLocalizacao)
       }
-      addColumnFor(ProdutoPedido::qtty, NumberRenderer(ProdutoPedido::qtty, DecimalFormat("0.##"))) {
+      addColumnFor(ProdutoPedido::qttyEdit, NumberRenderer(ProdutoPedido::qttyEdit, DecimalFormat("0"))) {
         setHeader("Quant")
+        flexGrow = 1
+        this.textAlign = ColumnTextAlign.END
+        setEditorComponent(edtQtty)
+      }
+      addColumnFor(ProdutoPedido::saldo, NumberRenderer(ProdutoPedido::saldo, DecimalFormat("0"))) {
+        setHeader("Saldo")
         flexGrow = 1
         this.textAlign = ColumnTextAlign.END
       }
       sort(listOf(
         GridSortOrder(getColumnBy(ProdutoPedido::localizacao), SortDirection.ASCENDING),
-        GridSortOrder(getColumnBy(ProdutoPedido::grade), SortDirection.ASCENDING),
-        GridSortOrder(getColumnBy(ProdutoPedido::descricao), SortDirection.ASCENDING)
-                 )
-          )
-      val grade = this
+        GridSortOrder(getColumnBy(ProdutoPedido::descricao), SortDirection.ASCENDING),
+        GridSortOrder(getColumnBy(ProdutoPedido::grade), SortDirection.ASCENDING)
+                 ))
+      
       this.addItemClickListener {evento ->
+        val grade = evento.source
         if(evento.isShiftKey) {
           val pedido = evento.item
           if(produtoInicial == null) {
@@ -197,12 +245,16 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
     val queryOrdem = comparator(grade)
     return dataProviderProdutos.items.toList()
       .filter {
-        filter.test(it)
+        filter?.test(it) ?: true
       }
-      .sortedWith<ProdutoPedido>(queryOrdem)
+      .let {list ->
+        if(queryOrdem == null) list
+        else list.sortedWith<ProdutoPedido>(queryOrdem)
+      }
   }
   
-  private fun comparator(grade: Grid<ProdutoPedido>): Comparator<ProdutoPedido> {
+  private fun comparator(grade: Grid<ProdutoPedido>): Comparator<ProdutoPedido>? {
+    if(grade.sortOrder.isEmpty()) return null
     val queryOrdem = grade.sortOrder.mapNotNull {gridSort ->
       val prop = ProdutoPedido::class.members.toList()
         .filterIsInstance<KProperty1<ProdutoPedido, Comparable<*>>>()
@@ -227,7 +279,21 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
   override val pedido: Pedido?
     get() = Pedido.findTemp(cmbPedido.value.ordno)
   override val produtosSelecionados: List<ProdutoPedido>
-    get() = emptyList()
+    get() = gridProduto.selectedItems.toList()
+  
+  override fun updateGrid() {
+    val pedidoAtual = pedido
+    updateGrid(pedidoAtual)
+    cmbPedido.setItems(Pedido.pedidosTemporarios)
+    cmbPedido.value = pedidoAtual
+  }
+  
+  private fun updateGrid(pedidoNovo: Pedido?) {
+    dataProviderProdutos.items.clear()
+    dataProviderProdutos.items.addAll(pedidoNovo?.produtos.orEmpty())
+    dataProviderProdutos.refreshAll()
+    proximoNumero.value = viewModel.proximoNumero()
+  }
 }
 
 class TextFieldFiltro(val property: KProperty1<ProdutoPedido, Any>): TextField() {
@@ -240,6 +306,7 @@ class TextFieldFiltro(val property: KProperty1<ProdutoPedido, Any>): TextField()
   
   init {
     setSizeFull()
+    autocapitalize = Autocapitalize.CHARACTERS
     valueChangeMode = ValueChangeMode.TIMEOUT
     placeholder = "Filtro"
   }

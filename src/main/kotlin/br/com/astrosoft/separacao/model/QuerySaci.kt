@@ -41,16 +41,21 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   fun listaProduto(ordno: Int): List<ProdutoPedido> {
     val storeno = 1
     val sql = "/sqlSaci/listaProdutos.sql"
-    return query(sql) {q ->
+    val lista = query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.addParameter("ordno", ordno)
         .executeAndFetch(ProdutoPedido::class.java)
     }
+    lista.forEach {produto ->
+      produto.qttyEdit = produto.qtty.toInt()
+    }
+    return lista
   }
   
   fun listaPedido(): List<Pedido> {
     val storeno = 1
     val sql = "/sqlSaci/listaPedidos.sql"
+  
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
         .executeAndFetch(Pedido::class.java)
@@ -79,13 +84,14 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun atualizarQuantidade(ordno: Int, codigo: String, grade: String, quantidade: Double) {
+  fun atualizarQuantidade(ordno: Int, ordnoNovo: Int, codigo: String, grade: String, quantidade: Double) {
     val storeno = 1
     val sql = "/sqlSaci/atualizarQuantidade.sql"
     val prdno = codigo.lpad(16, " ")
-    val qtty: Int = (quantidade * 1000).toInt()
+    val qtty: Int = (quantidade * 1).toInt()
     script(sql) {q ->
       q.addOptionalParameter("storeno", storeno)
+      q.addOptionalParameter("ordnoNovo", ordnoNovo)
       q.addOptionalParameter("ordno", ordno)
       q.addOptionalParameter("prdno", prdno)
       q.addOptionalParameter("grade", grade)
