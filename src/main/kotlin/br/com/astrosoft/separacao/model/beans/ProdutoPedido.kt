@@ -10,8 +10,18 @@ data class ProdutoPedido(
   val centrodelucro: String,
   val localizacao: String,
   val tipo: Int,
-  val qtty: Double
+  val qtty: Double,
+  val saldo: Double
                         ) {
+  val quantidadeValida: Boolean
+    get() = qttyEdit in qttyMin..qttyMax
   val codigo
     get() = prdno.lpad(6, "0")
+  val prdnoSaci
+    get() = prdno.lpad(16, " ")
+  var qttyEdit: Int = 0
+  val qttyMax
+    get() = (qtty * 1.50).toInt()
+  val qttyMin
+    get() = 1
 }

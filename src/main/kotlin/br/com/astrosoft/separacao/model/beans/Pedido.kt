@@ -6,9 +6,10 @@ import br.com.astrosoft.separacao.model.enum.ESituacaoPedido
 import br.com.astrosoft.separacao.model.enum.ESituacaoPedido.BACKUP
 import br.com.astrosoft.separacao.model.enum.ESituacaoPedido.ERRO
 import br.com.astrosoft.separacao.model.enum.ESituacaoPedido.TEMPORARIO
+import br.com.astrosoft.separacao.model.enum.ETipoOrigem
 import br.com.astrosoft.separacao.model.saci
 
-data class Pedido(val storeno: Int = 1, val ordno: Int) {
+data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val tipo: String) {
   fun compativel(pedido: Pedido) = storenoDestino == pedido.storenoDestino
   
   val isNotEmpty
@@ -36,6 +37,9 @@ data class Pedido(val storeno: Int = 1, val ordno: Int) {
     get() = chave.mid(6, 4).toIntOrNull() ?: 0
   val numeroBackup
     get() = chave.mid(1, 5).toIntOrNull() ?: 0
+  val tipoOrigem: ETipoOrigem
+    get() = if(tipo == "S") ETipoOrigem.SEPARADO
+    else ETipoOrigem.DUPLICADO
   
   companion object {
     fun findTemp(numeroOrigem: Int?): Pedido? {
