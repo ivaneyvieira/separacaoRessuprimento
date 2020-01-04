@@ -12,6 +12,7 @@ import com.github.appreciated.app.layout.entity.Section
 import com.github.appreciated.app.layout.router.AppLayoutRouterLayout
 import com.github.mvysny.karibudsl.v10.navigateToView
 import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.html.Hr
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.icon.VaadinIcon.COPY
 import com.vaadin.flow.component.icon.VaadinIcon.EDIT
@@ -53,7 +54,7 @@ class SeparacaoLayout: AppLayoutRouterLayout() {
     .build()
   
   private fun headerMenu(company: String, version: String) = LeftAppMenuBuilder.get()
-    .addToSection(LeftHeaderItem(company, version, null), Section.HEADER)
+    .addToSection(LeftHeaderItem(company, version, null), Section.HEADER).add(Hr())
   
   private fun LeftAppMenuBuilder.addMenu(caption: String, icon: VaadinIcon, className: KClass<out Component>) =
     add(LeftNavigationItem(caption, icon, className.java))
