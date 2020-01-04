@@ -13,7 +13,7 @@ class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
   }
   
   fun proximoNumero(): Int? {
-    val pedidoOrigem = Pedido(ordno = view.numeroOrigem ?: 0)
+    val pedidoOrigem = Pedido(1, view.numeroOrigem ?: 0, 0, "")
     return if(pedidoOrigem.tipoPedido == TEMPORARIO) {
       val loja = pedidoOrigem.storenoDestino
       saci.proximoNumero(loja)
@@ -23,7 +23,7 @@ class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
   
   fun duplicar() = exec {
     val pedidoOrigem = Pedido.findTemp(view.numeroOrigem) ?: throw EViewModelError("Pedido de origem não encontrado")
-    val pedidoDestino = Pedido.findTemp(view.numeroDestino) ?: Pedido(ordno = view.numeroDestino ?: 0)
+    val pedidoDestino = Pedido.findTemp(view.numeroDestino) ?: Pedido(1, view.numeroDestino ?: 0, 0, "")
     when {
       pedidoDestino.isTemporario              -> throw EViewModelError("O pedido destino não é válido")
       pedidoDestino.isNotEmpty                -> throw EViewModelError("O pedido de destino já existe")
