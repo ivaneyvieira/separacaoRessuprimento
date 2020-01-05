@@ -13,9 +13,13 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
     val storenoDestino = pedido.storenoDestino
     val ordno = pedido.ordno
     val proximoNumero = saci.proximoNumero(storenoDestino)
-    view.produtosSelecionados.forEach {produto ->
-      saci.atualizarQuantidade(ordno, proximoNumero, produto.prdnoSaci, produto.grade, produto.qttyEdit.toDouble())
-    }
+    val produtosSelecionados = view.produtosSelecionados
+    if(produtosSelecionados.isEmpty())
+      throw EViewModelError("Não há nenhum produto selecionado")
+    else
+      produtosSelecionados.forEach {produto ->
+        saci.atualizarQuantidade(ordno, proximoNumero, produto.prdnoSaci, produto.grade, produto.qttyEdit.toDouble())
+      }
     view.showInformation("Foi gerado o pedido número $proximoNumero")
     view.updateGrid()
   }

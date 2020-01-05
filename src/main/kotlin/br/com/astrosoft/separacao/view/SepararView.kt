@@ -5,6 +5,7 @@ import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
 import br.com.astrosoft.separacao.viewmodel.ISepararView
 import br.com.astrosoft.separacao.viewmodel.SepararViewModel
+import com.github.mvysny.karibudsl.v10.VaadinDsl
 import com.github.mvysny.karibudsl.v10.addColumnFor
 import com.github.mvysny.karibudsl.v10.button
 import com.github.mvysny.karibudsl.v10.comboBox
@@ -177,39 +178,8 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
         GridSortOrder(getColumnBy(ProdutoPedido::descricao), SortDirection.ASCENDING),
         GridSortOrder(getColumnBy(ProdutoPedido::grade), SortDirection.ASCENDING)
                  ))
-      
-      this.addItemClickListener {evento ->
-        val grade = evento.source
-        if(evento.isShiftKey) {
-          val pedido = evento.item
-          if(produtoInicial == null) {
-            produtoInicial = pedido
-            grade.select(pedido)
-          }
-          else {
-            if(produtoFinal == null) {
-              val itens = list(grade)
-              produtoFinal = pedido
-              val p1 = itens.indexOf(produtoInicial!!)
-              val p2 = itens.indexOf(produtoFinal!!) + 1
-              val subList = itens.subList(p1.coerceAtMost(p2), p1.coerceAtLeast(p2))
-              subList.forEach {
-                grade.select(it)
-              }
-              produtoFinal = null
-              produtoInicial = null
-            }
-            else {
-              produtoFinal = null
-              produtoInicial = null
-            }
-          }
-        }
-        else {
-          produtoFinal = null
-          produtoInicial = null
-        }
-      }
+  
+      shiftSelect()
     }
     toolbar {
       button("Separar") {
@@ -223,6 +193,41 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
         addClickListener {
           viewModel.imprimir()
         }
+      }
+    }
+  }
+  
+  private fun @VaadinDsl Grid<ProdutoPedido>.shiftSelect() {
+    this.addItemClickListener {evento ->
+      val grade = evento.source
+      if(evento.isShiftKey) {
+        val pedido = evento.item
+        if(produtoInicial == null) {
+          produtoInicial = pedido
+          grade.select(pedido)
+        }
+        else {
+          if(produtoFinal == null) {
+            val itens = list(grade)
+            produtoFinal = pedido
+            val p1 = itens.indexOf(produtoInicial!!)
+            val p2 = itens.indexOf(produtoFinal!!) + 1
+            val subList = itens.subList(p1.coerceAtMost(p2), p1.coerceAtLeast(p2))
+            subList.forEach {
+              grade.select(it)
+            }
+            produtoFinal = null
+            produtoInicial = null
+          }
+          else {
+            produtoFinal = null
+            produtoInicial = null
+          }
+        }
+      }
+      else {
+        produtoFinal = null
+        produtoInicial = null
       }
     }
   }
@@ -277,7 +282,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
   }
   
   override val pedido: Pedido?
-    get() = Pedido.findTemp(cmbPedido.value.ordno)
+    get() = Pedido.findTemp(cmbPedido.value?.ordno ?: 0)
   override val produtosSelecionados: List<ProdutoPedido>
     get() = gridProduto.selectedItems.toList()
   

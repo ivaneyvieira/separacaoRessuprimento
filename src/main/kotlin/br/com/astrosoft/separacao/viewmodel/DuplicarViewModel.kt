@@ -23,7 +23,8 @@ class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
   
   fun duplicar() = exec {
     val pedidoOrigem = Pedido.findTemp(view.numeroOrigem) ?: throw EViewModelError("Pedido de origem não encontrado")
-    val pedidoDestino = Pedido.findTemp(view.numeroDestino) ?: Pedido(1, view.numeroDestino ?: 0, 0, "")
+    val pedidoDestino = Pedido.findTemp(view.numeroDestino) ?: Pedido(1, view.numeroDestino ?: 0, 0, "" +
+                                                                                                     "")
     when {
       pedidoDestino.isTemporario              -> throw EViewModelError("O pedido destino não é válido")
       pedidoDestino.isNotEmpty                -> throw EViewModelError("O pedido de destino já existe")
