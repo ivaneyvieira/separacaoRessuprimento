@@ -62,6 +62,7 @@ dependencies {
   compile("mysql:mysql-connector-java:5.1.48")
   compile("com.zaxxer:HikariCP:3.4.1")
   compile("org.imgscalr:imgscalr-lib:4.2")
+  compile("com.jcraft:jsch:0.1.55")
   // logging
   // currently we are logging through the SLF4J API to SLF4J-Simple. See src/main/resources/simplelogger.properties file for the logger configuration
   compile("org.slf4j:slf4j-simple:1.7.28")
