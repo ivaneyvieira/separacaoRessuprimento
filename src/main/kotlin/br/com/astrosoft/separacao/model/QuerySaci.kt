@@ -84,7 +84,8 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun atualizarQuantidade(ordno: Int, ordnoNovo: Int, codigo: String, grade: String, quantidade: Double) {
+  fun atualizarQuantidade(ordno: Int, ordnoNovo: Int, codigo: String, grade: String,
+                          localizacao: String, quantidade: Double) {
     val storeno = 1
     val sql = "/sqlSaci/atualizarQuantidade.sql"
     val prdno = codigo.lpad(16, " ")
@@ -95,6 +96,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addOptionalParameter("ordno", ordno)
       q.addOptionalParameter("prdno", prdno)
       q.addOptionalParameter("grade", grade)
+      q.addOptionalParameter("localizacao", localizacao)
       q.addOptionalParameter("qtty", qtty)
         .executeUpdate()
     }
