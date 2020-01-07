@@ -294,6 +294,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
   }
   
   private fun updateGrid(pedidoNovo: Pedido?) {
+    gridProduto.selectionModel.deselectAll()
     dataProviderProdutos.items.clear()
     dataProviderProdutos.items.addAll(pedidoNovo?.produtos.orEmpty())
     dataProviderProdutos.refreshAll()
