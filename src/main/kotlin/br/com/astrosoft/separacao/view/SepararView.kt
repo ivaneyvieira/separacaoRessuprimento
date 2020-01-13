@@ -49,7 +49,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
   var produtoFinal: ProdutoPedido? = null
   
   init {
-    form("Separar") {
+    form("Separar Pedidos") {
       isExpand = false
       cmbPedido = comboBox<Pedido>("Pedido origem") {
         colspan = 1
