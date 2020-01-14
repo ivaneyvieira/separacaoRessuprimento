@@ -13,4 +13,4 @@ WHERE storeno = :storeno AND
 DELETE
 FROM oprdxf
 WHERE storeno = :storeno AND
-      ordno BETWEEN :numeroI AND :numeroF;
+      ordno BETWEEN :numeroI AND :numeroF

@@ -8,18 +8,20 @@ import br.com.astrosoft.separacao.viewmodel.IEditarView
 import com.github.mvysny.karibudsl.v10.addColumnFor
 import com.github.mvysny.karibudsl.v10.button
 import com.github.mvysny.karibudsl.v10.comboBox
+import com.github.mvysny.karibudsl.v10.getAll
 import com.github.mvysny.karibudsl.v10.getColumnBy
 import com.github.mvysny.karibudsl.v10.grid
-import com.github.mvysny.karibudsl.v10.integerField
 import com.github.mvysny.karibudsl.v10.isExpand
+import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.grid.ColumnTextAlign
+import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.Grid.SelectionMode
 import com.vaadin.flow.component.grid.GridSortOrder
-import com.vaadin.flow.component.grid.HeaderRow
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.textfield.IntegerField
 import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.binder.ValidationResult
+import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.data.provider.SortDirection.ASCENDING
 import com.vaadin.flow.data.renderer.NumberRenderer
 import com.vaadin.flow.router.PageTitle
@@ -29,14 +31,17 @@ import java.text.DecimalFormat
 @Route(layout = SeparacaoLayout::class)
 @PageTitle("Editar")
 class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
+  private var gridProduto: Grid<ProdutoPedido>
+  private lateinit var cmbPedido: ComboBox<Pedido>
   override val viewModel: EditarViewModel = EditarViewModel(this)
+  val dataProviderProdutos = ListDataProvider<ProdutoPedido>(mutableListOf())
   
-  init{
+  init {
     form("Editar pedidos") {
       isExpand = false
-      cmbPedido = comboBox<Pedido>("Pedido origem") {
+      cmbPedido = comboBox<Pedido>("Numero do pedido") {
         colspan = 1
-        setItems(Pedido.pedidosTemporarios)
+        setItems(viewModel.pedidosSeparacao)
         setItemLabelGenerator {
           "${it.ordnoOrigem.toString()} - ${it.tipoOrigem.descricao}"
         }
@@ -48,36 +53,11 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
           }
         }
       }
-      proximoNumero = integerField("Próximo número") {
-        isEnabled = false
-      }
     }
     gridProduto = grid(dataProvider = dataProviderProdutos) {
       isExpand = true
       setSelectionMode(SelectionMode.MULTI)
       isMultiSort = true
-      this.appendHeaderRow()
-      val filterRow: HeaderRow = this.appendHeaderRow()
-      val edtCodigo = TextFieldFiltro(ProdutoPedido::codigo)
-      val edtDescricao = TextFieldFiltro(ProdutoPedido::descricao)
-      val edtGrade = TextFieldFiltro(ProdutoPedido::grade)
-      val edtFornecedor = TextFieldFiltro(ProdutoPedido::fornecedor)
-      val edtLocalizacao = TextFieldFiltro(ProdutoPedido::localizacao)
-      edtCodigo.addValueChangeListener {
-        updateFilter(edtCodigo, edtDescricao, edtGrade, edtFornecedor, edtLocalizacao)
-      }
-      edtDescricao.addValueChangeListener {
-        updateFilter(edtCodigo, edtDescricao, edtGrade, edtFornecedor, edtLocalizacao)
-      }
-      edtGrade.addValueChangeListener {
-        updateFilter(edtCodigo, edtDescricao, edtGrade, edtFornecedor, edtLocalizacao)
-      }
-      edtFornecedor.addValueChangeListener {
-        updateFilter(edtCodigo, edtDescricao, edtGrade, edtFornecedor, edtLocalizacao)
-      }
-      edtLocalizacao.addValueChangeListener {
-        updateFilter(edtCodigo, edtDescricao, edtGrade, edtFornecedor, edtLocalizacao)
-      }
       val binder = Binder<ProdutoPedido>(ProdutoPedido::class.java)
       binder.withValidator {value, context ->
         if(value.quantidadeValida) {
@@ -118,32 +98,22 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
         setHeader("Código")
         flexGrow = 1
         this.textAlign = ColumnTextAlign.END
-        filterRow.getCell(this)
-          .setComponent(edtCodigo)
       }
       addColumnFor(ProdutoPedido::descricao) {
         setHeader("Descrição")
         flexGrow = 8
-        filterRow.getCell(this)
-          .setComponent(edtDescricao)
       }
       addColumnFor(ProdutoPedido::grade) {
         setHeader("Grade")
         flexGrow = 1
-        filterRow.getCell(this)
-          .setComponent(edtGrade)
       }
       addColumnFor(ProdutoPedido::fornecedor) {
         setHeader("Fornecedor")
         flexGrow = 1
-        filterRow.getCell(this)
-          .setComponent(edtFornecedor)
       }
       addColumnFor(ProdutoPedido::localizacao) {
         setHeader("Localização")
         flexGrow = 3
-        filterRow.getCell(this)
-          .setComponent(edtLocalizacao)
       }
       addColumnFor(ProdutoPedido::qttyEdit, NumberRenderer(ProdutoPedido::qttyEdit, DecimalFormat("0"))) {
         setHeader("Quant")
@@ -161,29 +131,31 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
         GridSortOrder(getColumnBy(ProdutoPedido::descricao), ASCENDING),
         GridSortOrder(getColumnBy(ProdutoPedido::grade), ASCENDING)
                  ))
-    
-      shiftSelect()
     }
     toolbar {
-      button("Separar") {
+      button("Processar") {
         icon = VaadinIcon.SPLIT.create()
         addClickListener {
-          viewModel.separar()
-        }
-      }
-      button("Imprimir") {
-        icon = VaadinIcon.PRINT.create()
-        addClickListener {
-          viewModel.imprimir()
+          viewModel.processar()
         }
       }
     }
   }
   
   override val pedido: Pedido?
-    get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    get() = Pedido.findTemp(cmbPedido.value?.ordno ?: 0)
+  override val produtos: List<ProdutoPedido>
+    get() = dataProviderProdutos.getAll()
   
   override fun updateGrid() {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    val pedidoAtual = pedido
+    updateGrid(pedidoAtual)
+  }
+  
+  private fun updateGrid(pedidoNovo: Pedido?) {
+    gridProduto.selectionModel.deselectAll()
+    dataProviderProdutos.items.clear()
+    dataProviderProdutos.items.addAll(pedidoNovo?.produtos.orEmpty())
+    dataProviderProdutos.refreshAll()
   }
 }

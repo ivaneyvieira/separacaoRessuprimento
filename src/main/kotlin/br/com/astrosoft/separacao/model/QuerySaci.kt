@@ -85,11 +85,10 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   }
   
   fun atualizarQuantidade(ordno: Int, ordnoNovo: Int, codigo: String, grade: String,
-                          localizacao: String, quantidade: Double) {
+                          localizacao: String, qtty: Int) {
     val storeno = 1
     val sql = "/sqlSaci/atualizarQuantidade.sql"
     val prdno = codigo.lpad(16, " ")
-    val qtty: Int = (quantidade * 1).toInt()
     script(sql) {q ->
       q.addOptionalParameter("storeno", storeno)
       q.addOptionalParameter("ordnoNovo", ordnoNovo)
@@ -98,6 +97,23 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addOptionalParameter("grade", grade)
       q.addOptionalParameter("localizacao", localizacao)
       q.addOptionalParameter("qtty", qtty)
+        .executeUpdate()
+    }
+  }
+  
+  fun retornaSaldo(ordnoMae: Int, ordno: Int, codigo: String, grade: String,
+                   localizacao: String, diferenca: Int) {
+    val storeno = 1
+    val sql = "/sqlSaci/retornaSaldo.sql"
+    val prdno = codigo.lpad(16, " ")
+    script(sql) {q ->
+      q.addOptionalParameter("storeno", storeno)
+      q.addOptionalParameter("ordnoMae", ordnoMae)
+      q.addOptionalParameter("ordno", ordno)
+      q.addOptionalParameter("prdno", prdno)
+      q.addOptionalParameter("grade", grade)
+      q.addOptionalParameter("localizacao", localizacao)
+      q.addOptionalParameter("diferenca", diferenca)
         .executeUpdate()
     }
   }

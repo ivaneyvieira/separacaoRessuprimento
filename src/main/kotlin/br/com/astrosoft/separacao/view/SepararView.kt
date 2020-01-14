@@ -51,7 +51,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
   init {
     form("Separar Pedidos") {
       isExpand = false
-      cmbPedido = comboBox<Pedido>("Pedido origem") {
+      cmbPedido = comboBox("Pedido origem") {
         colspan = 1
         setItems(Pedido.pedidosTemporarios)
         setItemLabelGenerator {
