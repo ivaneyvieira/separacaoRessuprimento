@@ -15,7 +15,6 @@ import com.github.mvysny.karibudsl.v10.isExpand
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.grid.ColumnTextAlign
 import com.vaadin.flow.component.grid.Grid
-import com.vaadin.flow.component.grid.Grid.SelectionMode
 import com.vaadin.flow.component.grid.GridSortOrder
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.textfield.IntegerField
@@ -56,7 +55,6 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
     }
     gridProduto = grid(dataProvider = dataProviderProdutos) {
       isExpand = true
-      setSelectionMode(SelectionMode.MULTI)
       isMultiSort = true
       val binder = Binder<ProdutoPedido>(ProdutoPedido::class.java)
       binder.withValidator {value, context ->
