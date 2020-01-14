@@ -18,3 +18,4 @@ src/main/webapp/VAADIN/themes/*/styles.css.gz
 Procfile
 deploy.sh
 .gradle
+ebean.properties
