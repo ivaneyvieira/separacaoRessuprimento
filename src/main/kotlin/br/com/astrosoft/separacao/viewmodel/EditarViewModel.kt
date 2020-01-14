@@ -11,12 +11,20 @@ import br.com.astrosoft.separacao.model.saci
 class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
   fun processar() = exec {
     val pedido = view.pedido ?: throw EViewModelError("Nenum pedido selecionado")
-    view.produtos.forEach {produto ->
+    view.produtosSelecionados.forEach {produto ->
       saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
                         ordno = pedido.ordno,
                         codigo = produto.codigo,
                         grade = produto.grade,
                         diferenca = produto.diferenca,
+                        localizacao = produto.localizacao)
+    }
+    view.produtosNaoSelecionado.forEach {produto ->
+      saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
+                        ordno = pedido.ordno,
+                        codigo = produto.codigo,
+                        grade = produto.grade,
+                        diferenca = produto.saldo.toInt(),
                         localizacao = produto.localizacao)
     }
   }
@@ -30,6 +38,10 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
 interface IEditarView: IView {
   val pedido: Pedido?
   val produtos: List<ProdutoPedido>
+  val produtosSelecionados: List<ProdutoPedido>
   
   fun updateGrid()
+  
+  val produtosNaoSelecionado
+    get() = produtos - produtosSelecionados
 }
