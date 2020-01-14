@@ -27,6 +27,7 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
                         diferenca = produto.saldo.toInt(),
                         localizacao = produto.localizacao)
     }
+    view.updateGrid()
   }
   
   val pedidosSeparacao: List<Pedido>
