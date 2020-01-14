@@ -44,4 +44,6 @@ DELETE
 FROM oprd
 WHERE oprd.storeno = :storeno AND
       oprd.ordno = :ordno AND
-      ROUND(oprd.qtty, 2) <= 0;
+      oprd.prdno = :prdno AND
+      oprd.grade = :grade AND
+      ROUND(oprd.qtty, 2) <= 0

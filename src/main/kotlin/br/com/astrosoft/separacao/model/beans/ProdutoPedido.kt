@@ -24,4 +24,7 @@ data class ProdutoPedido(
     get() = (qtty * 1.50).toInt()
   val qttyMin
     get() = 1
+  val diferenca
+    get() = if(qttyEdit >= qtty.toInt()) 0
+    else qtty.toInt() - qttyEdit
 }
