@@ -10,7 +10,7 @@ import br.com.astrosoft.separacao.model.saci
 class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
   fun processar() = exec {
     view.produtos.forEach {produto ->
-      saci.retornaSaldo()
+      //saci.retornaSaldo(produto)
     }
   }
   

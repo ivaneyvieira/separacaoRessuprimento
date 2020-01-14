@@ -21,7 +21,7 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
     else
       produtosSelecionados.forEach {produto ->
         saci.atualizarQuantidade(ordno, proximoNumero, produto.prdnoSaci, produto.grade,
-                                 produto.localizacao, produto.qttyEdit.toDouble())
+                                 produto.localizacao, produto.qttyEdit)
       }
     print(proximoNumero)
     view.showInformation("Foi gerado o pedido número $proximoNumero")
