@@ -11,6 +11,7 @@ import com.github.mvysny.karibudsl.v10.comboBox
 import com.github.mvysny.karibudsl.v10.getAll
 import com.github.mvysny.karibudsl.v10.getColumnBy
 import com.github.mvysny.karibudsl.v10.grid
+import com.github.mvysny.karibudsl.v10.integerField
 import com.github.mvysny.karibudsl.v10.isExpand
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.grid.ColumnTextAlign
@@ -31,6 +32,7 @@ import java.text.DecimalFormat
 @Route(layout = SeparacaoLayout::class)
 @PageTitle("Editar")
 class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
+  private lateinit var pedidoMae: IntegerField
   private var gridProduto: Grid<ProdutoPedido>
   private lateinit var cmbPedido: ComboBox<Pedido>
   override val viewModel: EditarViewModel = EditarViewModel(this)
@@ -52,6 +54,9 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
             updateGrid(value)
           }
         }
+      }
+      pedidoMae = integerField("Pedido mãe") {
+        isEnabled = false
       }
     }
     gridProduto = grid(dataProvider = dataProviderProdutos) {
@@ -159,5 +164,6 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
     dataProviderProdutos.items.clear()
     dataProviderProdutos.items.addAll(pedidoNovo?.produtos.orEmpty())
     dataProviderProdutos.refreshAll()
+    pedidoMae.value = pedidoNovo?.ordnoMae
   }
 }
