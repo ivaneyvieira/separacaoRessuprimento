@@ -63,13 +63,13 @@ abstract class ViewLayout<VM: ViewModel<*>>(): VerticalLayout(), IView, BeforeLe
     //   loginForm.isOpened = LoginService.isLogged() == false
   }
   
-  fun VerticalLayout.form(title: String, compnentes: KFormLayout.() -> Unit) {
+  fun VerticalLayout.form(title: String, componentes: KFormLayout.() -> Unit = {}) {
     formLayout {
       isExpand = true
       em(title) {
         colspan = 2
       }
-      compnentes()
+      componentes()
     }
   }
   

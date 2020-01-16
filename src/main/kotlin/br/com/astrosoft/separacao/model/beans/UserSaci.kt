@@ -19,10 +19,10 @@ class UserSaci() {
   fun initVars(): UserSaci {
     val bits = bitAcesso ?: 0
     ativo = (bits and 2.toDouble().pow(0).toInt()) != 0 || login == "ADM"
-    duplicar = (bits and 2.toDouble().pow(1).toInt()) != 0
-    separar = (bits and 2.toDouble().pow(2).toInt()) != 0
-    remover = (bits and 2.toDouble().pow(3).toInt()) != 0
-    editar = (bits and 2.toDouble().pow(4).toInt()) != 0
+    duplicar = (bits and 2.toDouble().pow(1).toInt()) != 0 || login == "ADM"
+    separar = (bits and 2.toDouble().pow(2).toInt()) != 0 || login == "ADM"
+    remover = (bits and 2.toDouble().pow(3).toInt()) != 0 || login == "ADM"
+    editar = (bits and 2.toDouble().pow(4).toInt()) != 0 || login == "ADM"
     return this
   }
   
