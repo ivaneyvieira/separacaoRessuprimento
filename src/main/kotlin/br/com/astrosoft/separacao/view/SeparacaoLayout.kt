@@ -18,6 +18,7 @@ import com.vaadin.flow.component.icon.VaadinIcon.COPY
 import com.vaadin.flow.component.icon.VaadinIcon.EDIT
 import com.vaadin.flow.component.icon.VaadinIcon.ERASER
 import com.vaadin.flow.component.icon.VaadinIcon.SPLIT
+import com.vaadin.flow.component.icon.VaadinIcon.USER
 import com.vaadin.flow.component.page.Push
 import com.vaadin.flow.router.PreserveOnRefresh
 import com.vaadin.flow.server.PWA
@@ -38,6 +39,7 @@ class SeparacaoLayout: AppLayoutRouterLayout() {
       .addMenu("Separar", SPLIT, SepararView::class)
       .addMenu("Editar", EDIT, EditarView::class)
       .addMenu("Remover", ERASER, RemoverView::class)
+      .addMenu("Usuários", USER, UsuarioView::class)
       .build()
     val appLayout = appLayout(RegistryUserInfo.appName, appMenu)
     
