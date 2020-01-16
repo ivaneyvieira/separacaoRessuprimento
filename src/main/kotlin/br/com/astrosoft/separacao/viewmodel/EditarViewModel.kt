@@ -4,6 +4,7 @@ import br.com.astrosoft.framework.viewmodel.EViewModelError
 import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
 import br.com.astrosoft.separacao.model.beans.Pedido
+import br.com.astrosoft.separacao.model.beans.Produto
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem.SEPARADO
 import br.com.astrosoft.separacao.model.saci
@@ -30,6 +31,20 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
     view.updateGrid()
   }
   
+  fun processaProduto(produto: ProdutoPedido) {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  }
+  
+  fun novoProduto() = exec {
+    view.pedido?.let {pedido ->
+      view.novoProduto(pedido, ::processaProduto)
+    }
+  }
+  
+  fun findProduto(prdno: String?): Produto? {
+    return null
+  }
+  
   val pedidosSeparacao: List<Pedido>
     get() = Pedido.pedidosTemporarios.filter {
       it.tipoOrigem == SEPARADO
@@ -45,4 +60,7 @@ interface IEditarView: IView {
   
   val produtosNaoSelecionado
     get() = produtos - produtosSelecionados
+  
+  fun novoProduto(pedido: Pedido, processaProduto: (ProdutoPedido) -> Unit)
 }
+
