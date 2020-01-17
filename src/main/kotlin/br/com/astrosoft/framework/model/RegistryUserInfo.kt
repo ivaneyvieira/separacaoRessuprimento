@@ -7,4 +7,6 @@ object RegistryUserInfo {
   val version = SystemUtils.readFile("/versao.txt") ?: "1.0"
   val appName = "Separação para ressuprimento"
   val commpany = "Engecopi"
+  val usuario
+    get() = loginInfoProvider?.loginInfo?.usuario
 }
