@@ -11,7 +11,6 @@ import com.github.mvysny.karibudsl.v10.em
 import com.github.mvysny.karibudsl.v10.formLayout
 import com.github.mvysny.karibudsl.v10.horizontalLayout
 import com.github.mvysny.karibudsl.v10.isExpand
-import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.AfterNavigationEvent
@@ -76,15 +75,18 @@ abstract class ViewLayout<VM: ViewModel<*>>(): VerticalLayout(), IView, BeforeLe
   fun VerticalLayout.form(title: String, componentes: KFormLayout.() -> Unit = {}) {
     formLayout {
       isExpand = true
-      val token =
-        UI.getCurrent()
-          .csrfToken
+  
       em(title) {
         colspan = 1
       }
+      /*
+      val token =
+        UI.getCurrent()
+          .csrfToken
       em(token) {
         colspan = 1
       }
+       */
       componentes()
     }
   }
