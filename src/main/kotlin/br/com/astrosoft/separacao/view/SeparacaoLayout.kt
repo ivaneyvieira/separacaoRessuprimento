@@ -12,7 +12,6 @@ import com.github.appreciated.app.layout.component.menu.left.items.LeftNavigatio
 import com.github.appreciated.app.layout.component.menu.top.item.TopClickableItem
 import com.github.appreciated.app.layout.entity.Section
 import com.github.appreciated.app.layout.router.AppLayoutRouterLayout
-import com.github.appreciated.app.layout.router.AppLayoutRouterLayoutBase
 import com.github.mvysny.karibudsl.v10.navigateToView
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.html.Hr
@@ -45,35 +44,47 @@ class SeparacaoLayout: AppLayoutRouterLayout() {
   }
   
   fun atualizaMenu(usuario: UserSaci? = null): AppLayout? {
-    val appMenu = headerMenu(RegistryUserInfo.commpany, "Versão ${RegistryUserInfo.version}")
-      .addMenu("Duplicar", COPY, DuplicarView::class, usuario?.duplicar)
-      .addMenu("Separar", SPLIT, SepararView::class, usuario?.separar)
-      .addMenu("Editar", EDIT, EditarView::class, usuario?.editar)
-      .addMenu("Remover", ERASER, RemoverView::class, usuario?.remover)
-      .addMenu("Usuários", USER, UsuarioView::class, usuario?.admin)
-      .build()
+    /*
+     val appMenu = headerMenu(RegistryUserInfo.commpany, "Versão ${RegistryUserInfo.version}")
+       .addMenu("Duplicar", COPY, DuplicarView::class, usuario?.duplicar)
+       .addMenu("Separar", SPLIT, SepararView::class, usuario?.separar)
+       .addMenu("Editar", EDIT, EditarView::class, usuario?.editar)
+       .addMenu("Remover", ERASER, RemoverView::class, usuario?.remover)
+       .addMenu("Usuários", USER, UsuarioView::class, usuario?.admin)
+       .build()
+       
+     */
+    val appMenu = appMenu()
     return appLayout(RegistryUserInfo.appName, appMenu)
   }
   
-  private fun appLayout(title: String, appMenu: Component) = AppLayoutBuilder.get(Behaviour.LEFT_RESPONSIVE)
-    .withTitle(title)
-    .withAppBar(AppBarBuilder.get().add(TopClickableItem(null, VaadinIcon.CLOSE_CIRCLE.create()) {
-      LoginService.logout()
-      navigateToView(DefaultView::class)
-    }).build())
-    .withAppMenu(appMenu)
-    .build()
+  private fun appLayout(title: String, appMenu: Component): AppLayout {
+    val appLayout = AppLayoutBuilder.get(Behaviour.LEFT_RESPONSIVE)
+      .withTitle(title)
+      .withAppBar(AppBarBuilder.get().add(TopClickableItem(null, VaadinIcon.CLOSE_CIRCLE.create()) {
+        LoginService.logout()
+        navigateToView(DefaultView::class)
+      }).build())
+      .withAppMenu(appMenu)
+      .build()
+    return appLayout
+  }
   
   companion object {
-    private lateinit var menuUsuario: LeftAppMenuBuilder
-    private lateinit var menuRemover: LeftAppMenuBuilder
-    private lateinit var menuEditar: LeftAppMenuBuilder
-    private lateinit var menuSeparar: LeftAppMenuBuilder
-    private lateinit var menuDuplicar: LeftAppMenuBuilder
-    val currentLayout get() = AppLayoutRouterLayoutBase.getCurrent()
+    private var menuComponent: Component? = null
+    private var menuUsuario: LeftNavigationItem? = null
+    private var menuRemover: LeftNavigationItem? = null
+    private var menuEditar: LeftNavigationItem? = null
+    private var menuSeparar: LeftNavigationItem? = null
+    private var menuDuplicar: LeftNavigationItem? = null
     
     fun updateLayout(user: UserSaci) {
-      currentLayout.localeMenu("Duplicar")
+      menuComponent?.children?.forEach {component ->
+        (component as? LeftNavigationItem)?.let {lItem ->
+          println(lItem)
+        }
+        println("OK")
+      }
     }
     
     fun Component.localeMenu(caption: String): Component? {
@@ -84,22 +95,27 @@ class SeparacaoLayout: AppLayoutRouterLayout() {
       return null
     }
     
-    fun appMenu(usuario: UserSaci) {
+    fun appMenu(): Component {
       val appMenu = headerMenu(RegistryUserInfo.commpany, "Versão ${RegistryUserInfo.version}")
-      menuDuplicar = appMenu.addMenu("Duplicar", COPY, DuplicarView::class, usuario.duplicar ?: false)
-      menuSeparar = appMenu.addMenu("Separar", SPLIT, SepararView::class, usuario.separar ?: false)
-      menuEditar = appMenu.addMenu("Editar", EDIT, EditarView::class, usuario.editar ?: false)
-      menuRemover = appMenu.addMenu("Remover", ERASER, RemoverView::class, usuario.remover ?: false)
-      menuUsuario = appMenu.addMenu("Usuários", USER, UsuarioView::class, usuario.admin ?: false)
+      menuDuplicar = addMenu("Duplicar", COPY, DuplicarView::class)
+      menuSeparar = addMenu("Separar", SPLIT, SepararView::class)
+      menuEditar = addMenu("Editar", EDIT, EditarView::class)
+      menuRemover = addMenu("Remover", ERASER, RemoverView::class)
+      menuUsuario = addMenu("Usuários", USER, UsuarioView::class)
+      appMenu.add(menuDuplicar)
+      appMenu.add(menuSeparar)
+      appMenu.add(menuEditar)
+      appMenu.add(menuRemover)
+      appMenu.add(menuUsuario)
+      menuComponent = appMenu.build()
+      return menuComponent!!
     }
     
     private fun headerMenu(company: String, version: String) = LeftAppMenuBuilder.get()
       .addToSection(LeftHeaderItem(company, version, null), Section.HEADER).add(Hr())
     
-    private fun LeftAppMenuBuilder.addMenu(caption: String, icon: VaadinIcon, className: KClass<out Component>,
-                                           isVisible: Boolean? = true): LeftAppMenuBuilder {
-      val menu = add(LeftNavigationItem(caption, icon, className.java))
-      return menu
+    private fun addMenu(caption: String, icon: VaadinIcon, className: KClass<out Component>): LeftNavigationItem {
+      return LeftNavigationItem(caption, icon, className.java)
     }
   }
 }
