@@ -3,33 +3,37 @@ package br.com.astrosoft.framework.view
 import br.com.astrosoft.framework.model.LoginInfo
 import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.model.saci
-import br.com.astrosoft.separacao.view.DuplicarView
-import br.com.astrosoft.separacao.view.EditarView
 import br.com.astrosoft.separacao.view.LoginService
-import br.com.astrosoft.separacao.view.RemoverView
-import br.com.astrosoft.separacao.view.SepararView
-import com.github.mvysny.karibudsl.v10.navigateToView
-import com.vaadin.flow.component.login.LoginForm
 import com.vaadin.flow.component.login.LoginI18n
 import com.vaadin.flow.component.login.LoginI18n.Header
 import com.vaadin.flow.component.login.LoginOverlay
 
-class LoginFormApp(appName: String, version: String, navigate : (UserSaci)-> Unit): LoginOverlay() {
+class LoginFormApp(appName: String, version: String, val navigate: (UserSaci) -> Unit): LoginOverlay() {
+  val MSG_ERRO = "Usuário ou senha está errado"
+  
   init {
     setI18n(loginI18n(appName, version))
-    
+    isError = false
     addLoginListener {loginEvent ->
       val user = saci.findUser(loginEvent.username)
       when {
-        user == null                      -> LoginService.logout()
-        user.senha == loginEvent.password -> {
-          LoginService.login(LoginInfo(user.login ?: ""))
-          navigate(user)
-          close()
-        }
-        else                              -> LoginService.logout()
+        user == null                      -> logout()
+        !user.ativo                       -> logout()
+        user.senha == loginEvent.password -> login(user)
+        else                              -> logout()
       }
     }
+  }
+  
+  private fun logout() {
+    LoginService.logout()
+    isError = true
+  }
+  
+  private fun login(user: UserSaci) {
+    LoginService.login(LoginInfo(user.login ?: ""))
+    navigate(user)
+    close()
   }
   
   private fun loginI18n(appName: String, version: String) = LoginI18n.createDefault().apply {
