@@ -17,7 +17,7 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
   val isTemporario: Boolean
     get() = tipoPedido != TEMPORARIO
   val produtos
-    get() = saci.listaProduto(ordno)
+    get() = saci.listaProduto(ordno).filtraLocalizacoes()
   val chave: String
     get() = ordno.toString().lpad(10, "0")
   val prefixo
@@ -46,7 +46,7 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
       numeroOrigem ?: return null
       return pedidosTemporarios.firstOrNull {it.ordno == numeroOrigem}
     }
-    
+  
     val pedidos
       get() = saci.listaPedido().filter {
         it.tipoPedido == TEMPORARIO || it.tipoPedido == BACKUP
@@ -57,5 +57,17 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
     val pedidosBackup
       get() = pedidos.filter {it.tipoPedido == BACKUP}
   }
+  
+  private fun List<ProdutoPedido>.filtraLocalizacoes(): List<ProdutoPedido> {
+    return this.groupBy {ProdutoKey(it.prdno, it.grade)}
+      .flatMap {entry ->
+        val list = entry.value.filter {
+          (!it.localizacao.startsWith("EXP4")) && (!it.localizacao.startsWith("CD00"))
+        }
+        if(list.isEmpty()) entry.value else list
+      }
+  }
 }
+
+data class ProdutoKey(val prdno: String, val grade: String)
 

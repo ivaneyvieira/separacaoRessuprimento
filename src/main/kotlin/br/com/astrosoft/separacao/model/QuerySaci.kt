@@ -4,6 +4,7 @@ import br.com.astrosoft.framework.model.QueryDB
 import br.com.astrosoft.framework.util.DB
 import br.com.astrosoft.framework.util.lpad
 import br.com.astrosoft.separacao.model.beans.Pedido
+import br.com.astrosoft.separacao.model.beans.Produto
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
 import br.com.astrosoft.separacao.model.beans.UserSaci
 
@@ -136,6 +137,14 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addOptionalParameter("localizacao", localizacao)
       q.addOptionalParameter("diferenca", diferenca)
         .executeUpdate()
+    }
+  }
+  
+  fun findProduto(prdno: String): List<Produto> {
+    val sql = "/sqlSaci/findProduto.sql"
+    return query(sql) {q ->
+      q.addOptionalParameter("prdno", prdno)
+      q.executeAndFetch(Produto::class.java)
     }
   }
   

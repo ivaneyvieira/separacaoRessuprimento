@@ -9,17 +9,25 @@ import br.com.astrosoft.separacao.viewmodel.IEditarView
 import com.github.mvysny.karibudsl.v10.addColumnFor
 import com.github.mvysny.karibudsl.v10.button
 import com.github.mvysny.karibudsl.v10.comboBox
+import com.github.mvysny.karibudsl.v10.em
+import com.github.mvysny.karibudsl.v10.formLayout
 import com.github.mvysny.karibudsl.v10.getAll
 import com.github.mvysny.karibudsl.v10.getColumnBy
 import com.github.mvysny.karibudsl.v10.grid
+import com.github.mvysny.karibudsl.v10.horizontalLayout
+import com.github.mvysny.karibudsl.v10.integerField
 import com.github.mvysny.karibudsl.v10.isExpand
+import com.github.mvysny.karibudsl.v10.responsiveSteps
+import com.github.mvysny.karibudsl.v10.textField
 import com.vaadin.flow.component.combobox.ComboBox
+import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.grid.ColumnTextAlign
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.Grid.SelectionMode
 import com.vaadin.flow.component.grid.GridSortOrder
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.textfield.IntegerField
+import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.binder.ValidationResult
 import com.vaadin.flow.data.provider.ListDataProvider
@@ -32,6 +40,7 @@ import java.text.DecimalFormat
 @Route(layout = SeparacaoLayout::class)
 @PageTitle("Editar")
 class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
+  private lateinit var pedidoMae: IntegerField
   private var gridProduto: Grid<ProdutoPedido>
   private lateinit var cmbPedido: ComboBox<Pedido>
   override val viewModel: EditarViewModel = EditarViewModel(this)
@@ -57,11 +66,14 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
           }
         }
       }
+      pedidoMae = integerField("Pedido mãe") {
+        isEnabled = false
+      }
     }
     gridProduto = grid(dataProvider = dataProviderProdutos) {
       isExpand = true
-      setSelectionMode(SelectionMode.MULTI)
       isMultiSort = true
+      setSelectionMode(SelectionMode.MULTI)
       val binder = Binder<ProdutoPedido>(ProdutoPedido::class.java)
       binder.withValidator {value, context ->
         if(value.quantidadeValida) {
@@ -82,22 +94,22 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
           .addEventListener("keydown") {event -> this@grid.editor.cancel()}
           .filter = "event.key === 'Tab' && event.shiftKey"
       }
-    
+  
       binder.bind(edtQtty, ProdutoPedido::qttyEdit.name)
-    
+  
       addItemClickListener {event ->
         editor.editItem(event.item)
         edtQtty.focus()
       }
-    
+  
       binder.addValueChangeListener {e ->
         editor.refresh()
       }
-    
+  
       editor.addCloseListener {
         binder.writeBean(it.item)
       }
-    
+  
       addColumnFor(ProdutoPedido::codigo) {
         setHeader("Código")
         flexGrow = 1
@@ -137,6 +149,13 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
                  ))
     }
     toolbar {
+      button("Novo produto") {
+        isEnabled = false
+        icon = VaadinIcon.INSERT.create()
+        addClickListener {
+          viewModel.novoProduto()
+        }
+      }
       button("Processar") {
         icon = VaadinIcon.SPLIT.create()
         addClickListener {
@@ -150,10 +169,18 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
     get() = Pedido.findTemp(cmbPedido.value?.ordno ?: 0)
   override val produtos: List<ProdutoPedido>
     get() = dataProviderProdutos.getAll()
+  override val produtosSelecionados: List<ProdutoPedido>
+    get() = gridProduto.selectedItems.toList()
   
   override fun updateGrid() {
     val pedidoAtual = pedido
     updateGrid(pedidoAtual)
+  }
+  
+  override fun novoProduto(pedido: Pedido, processaProduto: (ProdutoPedido) -> Unit) {
+    ProdutoDialog(viewModel).apply {
+      open()
+    }
   }
   
   private fun updateGrid(pedidoNovo: Pedido?) {
@@ -161,5 +188,43 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
     dataProviderProdutos.items.clear()
     dataProviderProdutos.items.addAll(pedidoNovo?.produtos.orEmpty())
     dataProviderProdutos.refreshAll()
+    pedidoMae.value = pedidoNovo?.ordnoMae
+  }
+}
+
+class ProdutoDialog(val viewModel: EditarViewModel): Dialog() {
+  private lateinit var edtQtty: IntegerField
+  private lateinit var edtDescricao: TextField
+  private lateinit var edtGrade: TextField
+  private lateinit var edtCodigo: TextField
+  
+  init {
+    em("Adiciona Produto")
+    formLayout {
+      responsiveSteps {
+        "0px"(4, top)
+      }
+      edtCodigo = textField("Código") {
+        colspan = 1
+        addValueChangeListener {event ->
+          val value = event.value
+          val produto = viewModel.findProduto(value)
+        }
+      }
+      edtDescricao = textField("Descrição") {
+        colspan = 3
+        isReadOnly = true
+      }
+      edtGrade = textField("Grade") {
+        colspan = 1
+      }
+      edtQtty = integerField("Quantidade") {
+        colspan = 1
+      }
+    }
+    horizontalLayout {
+      button("Salva")
+      button("Cancela")
+    }
   }
 }

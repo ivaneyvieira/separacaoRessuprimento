@@ -6,7 +6,7 @@ INSERT IGNORE INTO oprd (storeno, ordno, mult, ipi, freight, icms, auxLong1, aux
                          padbyte, gradeFechada, obs, auxStr)
 SELECT :storeno AS storeno, :ordnoMae AS ordno, mult, ipi, freight, icms, auxLong1, auxLong2,
        auxMy1, auxMy2, icmsSubst, auxLong3, auxLong4, auxMy3, auxMy4, :diferenca AS qtty,
-       :qtty AS qtty_src, qtty_xfr, cost, 0 AS qttyRcv, 0 AS qttyCancel, qttyVendaMes,
+       :diferenca AS qtty_src, qtty_xfr, cost, 0 AS qttyRcv, 0 AS qttyCancel, qttyVendaMes,
        qttyVendaMesAnt, qttyVendaMedia, qttyPendente, stkDisponivel, qttyAbc, seqno, status, bits,
        bits2, auxShort1, auxShort2, auxShort3, auxShort4, prdno, grade, remarks, padbyte,
        gradeFechada, obs, :localizacao AS auxStr
