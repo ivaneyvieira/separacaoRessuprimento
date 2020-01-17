@@ -3,6 +3,7 @@ package br.com.astrosoft.separacao.view
 import br.com.astrosoft.framework.view.ViewLayout
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
+import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.viewmodel.EditarViewModel
 import br.com.astrosoft.separacao.viewmodel.IEditarView
 import com.github.mvysny.karibudsl.v10.addColumnFor
@@ -35,6 +36,9 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
   private lateinit var cmbPedido: ComboBox<Pedido>
   override val viewModel: EditarViewModel = EditarViewModel(this)
   val dataProviderProdutos = ListDataProvider<ProdutoPedido>(mutableListOf())
+  
+  override fun isAccept(user: UserSaci) = user.editar
+  
   
   init {
     form("Editar pedidos") {

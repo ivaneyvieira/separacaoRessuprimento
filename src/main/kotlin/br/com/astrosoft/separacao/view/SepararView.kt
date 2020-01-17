@@ -3,6 +3,7 @@ package br.com.astrosoft.separacao.view
 import br.com.astrosoft.framework.view.ViewLayout
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
+import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.viewmodel.ISepararView
 import br.com.astrosoft.separacao.viewmodel.SepararViewModel
 import com.github.mvysny.karibudsl.v10.VaadinDsl
@@ -47,6 +48,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
   val dataProviderProdutos = ListDataProvider<ProdutoPedido>(mutableListOf())
   var produtoInicial: ProdutoPedido? = null
   var produtoFinal: ProdutoPedido? = null
+  override fun isAccept(user: UserSaci) = user.separar
   
   init {
     form("Separar Pedidos") {
@@ -178,7 +180,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
         GridSortOrder(getColumnBy(ProdutoPedido::descricao), SortDirection.ASCENDING),
         GridSortOrder(getColumnBy(ProdutoPedido::grade), SortDirection.ASCENDING)
                  ))
-  
+      
       shiftSelect()
     }
     toolbar {

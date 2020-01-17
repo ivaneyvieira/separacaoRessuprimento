@@ -8,12 +8,33 @@ import br.com.astrosoft.separacao.model.beans.ProdutoPedido
 import br.com.astrosoft.separacao.model.beans.UserSaci
 
 class QuerySaci: QueryDB(driver, url, username, password) {
-  fun findUser(login: String): UserSaci? {
+  fun findUser(login: String?): UserSaci? {
     val sql = "/sqlSaci/userSenha.sql"
     return query(sql) {q ->
       q.addParameter("login", login)
         .executeAndFetch(UserSaci::class.java)
         .firstOrNull()
+        ?.initVars()
+    }
+  }
+  
+  fun findAllUser(): List<UserSaci> {
+    val sql = "/sqlSaci/userSenha.sql"
+    return query(sql) {q ->
+      q.addParameter("login", "TODOS")
+        .executeAndFetch(UserSaci::class.java)
+        .map {user ->
+          user.initVars()
+        }
+    }
+  }
+  
+  fun updateUser(user: UserSaci) {
+    val sql = "/sqlSaci/updateUser.sql"
+    script(sql) {q ->
+      q.addParameter("login", user.login)
+      q.addParameter("bitAcesso", user.bitAcesso())
+      q.executeUpdate()
     }
   }
   
@@ -55,7 +76,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   fun listaPedido(): List<Pedido> {
     val storeno = 1
     val sql = "/sqlSaci/listaPedidos.sql"
-  
+    
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
         .executeAndFetch(Pedido::class.java)
