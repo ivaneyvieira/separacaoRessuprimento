@@ -3,10 +3,13 @@ package br.com.astrosoft.separacao.view
 import br.com.astrosoft.framework.model.LoginInfo
 import br.com.astrosoft.framework.model.LoginInfoProvider
 import br.com.astrosoft.framework.model.RegistryUserInfo
+import com.vaadin.flow.component.UI
 import com.vaadin.flow.server.VaadinSession
 
 object LoginService {
   fun login(loginInfo: LoginInfo) {
+   // VaadinSession.getCurrent().session.invalidate()
+   // UI.getCurrent().page.reload()
     SessionUitl.loginInfo = loginInfo
     RegistryUserInfo.loginInfoProvider = SessionLoginInfoProvider()
   }
@@ -14,6 +17,8 @@ object LoginService {
   fun logout() {
     SessionUitl.loginInfo = null
     RegistryUserInfo.loginInfoProvider = null
+    VaadinSession.getCurrent().session.invalidate()
+    UI.getCurrent().page.reload()
   }
   
   fun isLogged(): Boolean {

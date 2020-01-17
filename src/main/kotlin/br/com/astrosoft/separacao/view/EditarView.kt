@@ -48,7 +48,6 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
   
   override fun isAccept(user: UserSaci) = user.editar
   
-  
   init {
     form("Editar pedidos") {
       isExpand = false
