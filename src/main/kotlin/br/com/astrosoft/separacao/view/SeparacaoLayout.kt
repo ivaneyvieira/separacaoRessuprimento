@@ -3,7 +3,7 @@ package br.com.astrosoft.separacao.view
 import br.com.astrosoft.framework.model.RegistryUserInfo
 import br.com.astrosoft.separacao.model.beans.UserSaci
 import com.github.appreciated.app.layout.behaviour.AppLayout
-import com.github.appreciated.app.layout.behaviour.Behaviour.LEFT_RESPONSIVE
+import com.github.appreciated.app.layout.behaviour.Behaviour
 import com.github.appreciated.app.layout.builder.AppLayoutBuilder
 import com.github.appreciated.app.layout.component.appbar.AppBarBuilder
 import com.github.appreciated.app.layout.component.menu.left.builder.LeftAppMenuBuilder
@@ -13,10 +13,8 @@ import com.github.appreciated.app.layout.component.menu.top.item.TopClickableIte
 import com.github.appreciated.app.layout.entity.Section
 import com.github.appreciated.app.layout.router.AppLayoutRouterLayout
 import com.github.appreciated.app.layout.router.AppLayoutRouterLayoutBase
-import com.github.appreciated.app.layout.webcomponents.applayout.AppDrawer
 import com.github.mvysny.karibudsl.v10.navigateToView
 import com.vaadin.flow.component.Component
-import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.html.Hr
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.icon.VaadinIcon.COPY
@@ -54,12 +52,10 @@ class SeparacaoLayout: AppLayoutRouterLayout() {
       .addMenu("Remover", ERASER, RemoverView::class, usuario?.remover)
       .addMenu("Usuários", USER, UsuarioView::class, usuario?.admin)
       .build()
-    return appLayout(RegistryUserInfo.appName, appMenu).apply {
-      showUpNavigation(true)
-    }
+    return appLayout(RegistryUserInfo.appName, appMenu)
   }
   
-  private fun appLayout(title: String, appMenu: Component) = AppLayoutBuilder.get(LEFT_RESPONSIVE)
+  private fun appLayout(title: String, appMenu: Component) = AppLayoutBuilder.get(Behaviour.LEFT_RESPONSIVE)
     .withTitle(title)
     .withAppBar(AppBarBuilder.get().add(TopClickableItem(null, VaadinIcon.CLOSE_CIRCLE.create()) {
       LoginService.logout()
@@ -85,7 +81,7 @@ class SeparacaoLayout: AppLayoutRouterLayout() {
       this.children.forEach {
         it.localeMenu(caption)
       }
-    return null
+      return null
     }
     
     fun appMenu(usuario: UserSaci) {
