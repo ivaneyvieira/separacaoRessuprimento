@@ -8,8 +8,8 @@ import com.vaadin.flow.server.VaadinSession
 
 object LoginService {
   fun login(loginInfo: LoginInfo) {
-   // VaadinSession.getCurrent().session.invalidate()
-   // UI.getCurrent().page.reload()
+    // VaadinSession.getCurrent().session.invalidate()
+    // UI.getCurrent().page.reload()
     SessionUitl.loginInfo = loginInfo
     RegistryUserInfo.loginInfoProvider = SessionLoginInfoProvider()
   }
@@ -17,8 +17,13 @@ object LoginService {
   fun logout() {
     SessionUitl.loginInfo = null
     RegistryUserInfo.loginInfoProvider = null
-    VaadinSession.getCurrent().session.invalidate()
-    UI.getCurrent().page.reload()
+    /*
+    VaadinSession.getCurrent()
+      .session.invalidate()
+    UI.getCurrent()
+      .page.reload()
+      *
+     */
   }
   
   fun isLogged(): Boolean {
@@ -33,12 +38,14 @@ class SessionLoginInfoProvider: LoginInfoProvider {
     }
 }
 
-object SessionUitl {
-  private const val ATTRIBUTE_NAME = "SESSION_USER"
+private object SessionUitl {
+  private val ATTRIBUTE_NAME get() = "SESSION_USER${UI.getCurrent().csrfToken}"
   var loginInfo: LoginInfo?
     get() = VaadinSession.getCurrent().getAttribute(ATTRIBUTE_NAME) as? LoginInfo
     set(value) {
       VaadinSession.getCurrent()
         .setAttribute(ATTRIBUTE_NAME, value)
+      UI.getCurrent()
+        ?.page
     }
 }

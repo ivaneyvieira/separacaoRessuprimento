@@ -8,7 +8,6 @@ import br.com.astrosoft.separacao.view.EditarView
 import br.com.astrosoft.separacao.view.RemoverView
 import br.com.astrosoft.separacao.view.SeparacaoLayout
 import br.com.astrosoft.separacao.view.SepararView
-import br.com.astrosoft.separacao.view.SessionUitl
 import com.github.mvysny.karibudsl.v10.navigateToView
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.BeforeEnterEvent
@@ -38,7 +37,7 @@ class LoginView: VerticalLayout(), BeforeEnterObserver {
   }
   
   override fun beforeEnter(event: BeforeEnterEvent?) {
-    saci.findUser(SessionUitl.loginInfo?.usuario)
+    saci.findUser(RegistryUserInfo.usuario)
       ?.let {usuario ->
         when {
           usuario.duplicar -> event?.rerouteTo(DuplicarView::class.java)

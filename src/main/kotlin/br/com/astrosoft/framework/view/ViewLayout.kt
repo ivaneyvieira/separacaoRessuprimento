@@ -1,17 +1,17 @@
 package br.com.astrosoft.framework.view
 
+import br.com.astrosoft.framework.model.RegistryUserInfo
 import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
 import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.model.saci
 import br.com.astrosoft.separacao.view.LoginService
-import br.com.astrosoft.separacao.view.SessionUitl
 import com.github.mvysny.karibudsl.v10.KFormLayout
 import com.github.mvysny.karibudsl.v10.em
 import com.github.mvysny.karibudsl.v10.formLayout
 import com.github.mvysny.karibudsl.v10.horizontalLayout
 import com.github.mvysny.karibudsl.v10.isExpand
-import com.sun.org.apache.xpath.internal.operations.Bool
+import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.AfterNavigationEvent
@@ -31,7 +31,7 @@ abstract class ViewLayout<VM: ViewModel<*>>(): VerticalLayout(), IView, BeforeLe
     height = "100%"
   }
   
-  abstract fun isAccept(user : UserSaci) : Boolean
+  abstract fun isAccept(user: UserSaci): Boolean
   
   override fun showError(msg: String) {
     ConfirmDialog.createError()
@@ -61,10 +61,11 @@ abstract class ViewLayout<VM: ViewModel<*>>(): VerticalLayout(), IView, BeforeLe
     if(!LoginService.isLogged())
       event?.forwardTo(LoginView::class.java)
     else {
-      saci.findUser(SessionUitl.loginInfo?.usuario)?.let {usuario->
-        if(!isAccept(usuario))
-          event?.rerouteTo(AccessNotAllowed::class.java)
-      }
+      saci.findUser(RegistryUserInfo.usuario)
+        ?.let {usuario ->
+          if(!isAccept(usuario))
+            event?.rerouteTo(AccessNotAllowed::class.java)
+        }
     }
   }
   
@@ -75,8 +76,14 @@ abstract class ViewLayout<VM: ViewModel<*>>(): VerticalLayout(), IView, BeforeLe
   fun VerticalLayout.form(title: String, componentes: KFormLayout.() -> Unit = {}) {
     formLayout {
       isExpand = true
+      val token =
+        UI.getCurrent()
+          .csrfToken
       em(title) {
-        colspan = 2
+        colspan = 1
+      }
+      em(token) {
+        colspan = 1
       }
       componentes()
     }
