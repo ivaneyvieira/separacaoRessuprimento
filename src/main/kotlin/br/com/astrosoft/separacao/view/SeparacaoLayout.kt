@@ -1,6 +1,8 @@
 package br.com.astrosoft.separacao.view
 
 import br.com.astrosoft.framework.model.RegistryUserInfo
+import br.com.astrosoft.separacao.model.beans.UserSaci
+import com.github.appreciated.app.layout.behaviour.AppLayout
 import com.github.appreciated.app.layout.behaviour.Behaviour.LEFT_RESPONSIVE
 import com.github.appreciated.app.layout.builder.AppLayoutBuilder
 import com.github.appreciated.app.layout.component.appbar.AppBarBuilder
@@ -10,8 +12,11 @@ import com.github.appreciated.app.layout.component.menu.left.items.LeftNavigatio
 import com.github.appreciated.app.layout.component.menu.top.item.TopClickableItem
 import com.github.appreciated.app.layout.entity.Section
 import com.github.appreciated.app.layout.router.AppLayoutRouterLayout
+import com.github.appreciated.app.layout.router.AppLayoutRouterLayoutBase
+import com.github.appreciated.app.layout.webcomponents.applayout.AppDrawer
 import com.github.mvysny.karibudsl.v10.navigateToView
 import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.HasComponents
 import com.vaadin.flow.component.html.Hr
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.icon.VaadinIcon.COPY
@@ -34,16 +39,24 @@ import kotlin.reflect.KClass
 @PreserveOnRefresh
 class SeparacaoLayout: AppLayoutRouterLayout() {
   init {
+    /*  val usuario = saci.findUser(SessionUitl.loginInfo?.usuario)
+      if(usuario == null)
+        navigateToView(LoginView::class)
+      else*/
+    init(atualizaMenu())
+  }
+  
+  fun atualizaMenu(usuario: UserSaci? = null): AppLayout? {
     val appMenu = headerMenu(RegistryUserInfo.commpany, "Versão ${RegistryUserInfo.version}")
-      .addMenu("Duplicar", COPY, DuplicarView::class)
-      .addMenu("Separar", SPLIT, SepararView::class)
-      .addMenu("Editar", EDIT, EditarView::class)
-      .addMenu("Remover", ERASER, RemoverView::class)
-      .addMenu("Usuários", USER, UsuarioView::class)
+      .addMenu("Duplicar", COPY, DuplicarView::class, usuario?.duplicar)
+      .addMenu("Separar", SPLIT, SepararView::class, usuario?.separar)
+      .addMenu("Editar", EDIT, EditarView::class, usuario?.editar)
+      .addMenu("Remover", ERASER, RemoverView::class, usuario?.remover)
+      .addMenu("Usuários", USER, UsuarioView::class, usuario?.admin)
       .build()
-    val appLayout = appLayout(RegistryUserInfo.appName, appMenu)
-    
-    init(appLayout)
+    return appLayout(RegistryUserInfo.appName, appMenu).apply {
+      showUpNavigation(true)
+    }
   }
   
   private fun appLayout(title: String, appMenu: Component) = AppLayoutBuilder.get(LEFT_RESPONSIVE)
@@ -55,11 +68,42 @@ class SeparacaoLayout: AppLayoutRouterLayout() {
     .withAppMenu(appMenu)
     .build()
   
-  private fun headerMenu(company: String, version: String) = LeftAppMenuBuilder.get()
-    .addToSection(LeftHeaderItem(company, version, null), Section.HEADER).add(Hr())
-  
-  private fun LeftAppMenuBuilder.addMenu(caption: String, icon: VaadinIcon, className: KClass<out Component>) =
-    add(LeftNavigationItem(caption, icon, className.java))
+  companion object {
+    private lateinit var menuUsuario: LeftAppMenuBuilder
+    private lateinit var menuRemover: LeftAppMenuBuilder
+    private lateinit var menuEditar: LeftAppMenuBuilder
+    private lateinit var menuSeparar: LeftAppMenuBuilder
+    private lateinit var menuDuplicar: LeftAppMenuBuilder
+    val currentLayout get() = AppLayoutRouterLayoutBase.getCurrent()
+    
+    fun updateLayout(user: UserSaci) {
+      currentLayout.localeMenu("Duplicar")
+    }
+    
+    fun Component.localeMenu(caption: String): Component? {
+      println(this)
+      this.children.forEach {
+        it.localeMenu(caption)
+      }
+    return null
+    }
+    
+    fun appMenu(usuario: UserSaci) {
+      val appMenu = headerMenu(RegistryUserInfo.commpany, "Versão ${RegistryUserInfo.version}")
+      menuDuplicar = appMenu.addMenu("Duplicar", COPY, DuplicarView::class, usuario.duplicar ?: false)
+      menuSeparar = appMenu.addMenu("Separar", SPLIT, SepararView::class, usuario.separar ?: false)
+      menuEditar = appMenu.addMenu("Editar", EDIT, EditarView::class, usuario.editar ?: false)
+      menuRemover = appMenu.addMenu("Remover", ERASER, RemoverView::class, usuario.remover ?: false)
+      menuUsuario = appMenu.addMenu("Usuários", USER, UsuarioView::class, usuario.admin ?: false)
+    }
+    
+    private fun headerMenu(company: String, version: String) = LeftAppMenuBuilder.get()
+      .addToSection(LeftHeaderItem(company, version, null), Section.HEADER).add(Hr())
+    
+    private fun LeftAppMenuBuilder.addMenu(caption: String, icon: VaadinIcon, className: KClass<out Component>,
+                                           isVisible: Boolean? = true): LeftAppMenuBuilder {
+      val menu = add(LeftNavigationItem(caption, icon, className.java))
+      return menu
+    }
+  }
 }
-
-

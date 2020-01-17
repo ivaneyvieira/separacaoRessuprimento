@@ -66,7 +66,8 @@ dependencies {
   // logging
   // currently we are logging through the SLF4J API to SLF4J-Simple. See src/main/resources/simplelogger.properties file for the logger configuration
   compile("org.slf4j:slf4j-simple:1.7.28")
-  compile("com.github.appreciated:app-layout-addon:3.0.0.beta5")
+//  compile("com.github.appreciated:app-layout-addon:3.0.0.beta5")
+  compile("com.github.appreciated:app-layout-addon:4.0.0.rc4")
   compile("org.vaadin.crudui:crudui:4.1.0")
   //compile("com.flowingcode.addons.applayout:app-layout-addon:2.0.2")
   compile(kotlin("stdlib-jdk8"))
@@ -80,10 +81,4 @@ dependencies {
 tasks.withType<KotlinCompile> {
   kotlinOptions.jvmTarget = "1.8"
 }
-/*
-<dependency>
-   <groupId>org.vaadin.crudui</groupId>
-   <artifactId>crudui</artifactId>
-   <version>4.1.0</version>
-</dependency>
- */
+

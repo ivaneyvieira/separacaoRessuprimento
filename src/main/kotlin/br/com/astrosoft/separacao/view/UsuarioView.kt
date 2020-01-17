@@ -20,6 +20,9 @@ import org.vaadin.crudui.crud.impl.GridCrud
 class UsuarioView: ViewLayout<UsuarioViewModel>(), IUsuarioView {
   override val viewModel = UsuarioViewModel(this)
   
+  override fun isAccept(user: UserSaci) = user.admin
+  
+  
   init {
     form("Editor de usuários")
     setSizeFull()

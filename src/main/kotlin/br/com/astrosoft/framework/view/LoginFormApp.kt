@@ -1,13 +1,20 @@
 package br.com.astrosoft.framework.view
 
 import br.com.astrosoft.framework.model.LoginInfo
+import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.model.saci
+import br.com.astrosoft.separacao.view.DuplicarView
+import br.com.astrosoft.separacao.view.EditarView
 import br.com.astrosoft.separacao.view.LoginService
+import br.com.astrosoft.separacao.view.RemoverView
+import br.com.astrosoft.separacao.view.SepararView
+import com.github.mvysny.karibudsl.v10.navigateToView
+import com.vaadin.flow.component.login.LoginForm
 import com.vaadin.flow.component.login.LoginI18n
 import com.vaadin.flow.component.login.LoginI18n.Header
 import com.vaadin.flow.component.login.LoginOverlay
 
-class LoginFormApp(appName: String, version: String): LoginOverlay() {
+class LoginFormApp(appName: String, version: String, navigate : (UserSaci)-> Unit): LoginOverlay() {
   init {
     setI18n(loginI18n(appName, version))
     
@@ -16,7 +23,8 @@ class LoginFormApp(appName: String, version: String): LoginOverlay() {
       when {
         user == null                      -> LoginService.logout()
         user.senha == loginEvent.password -> {
-          LoginService.login(LoginInfo(user.name ?: ""))
+          LoginService.login(LoginInfo(user.login ?: ""))
+          navigate(user)
           close()
         }
         else                              -> LoginService.logout()

@@ -2,6 +2,7 @@ package br.com.astrosoft.separacao.view
 
 import br.com.astrosoft.framework.view.ViewLayout
 import br.com.astrosoft.separacao.model.beans.Pedido
+import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.viewmodel.IRemoverView
 import br.com.astrosoft.separacao.viewmodel.RemoverViewModel
 import com.github.mvysny.karibudsl.v10.br
@@ -18,6 +19,8 @@ class RemoverView: ViewLayout<RemoverViewModel>(), IRemoverView {
   private lateinit var cmbNumeroFinal: ComboBox<Pedido>
   private lateinit var cmbNumeroInicial: ComboBox<Pedido>
   override val viewModel = RemoverViewModel(this)
+  
+  override fun isAccept(user: UserSaci) = user.remover
   
   init {
     form("Remover") {
