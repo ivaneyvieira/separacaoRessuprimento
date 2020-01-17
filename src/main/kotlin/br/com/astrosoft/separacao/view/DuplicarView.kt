@@ -2,6 +2,7 @@ package br.com.astrosoft.separacao.view
 
 import br.com.astrosoft.framework.view.ViewLayout
 import br.com.astrosoft.separacao.model.beans.Pedido
+import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.viewmodel.DuplicarViewModel
 import br.com.astrosoft.separacao.viewmodel.IDuplicarView
 import com.github.mvysny.karibudsl.v10.br
@@ -73,4 +74,6 @@ class DuplicarView: ViewLayout<DuplicarViewModel>(), IDuplicarView {
     set(value) {
       chkInformarPedidoDestino.value = value
     }
+  
+  override fun isAccept(user: UserSaci) = user.duplicar
 }

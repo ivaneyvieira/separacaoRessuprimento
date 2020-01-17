@@ -1,14 +1,17 @@
 package br.com.astrosoft.framework.view
 
-import br.com.astrosoft.framework.model.RegistryUserInfo
 import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
+import br.com.astrosoft.separacao.model.beans.UserSaci
+import br.com.astrosoft.separacao.model.saci
 import br.com.astrosoft.separacao.view.LoginService
+import br.com.astrosoft.separacao.view.SessionUitl
 import com.github.mvysny.karibudsl.v10.KFormLayout
 import com.github.mvysny.karibudsl.v10.em
 import com.github.mvysny.karibudsl.v10.formLayout
 import com.github.mvysny.karibudsl.v10.horizontalLayout
 import com.github.mvysny.karibudsl.v10.isExpand
+import com.sun.org.apache.xpath.internal.operations.Bool
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.AfterNavigationEvent
@@ -22,14 +25,13 @@ import org.claspina.confirmdialog.ConfirmDialog
 abstract class ViewLayout<VM: ViewModel<*>>(): VerticalLayout(), IView, BeforeLeaveObserver,
                                                BeforeEnterObserver, AfterNavigationObserver {
   abstract val viewModel: VM
-  private val appName = RegistryUserInfo.appName
-  private val version = "Verssão ${RegistryUserInfo.version}"
-  val loginForm = LoginFormApp(appName, version)
   
   init {
     width = "100%"
     height = "100%"
   }
+  
+  abstract fun isAccept(user : UserSaci) : Boolean
   
   override fun showError(msg: String) {
     ConfirmDialog.createError()
@@ -56,20 +58,27 @@ abstract class ViewLayout<VM: ViewModel<*>>(): VerticalLayout(), IView, BeforeLe
   }
   
   override fun beforeEnter(event: BeforeEnterEvent?) {
-    loginForm.isOpened = LoginService.isLogged() == false
+    if(!LoginService.isLogged())
+      event?.forwardTo(LoginView::class.java)
+    else {
+      saci.findUser(SessionUitl.loginInfo?.usuario)?.let {usuario->
+        if(!isAccept(usuario))
+          event?.rerouteTo(AccessNotAllowed::class.java)
+      }
+    }
   }
   
   override fun afterNavigation(event: AfterNavigationEvent?) {
     //   loginForm.isOpened = LoginService.isLogged() == false
   }
   
-  fun VerticalLayout.form(title: String, compnentes: KFormLayout.() -> Unit) {
+  fun VerticalLayout.form(title: String, componentes: KFormLayout.() -> Unit = {}) {
     formLayout {
       isExpand = true
       em(title) {
         colspan = 2
       }
-      compnentes()
+      componentes()
     }
   }
   
