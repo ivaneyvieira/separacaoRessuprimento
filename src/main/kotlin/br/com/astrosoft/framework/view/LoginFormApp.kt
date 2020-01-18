@@ -9,8 +9,6 @@ import com.vaadin.flow.component.login.LoginI18n.Header
 import com.vaadin.flow.component.login.LoginOverlay
 
 class LoginFormApp(appName: String, version: String, val navigate: (UserSaci) -> Unit): LoginOverlay() {
-  val MSG_ERRO = "Usuário ou senha está errado"
-  
   init {
     setI18n(loginI18n(appName, version))
     isError = false
