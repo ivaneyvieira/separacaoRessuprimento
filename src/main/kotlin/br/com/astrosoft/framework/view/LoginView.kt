@@ -22,7 +22,7 @@ class LoginView: VerticalLayout(), BeforeEnterObserver {
   private val appName = RegistryUserInfo.appName
   private val version = "Verssão ${RegistryUserInfo.version}"
   private val loginForm = LoginFormApp(appName, version) {user ->
-    SeparacaoLayout.updateLayout(user)
+    SeparacaoLayout.updateLayout()
     navigateToView<LoginView>()
   }
   
