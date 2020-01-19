@@ -1,7 +1,6 @@
 package br.com.astrosoft.separacao.view
 
 import br.com.astrosoft.framework.model.RegistryUserInfo
-import br.com.astrosoft.separacao.model.beans.UserSaci
 import com.github.appreciated.app.layout.behaviour.AppLayout
 import com.github.appreciated.app.layout.behaviour.Behaviour
 import com.github.appreciated.app.layout.builder.AppLayoutBuilder
@@ -43,7 +42,7 @@ class SeparacaoLayout: AppLayoutRouterLayout() {
     init(atualizaMenu())
   }
   
-  fun atualizaMenu(usuario: UserSaci? = null): AppLayout? {
+  fun atualizaMenu(): AppLayout? {
     /*
      val appMenu = headerMenu(RegistryUserInfo.commpany, "Versão ${RegistryUserInfo.version}")
        .addMenu("Duplicar", COPY, DuplicarView::class, usuario?.duplicar)
@@ -77,8 +76,8 @@ class SeparacaoLayout: AppLayoutRouterLayout() {
     private var menuEditar: LeftNavigationItem? = null
     private var menuSeparar: LeftNavigationItem? = null
     private var menuDuplicar: LeftNavigationItem? = null
-    
-    fun updateLayout(user: UserSaci) {
+  
+    fun updateLayout() {
       menuComponent?.children?.forEach {component ->
         (component as? LeftNavigationItem)?.let {lItem ->
           println(lItem)
