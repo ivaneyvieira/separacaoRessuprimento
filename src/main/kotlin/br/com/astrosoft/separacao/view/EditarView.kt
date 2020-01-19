@@ -74,7 +74,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
       isMultiSort = true
       setSelectionMode(SelectionMode.MULTI)
       val binder = Binder<ProdutoPedido>(ProdutoPedido::class.java)
-      binder.withValidator {value, context ->
+      binder.withValidator {value, _ ->
         if(value.quantidadeValida) {
           ValidationResult.ok()
         }
@@ -90,7 +90,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
         this.width = "100%"
         this.isAutofocus = true
         this.element
-          .addEventListener("keydown") {event -> this@grid.editor.cancel()}
+          .addEventListener("keydown") {_ -> this@grid.editor.cancel()}
           .filter = "event.key === 'Tab' && event.shiftKey"
       }
   
@@ -101,7 +101,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
         edtQtty.focus()
       }
   
-      binder.addValueChangeListener {e ->
+      binder.addValueChangeListener {_ ->
         editor.refresh()
       }
   

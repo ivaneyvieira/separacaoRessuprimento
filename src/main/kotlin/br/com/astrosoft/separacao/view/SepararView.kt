@@ -98,7 +98,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
         updateFilter(edtCodigo, edtDescricao, edtGrade, edtFornecedor, edtLocalizacao)
       }
       val binder = Binder<ProdutoPedido>(ProdutoPedido::class.java)
-      binder.withValidator {value, context ->
+      binder.withValidator {value, _ ->
         if(value.quantidadeValida) {
           ValidationResult.ok()
         }
@@ -114,7 +114,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
         this.width = "100%"
         this.isAutofocus = true
         this.element
-          .addEventListener("keydown") {event -> this@grid.editor.cancel()}
+          .addEventListener("keydown") {_ -> this@grid.editor.cancel()}
           .filter = "event.key === 'Tab' && event.shiftKey"
       }
       
@@ -124,8 +124,8 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
         editor.editItem(event.item)
         edtQtty.focus()
       }
-      
-      binder.addValueChangeListener {e ->
+  
+      binder.addValueChangeListener {_ ->
         editor.refresh()
       }
       
