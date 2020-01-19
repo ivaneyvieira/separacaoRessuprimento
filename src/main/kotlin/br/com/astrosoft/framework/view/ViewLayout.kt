@@ -77,7 +77,7 @@ abstract class ViewLayout<VM: ViewModel<*>>(): VerticalLayout(), IView, BeforeLe
       isExpand = true
   
       em(title) {
-        colspan = 1
+        colspan = 2
       }
       /*
       val token =

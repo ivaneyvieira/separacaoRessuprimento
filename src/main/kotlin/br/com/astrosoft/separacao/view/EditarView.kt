@@ -91,7 +91,8 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
         this.isAutofocus = true
         this.element
           .addEventListener("keydown") {_ -> this@grid.editor.cancel()}
-          .filter = "event.key === 'Tab' && event.shiftKey"
+          .filter = "event.key === 'Enter'"
+          //.filter = "event.key === 'Tab' && event.shiftKey"
       }
   
       binder.bind(edtQtty, ProdutoPedido::qttyEdit.name)
