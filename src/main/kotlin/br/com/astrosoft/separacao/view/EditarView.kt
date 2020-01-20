@@ -232,7 +232,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
 }
 
 class ProdutoDialog(private val viewModel: EditarViewModel, val pedido: Pedido): Dialog() {
-  private var produto: ProdutoDlg = ProdutoDlg()
+  private var produto: ProdutoDlg = ProdutoDlg(pedido)
   private lateinit var edtQtty: IntegerField
   private lateinit var edtDescricao: TextField
   private lateinit var edtGrade: ComboBox<String>
@@ -296,7 +296,7 @@ class ProdutoDialog(private val viewModel: EditarViewModel, val pedido: Pedido):
       button("Salva") {
         addThemeVariants(LUMO_PRIMARY)
         addClickListener {
-          val produto = ProdutoDlg().apply {
+          val produto = produto.apply {
             codigo = edtCodigo.value ?: ""
             grade = edtGrade.value ?: ""
             qtty = edtQtty.value ?: 0

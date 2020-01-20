@@ -38,15 +38,20 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
   val numeroBackup
     get() = chave.mid(1, 5).toIntOrNull() ?: 0
   val tipoOrigem: ETipoOrigem
-    get() = if(tipo == "S") ETipoOrigem.SEPARADO
-    else ETipoOrigem.DUPLICADO
+    get() = when(tipo) {
+      "S"  -> ETipoOrigem.SEPARADO
+      "L"  -> ETipoOrigem.LOJA
+      else -> ETipoOrigem.DUPLICADO
+    }
+  val abreviacoes
+    get() = produtos.filtraLocalizacoes().map {it.localizacao.mid(0, 4)}.distinct()
   
   companion object {
     fun findTemp(numeroOrigem: Int?): Pedido? {
       numeroOrigem ?: return null
       return pedidosTemporarios.firstOrNull {it.ordno == numeroOrigem}
     }
-  
+    
     val pedidos
       get() = saci.listaPedido().filter {
         it.tipoPedido == TEMPORARIO || it.tipoPedido == BACKUP

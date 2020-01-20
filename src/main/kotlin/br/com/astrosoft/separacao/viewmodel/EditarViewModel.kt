@@ -1,6 +1,7 @@
 package br.com.astrosoft.separacao.viewmodel
 
 import br.com.astrosoft.framework.util.lpad
+import br.com.astrosoft.framework.util.mid
 import br.com.astrosoft.framework.viewmodel.EViewModelError
 import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
@@ -75,7 +76,7 @@ interface IEditarView: IView {
   fun novoProduto(pedido: Pedido)
 }
 
-class ProdutoDlg {
+class ProdutoDlg(val pedido : Pedido) {
   var codigo: String = ""
   var grade: String = ""
   var localizacao: String = ""
@@ -88,5 +89,8 @@ class ProdutoDlg {
     val quantidade = qtty ?: 0
     if(quantidade <= 0)
       throw EViewModelError("Quantidade inválida")
+    val abreviacao = localizacao.mid(0, 4)
+    if(!pedido.abreviacoes.contains(abreviacao))
+      throw EViewModelError("A localização $abreviacao não é compativel")
   }
 }
