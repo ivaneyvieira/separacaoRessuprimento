@@ -19,6 +19,7 @@ import com.vaadin.flow.component.grid.ColumnTextAlign
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.Grid.SelectionMode
 import com.vaadin.flow.component.grid.GridSortOrder
+import com.vaadin.flow.component.grid.GridVariant.LUMO_COMPACT
 import com.vaadin.flow.component.grid.HeaderRow
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.textfield.Autocapitalize
@@ -74,6 +75,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
     gridProduto = grid(dataProvider = dataProviderProdutos) {
       isExpand = true
       setSelectionMode(SelectionMode.MULTI)
+      addThemeVariants(LUMO_COMPACT)
       isMultiSort = true
       this.appendHeaderRow()
       val filterRow: HeaderRow = this.appendHeaderRow()
