@@ -1,6 +1,7 @@
 package br.com.astrosoft.separacao.model.beans
 
 import br.com.astrosoft.framework.util.lpad
+import br.com.astrosoft.separacao.model.saci
 
 data class ProdutoPedido(
   val prdno: String,
