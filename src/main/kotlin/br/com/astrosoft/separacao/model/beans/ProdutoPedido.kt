@@ -22,7 +22,7 @@ data class ProdutoPedido(
     get() = prdno.lpad(16, " ")
   var qttyEdit: Int = 0
   val qttyMax
-    get() = (qtty * 1.50).toInt()
+    get() = (qtty * 2.00).toInt()
   val qttyMin
     get() = 1
   val diferenca
