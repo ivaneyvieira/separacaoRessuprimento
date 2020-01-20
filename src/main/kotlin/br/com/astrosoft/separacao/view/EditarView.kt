@@ -20,11 +20,13 @@ import com.github.mvysny.karibudsl.v10.isExpand
 import com.github.mvysny.karibudsl.v10.responsiveSteps
 import com.github.mvysny.karibudsl.v10.textField
 import com.vaadin.flow.component.combobox.ComboBox
+import com.vaadin.flow.component.dependency.HtmlImport
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.grid.ColumnTextAlign
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.Grid.SelectionMode
 import com.vaadin.flow.component.grid.GridSortOrder
+import com.vaadin.flow.component.grid.GridVariant.LUMO_COMPACT
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.textfield.IntegerField
 import com.vaadin.flow.component.textfield.TextField
@@ -39,6 +41,7 @@ import java.text.DecimalFormat
 
 @Route(layout = SeparacaoLayout::class)
 @PageTitle("Editar")
+@HtmlImport("frontend://styles/shared-styles.html")
 class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
   private lateinit var pedidoMae: IntegerField
   private var gridProduto: Grid<ProdutoPedido>
@@ -72,6 +75,8 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
     gridProduto = grid(dataProvider = dataProviderProdutos) {
       isExpand = true
       isMultiSort = true
+      addThemeVariants(LUMO_COMPACT)
+      isColumnReorderingAllowed = false
       setSelectionMode(SelectionMode.MULTI)
       val binder = Binder<ProdutoPedido>(ProdutoPedido::class.java)
       binder.withValidator {value, _ ->
@@ -85,31 +90,69 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
         }
       }
       editor.binder = binder
+      editor.isBuffered = false
       val edtQtty = IntegerField().apply {
         this.isAutoselect = true
         this.width = "100%"
         this.isAutofocus = true
         this.element
-          .addEventListener("keydown") {_ -> this@grid.editor.cancel()}
+          .addEventListener("keydown") {
+            val value = this@grid.editor.item
+            if(value.qtty.toInt() != value.qttyEdit)
+              this@grid.selectionModel.select(value)
+            else
+              this@grid.selectionModel.deselect(value)
+            this@grid.editor.save()
+            this@grid.editor.closeEditor()
+            
+          }
           .filter = "event.key === 'Enter'"
-          //.filter = "event.key === 'Tab' && event.shiftKey"
+        this.element
+          .addEventListener("keydown") {
+            this@grid.editor.cancel()
+            this@grid.editor.closeEditor()
+          }
+          .filter = "event.key === 'Escape'"
       }
-  
       binder.bind(edtQtty, ProdutoPedido::qttyEdit.name)
-  
+      
       addItemClickListener {event ->
-        editor.editItem(event.item)
-        edtQtty.focus()
+        if(event.clickCount == 1) {
+          editor.editItem(event.item)
+          edtQtty.focus()
+        }
       }
-  
-      binder.addValueChangeListener {_ ->
+      
+      editor.addSaveListener {
+        val value = it.item
+        if(value.qtty.toInt() != value.qttyEdit)
+          this.selectedItems.add(value)
+        else
+          this.selectedItems.remove(value)
+      }
+      
+      binder.addValueChangeListener {e ->
+        val value = e.value as? ProdutoPedido
+        if(value != null) {
+          if(value.qtty.toInt() != value.qttyEdit)
+            this.select(value)
+          else
+            this.selectedItems.remove(value)
+        }
         editor.refresh()
       }
-  
+      
       editor.addCloseListener {
         binder.writeBean(it.item)
       }
-  
+      /*
+      this.setClassNameGenerator {
+        if(it.qttyEdit != it.qtty.toInt())
+          "error_row"
+        else ""
+      }
+       */
+      
       addColumnFor(ProdutoPedido::codigo) {
         setHeader("Código")
         flexGrow = 1

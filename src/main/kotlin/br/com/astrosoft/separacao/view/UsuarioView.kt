@@ -6,6 +6,7 @@ import br.com.astrosoft.separacao.viewmodel.IUsuarioView
 import br.com.astrosoft.separacao.viewmodel.UsuarioViewModel
 import com.vaadin.flow.component.grid.ColumnTextAlign
 import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.grid.GridVariant.LUMO_COMPACT
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
@@ -43,6 +44,8 @@ class UsuarioView: ViewLayout<UsuarioViewModel>(), IUsuarioView {
     crud.grid.addColumnBool("Separar") {separar}
     crud.grid.addColumnBool("Editar") {editar}
     crud.grid.addColumnBool("Remover") {remover}
+    
+    crud.grid.addThemeVariants(LUMO_COMPACT)
     
     crud.crudFormFactory
       .setUseBeanValidation(true)
