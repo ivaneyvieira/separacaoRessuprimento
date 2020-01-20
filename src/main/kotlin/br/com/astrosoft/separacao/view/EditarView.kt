@@ -6,6 +6,7 @@ import br.com.astrosoft.separacao.model.beans.ProdutoPedido
 import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.viewmodel.EditarViewModel
 import br.com.astrosoft.separacao.viewmodel.IEditarView
+import br.com.astrosoft.separacao.viewmodel.ProdutoDlg
 import com.github.mvysny.karibudsl.v10.addColumnFor
 import com.github.mvysny.karibudsl.v10.button
 import com.github.mvysny.karibudsl.v10.comboBox
@@ -19,6 +20,7 @@ import com.github.mvysny.karibudsl.v10.integerField
 import com.github.mvysny.karibudsl.v10.isExpand
 import com.github.mvysny.karibudsl.v10.responsiveSteps
 import com.github.mvysny.karibudsl.v10.textField
+import com.vaadin.flow.component.button.ButtonVariant.LUMO_PRIMARY
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.dependency.HtmlImport
 import com.vaadin.flow.component.dialog.Dialog
@@ -30,11 +32,13 @@ import com.vaadin.flow.component.grid.GridVariant.LUMO_COMPACT
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.textfield.IntegerField
 import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.component.textfield.TextFieldVariant.LUMO_ALIGN_RIGHT
 import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.binder.ValidationResult
 import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.data.provider.SortDirection.ASCENDING
 import com.vaadin.flow.data.renderer.NumberRenderer
+import com.vaadin.flow.data.value.ValueChangeMode.EAGER
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import java.text.DecimalFormat
@@ -104,7 +108,6 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
               this@grid.selectionModel.deselect(value)
             this@grid.editor.save()
             this@grid.editor.closeEditor()
-            
           }
           .filter = "event.key === 'Enter'"
         this.element
@@ -145,13 +148,6 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
       editor.addCloseListener {
         binder.writeBean(it.item)
       }
-      /*
-      this.setClassNameGenerator {
-        if(it.qttyEdit != it.qtty.toInt())
-          "error_row"
-        else ""
-      }
-       */
       
       addColumnFor(ProdutoPedido::codigo) {
         setHeader("Código")
@@ -192,17 +188,17 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
                  ))
     }
     toolbar {
+      button("Processar") {
+        icon = VaadinIcon.SPLIT.create()
+        addThemeVariants(LUMO_PRIMARY)
+        addClickListener {
+          viewModel.processar()
+        }
+      }
       button("Novo produto") {
-        isEnabled = false
         icon = VaadinIcon.INSERT.create()
         addClickListener {
           viewModel.novoProduto()
-        }
-      }
-      button("Processar") {
-        icon = VaadinIcon.SPLIT.create()
-        addClickListener {
-          viewModel.processar()
         }
       }
     }
@@ -220,8 +216,8 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
     updateGrid(pedidoAtual)
   }
   
-  override fun novoProduto(pedido: Pedido, processaProduto: (ProdutoPedido) -> Unit) {
-    ProdutoDialog(viewModel).apply {
+  override fun novoProduto(pedido: Pedido) {
+    ProdutoDialog(viewModel, pedido).apply {
       open()
     }
   }
@@ -235,10 +231,12 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
   }
 }
 
-class ProdutoDialog(val viewModel: EditarViewModel): Dialog() {
+class ProdutoDialog(private val viewModel: EditarViewModel, val pedido: Pedido): Dialog() {
+  private var produto: ProdutoDlg = ProdutoDlg()
   private lateinit var edtQtty: IntegerField
   private lateinit var edtDescricao: TextField
-  private lateinit var edtGrade: TextField
+  private lateinit var edtGrade: ComboBox<String>
+  private lateinit var edtLocalizacao: ComboBox<String>
   private lateinit var edtCodigo: TextField
   
   init {
@@ -249,25 +247,71 @@ class ProdutoDialog(val viewModel: EditarViewModel): Dialog() {
       }
       edtCodigo = textField("Código") {
         colspan = 1
+        value = produto.codigo
+        valueChangeMode = EAGER
+        
         addValueChangeListener {event ->
-          val value = event.value
-          val produto = viewModel.findProduto(value)
+          if(event.isFromClient) {
+            val value = event.value
+            val produtos = viewModel.findProduto(value)
+            edtDescricao.value = produtos.firstOrNull()?.descricao ?: "Não encontrado"
+            val grades =
+              produtos.map {it.grade}
+                .distinct()
+                .sorted()
+            edtGrade.setItems(grades)
+            edtGrade.value = grades.firstOrNull()
+            
+            val localizacoes = produtos.map {it.localizacao}
+                .distinct()
+                .sorted()
+            edtLocalizacao.setItems(localizacoes)
+            edtLocalizacao.value = localizacoes.firstOrNull()
+          }
         }
       }
       edtDescricao = textField("Descrição") {
         colspan = 3
+        value = ""
         isReadOnly = true
       }
-      edtGrade = textField("Grade") {
+      edtGrade = comboBox("Grade") {
         colspan = 1
+        isRequired = false
+        isAllowCustomValue = false
       }
       edtQtty = integerField("Quantidade") {
         colspan = 1
+        isAutoselect =true
+        addThemeVariants(LUMO_ALIGN_RIGHT)
+        value = produto.qtty
+      }
+      edtLocalizacao = comboBox("Localização") {
+        colspan = 2
+        isRequired = false
+        isAllowCustomValue = false
       }
     }
     horizontalLayout {
-      button("Salva")
-      button("Cancela")
+      button("Salva") {
+        addThemeVariants(LUMO_PRIMARY)
+        addClickListener {
+          val produto = ProdutoDlg().apply {
+            codigo = edtCodigo.value ?: ""
+            grade = edtGrade.value ?: ""
+            qtty = edtQtty.value ?: 0
+            produtos = viewModel.findProduto(codigo)
+            localizacao = edtLocalizacao.value ?: ""
+          }
+          viewModel.salvaProduto(produto)
+          this@ProdutoDialog.close()
+        }
+      }
+      button("Cancela") {
+        addClickListener {
+          this@ProdutoDialog.close()
+        }
+      }
     }
   }
 }

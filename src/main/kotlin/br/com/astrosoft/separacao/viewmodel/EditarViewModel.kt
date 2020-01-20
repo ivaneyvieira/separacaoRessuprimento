@@ -1,5 +1,6 @@
 package br.com.astrosoft.separacao.viewmodel
 
+import br.com.astrosoft.framework.util.lpad
 import br.com.astrosoft.framework.viewmodel.EViewModelError
 import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
@@ -31,18 +32,28 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
     view.updateGrid()
   }
   
-  fun processaProduto(produto: ProdutoPedido) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
-  
   fun novoProduto() = exec {
     view.pedido?.let {pedido ->
-      view.novoProduto(pedido, ::processaProduto)
+      view.novoProduto(pedido)
     }
   }
   
-  fun findProduto(prdno: String?): Produto? {
-    return null
+  fun findProduto(prdno: String?): List<Produto> {
+    prdno ?: return emptyList()
+    return saci.findProduto(prdno)
+  }
+  
+  fun salvaProduto(produto: ProdutoDlg) = exec {
+    produto.validadialog()
+    val pedido = view.pedido ?: throw EViewModelError("Pedido não selecionado")
+    val prdno = produto.codigo.lpad(16, " ")
+    val grade = produto.grade
+    val localizacao = produto.localizacao
+    val qtty = produto.qtty ?: throw EViewModelError("Quantidade não informada")
+    if(pedido.produtos.any {it.prdno == produto.codigo && it.grade == produto.grade})
+      throw EViewModelError("O produto já está adicionado")
+    saci.adicionarProduto(pedido, prdno, grade, qtty, localizacao)
+    view.updateGrid()
   }
   
   val pedidosSeparacao: List<Pedido>
@@ -61,6 +72,21 @@ interface IEditarView: IView {
   val produtosNaoSelecionado
     get() = produtos - produtosSelecionados
   
-  fun novoProduto(pedido: Pedido, processaProduto: (ProdutoPedido) -> Unit)
+  fun novoProduto(pedido: Pedido)
 }
 
+class ProdutoDlg {
+  var codigo: String = ""
+  var grade: String = ""
+  var localizacao: String = ""
+  var qtty: Int? = 0
+  var produtos: List<Produto> = emptyList()
+  
+  fun validadialog() {
+    if(produtos.isEmpty())
+      throw EViewModelError("Produto inválido")
+    val quantidade = qtty ?: 0
+    if(quantidade <= 0)
+      throw EViewModelError("Quantidade inválida")
+  }
+}

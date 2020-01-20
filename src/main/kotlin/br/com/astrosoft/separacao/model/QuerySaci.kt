@@ -148,6 +148,21 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
+  fun adicionarProduto(pedido: Pedido, prdno: String, grade: String, qtty: Int, localizacao: String) {
+    val sql = "/sqlSaci/adicionarProduto.sql"
+    val storeno = 1
+    val ordno = pedido.ordno
+    return query(sql) {q ->
+      q.addOptionalParameter("storeno", storeno)
+      q.addOptionalParameter("ordno", ordno)
+      q.addOptionalParameter("prdno", prdno)
+      q.addOptionalParameter("grade", grade)
+      q.addOptionalParameter("localizacao", localizacao)
+      q.addOptionalParameter("qtty", qtty)
+      q.executeUpdate()
+    }
+  }
+  
   companion object {
     private val db = DB("saci")
     internal val driver = db.driver
