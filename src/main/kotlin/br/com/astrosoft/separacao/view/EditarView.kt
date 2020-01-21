@@ -21,15 +21,20 @@ import com.github.mvysny.karibudsl.v10.isExpand
 import com.github.mvysny.karibudsl.v10.responsiveSteps
 import com.github.mvysny.karibudsl.v10.textField
 import com.vaadin.flow.component.button.ButtonVariant.LUMO_PRIMARY
+import com.vaadin.flow.component.checkbox.Checkbox
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.dependency.HtmlImport
 import com.vaadin.flow.component.dialog.Dialog
-import com.vaadin.flow.component.grid.ColumnTextAlign
+import com.vaadin.flow.component.grid.ColumnTextAlign.CENTER
+import com.vaadin.flow.component.grid.ColumnTextAlign.END
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.Grid.SelectionMode
 import com.vaadin.flow.component.grid.GridSortOrder
 import com.vaadin.flow.component.grid.GridVariant.LUMO_COMPACT
+import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.icon.VaadinIcon.CHECK_CIRCLE_O
+import com.vaadin.flow.component.icon.VaadinIcon.CIRCLE_THIN
 import com.vaadin.flow.component.textfield.IntegerField
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.textfield.TextFieldVariant.LUMO_ALIGN_RIGHT
@@ -37,6 +42,7 @@ import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.binder.ValidationResult
 import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.data.provider.SortDirection.ASCENDING
+import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.data.renderer.NumberRenderer
 import com.vaadin.flow.data.value.ValueChangeMode.EAGER
 import com.vaadin.flow.router.PageTitle
@@ -95,6 +101,10 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
       }
       editor.binder = binder
       editor.isBuffered = false
+      val edtLoja = Checkbox().apply {
+        this.width = "100%"
+        this.isAutofocus = true
+      }
       val edtQtty = IntegerField().apply {
         this.isAutoselect = true
         this.width = "100%"
@@ -118,7 +128,8 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
           .filter = "event.key === 'Escape'"
       }
       binder.bind(edtQtty, ProdutoPedido::qttyEdit.name)
-      
+      binder.bind(edtLoja, ProdutoPedido::estoqueLoja.name)
+  
       addItemClickListener {event ->
         if(event.clickCount == 1) {
           editor.editItem(event.item)
@@ -152,7 +163,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
       addColumnFor(ProdutoPedido::codigo) {
         setHeader("Código")
         flexGrow = 1
-        this.textAlign = ColumnTextAlign.END
+        this.textAlign = END
       }
       addColumnFor(ProdutoPedido::descricao) {
         setHeader("Descrição")
@@ -173,13 +184,24 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
       addColumnFor(ProdutoPedido::qttyEdit, NumberRenderer(ProdutoPedido::qttyEdit, DecimalFormat("0"))) {
         setHeader("Quant")
         flexGrow = 1
-        this.textAlign = ColumnTextAlign.END
+        this.textAlign = END
         setEditorComponent(edtQtty)
+      }
+      addColumnFor(ProdutoPedido::estoqueLoja, renderer = ComponentRenderer<Icon, ProdutoPedido> {produto ->
+        if(produto.estoqueLoja == true)
+          CHECK_CIRCLE_O.create()
+        else
+          CIRCLE_THIN.create()
+      }) {
+        setHeader("Loja")
+        flexGrow = 1
+        this.textAlign = CENTER
+        setEditorComponent(edtLoja)
       }
       addColumnFor(ProdutoPedido::saldo, NumberRenderer(ProdutoPedido::saldo, DecimalFormat("0"))) {
         setHeader("Saldo")
         flexGrow = 1
-        this.textAlign = ColumnTextAlign.END
+        this.textAlign = END
       }
       sort(listOf(
         GridSortOrder(getColumnBy(ProdutoPedido::localizacao), ASCENDING),
@@ -261,10 +283,9 @@ class ProdutoDialog(private val viewModel: EditarViewModel, val pedido: Pedido):
                 .sorted()
             edtGrade.setItems(grades)
             edtGrade.value = grades.firstOrNull()
-            
             val localizacoes = produtos.map {it.localizacao}
-                .distinct()
-                .sorted()
+              .distinct()
+              .sorted()
             edtLocalizacao.setItems(localizacoes)
             edtLocalizacao.value = localizacoes.firstOrNull()
           }
@@ -282,7 +303,7 @@ class ProdutoDialog(private val viewModel: EditarViewModel, val pedido: Pedido):
       }
       edtQtty = integerField("Quantidade") {
         colspan = 1
-        isAutoselect =true
+        isAutoselect = true
         addThemeVariants(LUMO_ALIGN_RIGHT)
         value = produto.qtty
       }

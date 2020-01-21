@@ -8,19 +8,30 @@ import br.com.astrosoft.framework.viewmodel.ViewModel
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.Produto
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
+import br.com.astrosoft.separacao.model.enum.ETipoOrigem.LOJA
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem.SEPARADO
 import br.com.astrosoft.separacao.model.saci
 
 class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
   fun processar() = exec {
     val pedido = view.pedido ?: throw EViewModelError("Nenum pedido selecionado")
+    val proximoNumero = saci.proximoNumero(pedido.storenoDestino)
     view.produtosSelecionados.forEach {produto ->
-      saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
-                        ordno = pedido.ordno,
-                        codigo = produto.codigo,
-                        grade = produto.grade,
-                        diferenca = produto.diferenca,
-                        localizacao = produto.localizacao)
+      if(produto.estoqueLoja == true)
+        saci.atualizarQuantidade(ordno = pedido.ordno,
+                                 ordnoNovo = proximoNumero,
+                                 codigo = produto.prdnoSaci,
+                                 grade = produto.grade,
+                                 localizacao = produto.localizacao,
+                                 qtty = produto.qttyEdit,
+                                 tipo = LOJA)
+      else
+        saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
+                          ordno = pedido.ordno,
+                          codigo = produto.codigo,
+                          grade = produto.grade,
+                          diferenca = produto.diferenca,
+                          localizacao = produto.localizacao)
     }
     view.produtosNaoSelecionado.forEach {produto ->
       saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
@@ -59,7 +70,7 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
   
   val pedidosSeparacao: List<Pedido>
     get() = Pedido.pedidosTemporarios.filter {
-      it.tipoOrigem == SEPARADO
+      it.tipoOrigem == SEPARADO || it.tipoOrigem == LOJA
     }
 }
 
@@ -76,7 +87,7 @@ interface IEditarView: IView {
   fun novoProduto(pedido: Pedido)
 }
 
-class ProdutoDlg(val pedido : Pedido) {
+class ProdutoDlg(val pedido: Pedido) {
   var codigo: String = ""
   var grade: String = ""
   var localizacao: String = ""

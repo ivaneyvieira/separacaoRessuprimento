@@ -7,6 +7,7 @@ import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.Produto
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
 import br.com.astrosoft.separacao.model.beans.UserSaci
+import br.com.astrosoft.separacao.model.enum.ETipoOrigem
 
 class QuerySaci: QueryDB(driver, url, username, password) {
   fun findUser(login: String?): UserSaci? {
@@ -107,10 +108,11 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   }
   
   fun atualizarQuantidade(ordno: Int, ordnoNovo: Int, codigo: String, grade: String,
-                          localizacao: String, qtty: Int) {
+                          localizacao: String, qtty: Int, tipo: ETipoOrigem) {
     val storeno = 1
     val sql = "/sqlSaci/atualizarQuantidade.sql"
     val prdno = codigo.lpad(16, " ")
+    val charTipo = tipo.sigla
     script(sql) {q ->
       q.addOptionalParameter("storeno", storeno)
       q.addOptionalParameter("ordnoNovo", ordnoNovo)
@@ -118,6 +120,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addOptionalParameter("prdno", prdno)
       q.addOptionalParameter("grade", grade)
       q.addOptionalParameter("localizacao", localizacao)
+      q.addOptionalParameter("tipo", charTipo)
       q.addOptionalParameter("qtty", qtty)
         .executeUpdate()
     }
