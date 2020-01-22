@@ -14,7 +14,9 @@ import br.com.astrosoft.separacao.model.saci
 class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
   fun processar() = exec {
     val pedido = view.pedido ?: throw EViewModelError("Nenum pedido selecionado")
-    view.produtosSelecionados.forEach {produto ->
+    val produtosSelecionados = view.produtosSelecionados
+    val produtosNaoSelecionado = view.produtosNaoSelecionado
+    produtosSelecionados.forEach {produto ->
       saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
                         ordno = pedido.ordno,
                         codigo = produto.codigo,
@@ -22,7 +24,7 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
                         diferenca = produto.diferenca,
                         localizacao = produto.localizacao)
     }
-    view.produtosNaoSelecionado.forEach {produto ->
+    produtosNaoSelecionado.forEach {produto ->
       saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
                         ordno = pedido.ordno,
                         codigo = produto.codigo,
