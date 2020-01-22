@@ -18,6 +18,7 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
     get() = tipoPedido != TEMPORARIO
   val produtos
     get() = saci.listaProduto(ordno).filtraLocalizacoes()
+      .sortedWith(compareBy({it.localizacao}, {it.descricao}, {it.grade}))
   val chave: String
     get() = ordno.toString().lpad(10, "0")
   val prefixo
