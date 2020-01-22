@@ -117,7 +117,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
         this.isAutofocus = true
         this.element
           .addEventListener("keydown") {_ -> this@grid.editor.cancel()}
-          .filter = "event.key === 'Tab' && event.shiftKey"
+          .filter = "event.key === 'Enter'"
       }
       
       binder.bind(edtQtty, ProdutoPedido::qttyEdit.name)

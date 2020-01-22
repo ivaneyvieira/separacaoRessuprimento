@@ -80,7 +80,6 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
       isExpand = true
       isMultiSort = true
       addThemeVariants(LUMO_COMPACT)
-      isColumnReorderingAllowed = false
       setSelectionMode(SelectionMode.MULTI)
       val binder = Binder<ProdutoPedido>(ProdutoPedido::class.java)
       binder.withValidator {value, _ ->
@@ -153,39 +152,48 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
         setHeader("Código")
         flexGrow = 1
         this.textAlign = ColumnTextAlign.END
+        isSortable = false
       }
       addColumnFor(ProdutoPedido::descricao) {
         setHeader("Descrição")
         flexGrow = 8
+        isSortable = false
       }
       addColumnFor(ProdutoPedido::grade) {
         setHeader("Grade")
         flexGrow = 1
+        isSortable = false
       }
       addColumnFor(ProdutoPedido::fornecedor) {
         setHeader("Fornecedor")
         flexGrow = 1
+        isSortable = false
       }
       addColumnFor(ProdutoPedido::localizacao) {
         setHeader("Localização")
         flexGrow = 3
+        isSortable = false
       }
       addColumnFor(ProdutoPedido::qttyEdit, NumberRenderer(ProdutoPedido::qttyEdit, DecimalFormat("0"))) {
         setHeader("Quant")
         flexGrow = 1
         this.textAlign = ColumnTextAlign.END
         setEditorComponent(edtQtty)
+        isSortable = false
       }
       addColumnFor(ProdutoPedido::saldo, NumberRenderer(ProdutoPedido::saldo, DecimalFormat("0"))) {
         setHeader("Saldo")
         flexGrow = 1
         this.textAlign = ColumnTextAlign.END
+        isSortable = false
       }
+      /*
       sort(listOf(
         GridSortOrder(getColumnBy(ProdutoPedido::localizacao), ASCENDING),
         GridSortOrder(getColumnBy(ProdutoPedido::descricao), ASCENDING),
         GridSortOrder(getColumnBy(ProdutoPedido::grade), ASCENDING)
                  ))
+       */
     }
     toolbar {
       button("Processar") {

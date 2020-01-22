@@ -5,6 +5,7 @@ import br.com.astrosoft.framework.util.execCommand
 import br.com.astrosoft.framework.viewmodel.EViewModelError
 import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
+import br.com.astrosoft.separacao.model.QuerySaci
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
 import br.com.astrosoft.separacao.model.saci
@@ -34,9 +35,10 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
   }
   
   private fun print(ordno: Int) {
-    Ssh("172.20.47.1", "ivaney", "ivaney").shell {
-      execCommand("/u/saci/shells/printRessuprimento.sh $ordno")
-    }
+    if(!QuerySaci.test)
+      Ssh("172.20.47.1", "ivaney", "ivaney").shell {
+        execCommand("/u/saci/shells/printRessuprimento.sh $ordno")
+      }
   }
   
   fun proximoNumero(): Int? {
