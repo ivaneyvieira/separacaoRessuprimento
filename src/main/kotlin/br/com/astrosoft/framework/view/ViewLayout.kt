@@ -19,6 +19,7 @@ import com.vaadin.flow.router.BeforeEnterEvent
 import com.vaadin.flow.router.BeforeEnterObserver
 import com.vaadin.flow.router.BeforeLeaveEvent
 import com.vaadin.flow.router.BeforeLeaveObserver
+import org.claspina.confirmdialog.ButtonOption
 import org.claspina.confirmdialog.ConfirmDialog
 
 abstract class ViewLayout<VM: ViewModel<*>>(): VerticalLayout(), IView, BeforeLeaveObserver,
@@ -50,6 +51,21 @@ abstract class ViewLayout<VM: ViewModel<*>>(): VerticalLayout(), IView, BeforeLe
     ConfirmDialog.createInfo()
       .withCaption("Informação")
       .withMessage(msg)
+      .open()
+  }
+  
+  fun showQuestion(msg: String, execYes: () -> Unit) {
+    showQuestion(msg, execYes, {})
+  }
+  
+  fun showQuestion(msg: String, execYes: () -> Unit, execNo: () -> Unit) {
+    ConfirmDialog.createQuestion()
+      .withCaption("Confirmação")
+      .withMessage(msg)
+      .withYesButton(Runnable {
+        execYes()
+      }, ButtonOption.caption("Sim"))
+      .withNoButton(Runnable {execNo()}, ButtonOption.caption("Não"))
       .open()
   }
   

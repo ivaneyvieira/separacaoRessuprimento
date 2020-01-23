@@ -14,22 +14,13 @@ import br.com.astrosoft.separacao.model.saci
 class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
   fun processar() = exec {
     val pedido = view.pedido ?: throw EViewModelError("Nenum pedido selecionado")
-    val produtosSelecionados = view.produtosSelecionados
-    val produtosNaoSelecionado = view.produtosNaoSelecionado
-    produtosSelecionados.forEach {produto ->
+    val produtos = view.produtos
+    produtos.forEach {produto ->
       saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
                         ordno = pedido.ordno,
-                        codigo = produto.codigo,
+                        codigo = produto.prdno,
                         grade = produto.grade,
-                        diferenca = produto.diferenca,
-                        localizacao = produto.localizacao)
-    }
-    produtosNaoSelecionado.forEach {produto ->
-      saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
-                        ordno = pedido.ordno,
-                        codigo = produto.codigo,
-                        grade = produto.grade,
-                        diferenca = produto.qtty.toInt(),
+                        qttyEdit = produto.qttyEdit,
                         localizacao = produto.localizacao)
     }
     view.updateGrid()
@@ -59,6 +50,18 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
     view.updateGrid()
   }
   
+  fun removePedido(produto: ProdutoPedido?) = exec {
+    val pedido = view.pedido ?: throw EViewModelError("Nenum pedido selecionado")
+    produto ?: throw EViewModelError("Produto não selecionado")
+    saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
+                      ordno = pedido.ordno,
+                      codigo = produto.prdno,
+                      grade = produto.grade,
+                      qttyEdit = 0,
+                      localizacao = produto.localizacao)
+    view.updateGrid()
+  }
+  
   val pedidosSeparacao: List<Pedido>
     get() = Pedido.pedidosTemporarios.filter {
       it.tipoOrigem == SEPARADO
@@ -68,17 +71,13 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
 interface IEditarView: IView {
   val pedido: Pedido?
   val produtos: List<ProdutoPedido>
-  val produtosSelecionados: List<ProdutoPedido>
   
   fun updateGrid()
-  
-  val produtosNaoSelecionado
-    get() = produtos - produtosSelecionados
   
   fun novoProduto(pedido: Pedido)
 }
 
-class ProdutoDlg(val pedido : Pedido) {
+class ProdutoDlg(val pedido: Pedido) {
   var codigo: String = ""
   var grade: String = ""
   var localizacao: String = ""

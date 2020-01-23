@@ -124,7 +124,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   }
   
   fun retornaSaldo(ordnoMae: Int, ordno: Int, codigo: String, grade: String,
-                   localizacao: String, diferenca: Int) {
+                   localizacao: String, qttyEdit: Int) {
     val storeno = 1
     val sql = "/sqlSaci/retornaSaldo.sql"
     val prdno = codigo.lpad(16, " ")
@@ -135,7 +135,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addOptionalParameter("prdno", prdno)
       q.addOptionalParameter("grade", grade)
       q.addOptionalParameter("localizacao", localizacao)
-      q.addOptionalParameter("diferenca", diferenca)
+      q.addOptionalParameter("qttyEdit", qttyEdit)
         .executeUpdate()
     }
   }
