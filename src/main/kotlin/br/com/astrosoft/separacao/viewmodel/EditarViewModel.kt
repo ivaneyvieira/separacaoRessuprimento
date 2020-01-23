@@ -18,7 +18,7 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
     produtos.forEach {produto ->
       saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
                         ordno = pedido.ordno,
-                        codigo = produto.codigo,
+                        codigo = produto.prdno,
                         grade = produto.grade,
                         diferenca = produto.diferenca,
                         localizacao = produto.localizacao)
@@ -55,7 +55,7 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
     produto ?: throw EViewModelError("Produto não selecionado")
     saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
                       ordno = pedido.ordno,
-                      codigo = produto.codigo,
+                      codigo = produto.prdno,
                       grade = produto.grade,
                       diferenca = produto.qtty.toInt(),
                       localizacao = produto.localizacao)
