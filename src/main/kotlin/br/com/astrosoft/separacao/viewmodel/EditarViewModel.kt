@@ -20,7 +20,7 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
                         ordno = pedido.ordno,
                         codigo = produto.prdno,
                         grade = produto.grade,
-                        diferenca = produto.diferenca,
+                        qttyEdit = produto.qttyEdit,
                         localizacao = produto.localizacao)
     }
     view.updateGrid()
@@ -57,7 +57,7 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
                       ordno = pedido.ordno,
                       codigo = produto.prdno,
                       grade = produto.grade,
-                      diferenca = produto.qtty.toInt(),
+                      qttyEdit = 0,
                       localizacao = produto.localizacao)
     view.updateGrid()
   }

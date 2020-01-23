@@ -1,7 +1,6 @@
 package br.com.astrosoft.separacao.model.beans
 
 import br.com.astrosoft.framework.util.lpad
-import br.com.astrosoft.separacao.model.saci
 
 data class ProdutoPedido(
   val prdno: String,
@@ -12,6 +11,7 @@ data class ProdutoPedido(
   val localizacao: String,
   val tipo: Int,
   val qtty: Double,
+  val qttyOriginal: Double,
   val saldo: Double
                         ) {
   val quantidadeValida: Boolean
@@ -22,10 +22,9 @@ data class ProdutoPedido(
     get() = prdno.lpad(16, " ")
   var qttyEdit: Int = 0
   val qttyMax
-    get() = (qtty * 2.00).toInt()
+    get() = (qttyOriginal * 2.00).toInt()
   val qttyMin
     get() = 1
-  val diferenca
-    get() = if(qttyEdit >= qtty.toInt()) 0
-    else qtty.toInt() - qttyEdit
+//  val diferenca
+//    get() = qttyOriginal.toInt() - qttyEdit
 }

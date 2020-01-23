@@ -1,6 +1,7 @@
 SELECT O.prdno, O.grade, IFNULL(TRIM(MID(P.name, 1, 37)), '') AS descricao, P.mfno AS fornecedor,
        IFNULL(LPAD(P.clno, 6, '0'), '') AS centrodelucro,
        IFNULL(L.localizacao, O.auxStr) AS localizacao, P.typeno AS tipo,
+       IFNULL(ROUND(O.auxLong3 / 1000, 2), 0.00) AS qttyOriginal,
        IFNULL(ROUND(O.qtty, 2), 0.00) AS qtty, IFNULL(ROUND(S.qtty_varejo / 1000, 2), 0.00) AS saldo
 FROM sqldados.oprd           AS O
   INNER JOIN sqldados.prd    AS P
