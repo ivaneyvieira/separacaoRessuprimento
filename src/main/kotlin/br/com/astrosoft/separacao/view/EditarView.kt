@@ -165,11 +165,9 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
         Button(TRASH.create()).apply {
           this.addThemeVariants(LUMO_SMALL)
           addClickListener {
-            if(!editor.isOpen) {
-              val produtoInfo = "${produto.prdno}${if(produto.grade == "") "" else " - ${produto.grade}"}"
-              showQuestion("Pode excluir o produto $produtoInfo?") {
-                viewModel.removePedido(produto)
-              }
+            val produtoInfo = "${produto.prdno}${if(produto.grade == "") "" else " - ${produto.grade}"}"
+            showQuestion("Pode excluir o produto $produtoInfo?") {
+              viewModel.removePedido(produto)
             }
           }
         }
