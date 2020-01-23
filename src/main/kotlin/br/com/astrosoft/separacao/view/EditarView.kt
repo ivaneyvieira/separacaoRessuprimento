@@ -20,21 +20,24 @@ import com.github.mvysny.karibudsl.v10.integerField
 import com.github.mvysny.karibudsl.v10.isExpand
 import com.github.mvysny.karibudsl.v10.responsiveSteps
 import com.github.mvysny.karibudsl.v10.textField
+import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant.LUMO_PRIMARY
+import com.vaadin.flow.component.button.ButtonVariant.LUMO_SMALL
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.dependency.HtmlImport
 import com.vaadin.flow.component.dialog.Dialog
-import com.vaadin.flow.component.grid.ColumnTextAlign
+import com.vaadin.flow.component.grid.ColumnTextAlign.END
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.Grid.SelectionMode
 import com.vaadin.flow.component.grid.GridSortOrder
 import com.vaadin.flow.component.grid.GridVariant.LUMO_COMPACT
-import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.icon.VaadinIcon.INSERT
+import com.vaadin.flow.component.icon.VaadinIcon.SPLIT
+import com.vaadin.flow.component.icon.VaadinIcon.TRASH
 import com.vaadin.flow.component.textfield.IntegerField
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.textfield.TextFieldVariant.LUMO_ALIGN_RIGHT
 import com.vaadin.flow.data.binder.Binder
-import com.vaadin.flow.data.binder.ValidationResult
 import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.data.provider.SortDirection.ASCENDING
 import com.vaadin.flow.data.renderer.NumberRenderer
@@ -51,7 +54,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
   private var gridProduto: Grid<ProdutoPedido>
   private lateinit var cmbPedido: ComboBox<Pedido>
   override val viewModel: EditarViewModel = EditarViewModel(this)
-  val dataProviderProdutos = ListDataProvider<ProdutoPedido>(mutableListOf())
+  private val dataProviderProdutos = ListDataProvider<ProdutoPedido>(mutableListOf())
   
   override fun isAccept(user: UserSaci) = user.editar
   
@@ -80,39 +83,22 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
       isExpand = true
       isMultiSort = true
       addThemeVariants(LUMO_COMPACT)
-      setSelectionMode(SelectionMode.MULTI)
+      setSelectionMode(SelectionMode.SINGLE)
       val binder = Binder<ProdutoPedido>(ProdutoPedido::class.java)
-      binder.withValidator {value, _ ->
-        if(value.quantidadeValida) {
-          ValidationResult.ok()
-        }
-        else {
-          val msg = "A quantidade deveria está entre ${value.qttyMin} e ${value.qttyMax}"
-          showError(msg)
-          ValidationResult.error(msg)
-        }
-      }
       editor.binder = binder
-      editor.isBuffered = false
+      editor.isBuffered = true
       val edtQtty = IntegerField().apply {
         this.isAutoselect = true
         this.width = "100%"
         this.isAutofocus = true
         this.element
           .addEventListener("keydown") {
-            val value = this@grid.editor.item
-            if(value.qtty.toInt() != value.qttyEdit)
-              this@grid.selectionModel.select(value)
-            else
-              this@grid.selectionModel.deselect(value)
-            this@grid.editor.save()
-            this@grid.editor.closeEditor()
+            editor.save()
           }
           .filter = "event.key === 'Enter'"
         this.element
           .addEventListener("keydown") {
-            this@grid.editor.cancel()
-            this@grid.editor.closeEditor()
+            editor.cancel()
           }
           .filter = "event.key === 'Escape'"
       }
@@ -120,92 +106,96 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
       
       addItemClickListener {event ->
         if(event.clickCount == 1) {
-          editor.editItem(event.item)
-          edtQtty.focus()
+          if(editor.isOpen) {
+            editor.save()
+          }
+          else {
+            editor.editItem(event.item)
+            edtQtty.focus()
+          }
         }
       }
-      
-      editor.addSaveListener {
-        val value = it.item
-        if(value.qtty.toInt() != value.qttyEdit)
-          this.selectedItems.add(value)
-        else
-          this.selectedItems.remove(value)
-      }
-      
-      binder.addValueChangeListener {e ->
-        val value = e.value as? ProdutoPedido
-        if(value != null) {
-          if(value.qtty.toInt() != value.qttyEdit)
-            this.select(value)
-          else
-            this.selectedItems.remove(value)
+  
+      editor.addSaveListener {event ->
+        val produto = event.item
+        if(produto.quantidadeValida) {
+          binder.writeBean(produto)
         }
-        editor.refresh()
+        else {
+          val msg = "A quantidade deveria está entre ${produto.qttyMin} e ${produto.qttyMax}"
+          showError(msg)
+          editor.cancel()
+          produto.qttyEdit = produto.qtty.toInt()
+        }
       }
-      
-      editor.addCloseListener {
-        binder.writeBean(it.item)
-      }
-      
+  
       addColumnFor(ProdutoPedido::codigo) {
         setHeader("Código")
         flexGrow = 1
-        this.textAlign = ColumnTextAlign.END
-        isSortable = false
+        this.textAlign = END
       }
       addColumnFor(ProdutoPedido::descricao) {
         setHeader("Descrição")
         flexGrow = 8
-        isSortable = false
       }
       addColumnFor(ProdutoPedido::grade) {
         setHeader("Grade")
         flexGrow = 1
-        isSortable = false
       }
       addColumnFor(ProdutoPedido::fornecedor) {
         setHeader("Fornecedor")
         flexGrow = 1
-        isSortable = false
       }
       addColumnFor(ProdutoPedido::localizacao) {
         setHeader("Localização")
         flexGrow = 3
-        isSortable = false
       }
       addColumnFor(ProdutoPedido::qttyEdit, NumberRenderer(ProdutoPedido::qttyEdit, DecimalFormat("0"))) {
         setHeader("Quant")
         flexGrow = 1
-        this.textAlign = ColumnTextAlign.END
+        this.textAlign = END
         setEditorComponent(edtQtty)
-        isSortable = false
       }
       addColumnFor(ProdutoPedido::saldo, NumberRenderer(ProdutoPedido::saldo, DecimalFormat("0"))) {
         setHeader("Saldo")
         flexGrow = 1
-        this.textAlign = ColumnTextAlign.END
-        isSortable = false
+        this.textAlign = END
       }
-      /*
+      addComponentColumn {produto ->
+        Button(TRASH.create()).apply {
+          this.addThemeVariants(LUMO_SMALL)
+          addClickListener {
+            if(!editor.isOpen) {
+              val produtoInfo = "${produto.prdno}${if(produto.grade == "") "" else " - ${produto.grade}"}"
+              showQuestion("Pode excluir o produto $produtoInfo?") {
+                viewModel.removePedido(produto)
+              }
+            }
+          }
+        }
+      }
+  
       sort(listOf(
         GridSortOrder(getColumnBy(ProdutoPedido::localizacao), ASCENDING),
         GridSortOrder(getColumnBy(ProdutoPedido::descricao), ASCENDING),
         GridSortOrder(getColumnBy(ProdutoPedido::grade), ASCENDING)
                  ))
-       */
     }
     toolbar {
       button("Processar") {
-        icon = VaadinIcon.SPLIT.create()
+        icon = SPLIT.create()
         addThemeVariants(LUMO_PRIMARY)
         addClickListener {
+          if(gridProduto.editor.isOpen)
+            gridProduto.editor.save()
           viewModel.processar()
         }
       }
       button("Novo produto") {
-        icon = VaadinIcon.INSERT.create()
+        icon = INSERT.create()
         addClickListener {
+          if(gridProduto.editor.isOpen)
+            gridProduto.editor.save()
           viewModel.novoProduto()
         }
       }
@@ -216,8 +206,6 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
     get() = Pedido.findTemp(cmbPedido.value?.ordno ?: 0)
   override val produtos: List<ProdutoPedido>
     get() = dataProviderProdutos.getAll()
-  override val produtosSelecionados: List<ProdutoPedido>
-    get() = gridProduto.selectedItems.toList()
   
   override fun updateGrid() {
     val pedidoAtual = pedido
@@ -269,10 +257,9 @@ class ProdutoDialog(private val viewModel: EditarViewModel, val pedido: Pedido):
                 .sorted()
             edtGrade.setItems(grades)
             edtGrade.value = grades.firstOrNull()
-            
             val localizacoes = produtos.map {it.localizacao}
-                .distinct()
-                .sorted()
+              .distinct()
+              .sorted()
             edtLocalizacao.setItems(localizacoes)
             edtLocalizacao.value = localizacoes.firstOrNull()
           }
@@ -290,7 +277,7 @@ class ProdutoDialog(private val viewModel: EditarViewModel, val pedido: Pedido):
       }
       edtQtty = integerField("Quantidade") {
         colspan = 1
-        isAutoselect =true
+        isAutoselect = true
         addThemeVariants(LUMO_ALIGN_RIGHT)
         value = produto.qtty
       }

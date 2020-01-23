@@ -5,11 +5,11 @@ INSERT IGNORE INTO oprd (storeno, ordno, mult, ipi, freight, icms, auxLong1, aux
                          bits2, auxShort1, auxShort2, auxShort3, auxShort4, prdno, grade, remarks,
                          padbyte, gradeFechada, obs, auxStr)
 SELECT :storeno AS storeno, :ordnoMae AS ordno, mult, ipi, freight, icms, auxLong1, auxLong2,
-       auxMy1, auxMy2, icmsSubst, auxLong3, auxLong4, auxMy3, auxMy4, :diferenca AS qtty,
-       :diferenca AS qtty_src, qtty_xfr, cost, 0 AS qttyRcv, 0 AS qttyCancel, qttyVendaMes,
-       qttyVendaMesAnt, qttyVendaMedia, qttyPendente, stkDisponivel, qttyAbc, seqno, status, bits,
-       bits2, auxShort1, auxShort2, auxShort3, auxShort4, prdno, grade, remarks, padbyte,
-       gradeFechada, obs, :localizacao AS auxStr
+       auxMy1, auxMy2, icmsSubst, auxLong3, auxLong4, auxMy3, auxMy4, 0 AS qtty, 0 AS qtty_src,
+       qtty_xfr, cost, 0 AS qttyRcv, 0 AS qttyCancel, qttyVendaMes, qttyVendaMesAnt, qttyVendaMedia,
+       qttyPendente, stkDisponivel, qttyAbc, seqno, status, bits, bits2, auxShort1, auxShort2,
+       auxShort3, auxShort4, prdno, grade, remarks, padbyte, gradeFechada, obs,
+       :localizacao AS auxStr
 FROM oprd
 WHERE (storeno = :storeno) AND
       (ordno = :ordno) AND
@@ -18,7 +18,7 @@ WHERE (storeno = :storeno) AND
 GROUP BY storeno, ordno, prdno, grade;
 
 UPDATE oprd
-SET oprd.qtty   = :diferenca,
+SET oprd.qtty   = oprd.qtty + :diferenca,
     oprd.auxStr = :localizacao
 WHERE (oprd.storeno = :storeno) AND
       (oprd.ordno = :ordnoMae) AND
