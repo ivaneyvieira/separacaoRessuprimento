@@ -10,7 +10,7 @@ SELECT :ordnoNovo AS no, date, vendno, discount, 0 AS amt, package, custo_fin, o
        l1, :ordno AS l2 /*Salva o pedido mãe*/, l3, l4, m1, m2, m3, m4, deliv, :storeno AS storeno,
        carrno, empno, prazo, eord_storeno, delivOriginal, bits, bits2, bits3, padbyte, indxno,
        repno, auxShort1, auxShort2, noofinst, 0, s1, s2, s3, s4, frete, remarks, ordnoFromVend,
-       remarksInv, remarksRcv, remarksOrd, auxChar, c1, c2, c3, 'S' AS c4
+       remarksInv, remarksRcv, remarksOrd, auxChar, c1, c2, c3, :tipo AS c4
 FROM ords
 WHERE storeno = :storeno AND
       NO = :ordno;

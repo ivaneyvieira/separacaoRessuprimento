@@ -18,12 +18,12 @@ import com.github.mvysny.karibudsl.v10.grid
 import com.github.mvysny.karibudsl.v10.horizontalLayout
 import com.github.mvysny.karibudsl.v10.integerField
 import com.github.mvysny.karibudsl.v10.isExpand
+import com.github.mvysny.karibudsl.v10.refresh
 import com.github.mvysny.karibudsl.v10.responsiveSteps
 import com.github.mvysny.karibudsl.v10.textField
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.button.ButtonVariant.LUMO_PRIMARY
-import com.vaadin.flow.component.checkbox.Checkbox
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.dependency.HtmlImport
 import com.vaadin.flow.component.dialog.Dialog
@@ -93,10 +93,6 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
       val binder = Binder<ProdutoPedido>(ProdutoPedido::class.java)
       editor.binder = binder
       editor.isBuffered = true
-      val edtLoja = Checkbox().apply {
-        this.width = "100%"
-        this.isAutofocus = true
-      }
       val edtQtty = IntegerField().apply {
         this.isAutoselect = true
         this.width = "100%"
@@ -113,14 +109,17 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
           .filter = "event.key === 'Escape'"
       }
       binder.bind(edtQtty, ProdutoPedido::qttyEdit.name)
-      binder.bind(edtLoja, ProdutoPedido::estoqueLoja.name)
       
       addItemClickListener {event ->
-        if(event.clickCount == 1) {
-          if(editor.isOpen) {
+        when {
+          editor.isOpen                           -> {
             editor.save()
           }
-          else {
+          event.column.id.orElse("") == "colLoja" -> {
+            event.item.estoqueLoja = !(event.item.estoqueLoja ?: false)
+            this@grid.refresh()
+          }
+          else                                    -> {
             editor.editItem(event.item)
             edtQtty.focus()
           }
@@ -176,7 +175,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
         setHeader("Loja")
         flexGrow = 1
         this.textAlign = CENTER
-        setEditorComponent(edtLoja)
+        this.setId("colLoja")
       }
       addColumnFor(ProdutoPedido::saldo, NumberRenderer(ProdutoPedido::saldo, DecimalFormat("0"))) {
         setHeader("Saldo")
