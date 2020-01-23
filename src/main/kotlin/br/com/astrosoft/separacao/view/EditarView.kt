@@ -21,16 +21,21 @@ import com.github.mvysny.karibudsl.v10.isExpand
 import com.github.mvysny.karibudsl.v10.responsiveSteps
 import com.github.mvysny.karibudsl.v10.textField
 import com.vaadin.flow.component.button.Button
+import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.button.ButtonVariant.LUMO_PRIMARY
-import com.vaadin.flow.component.button.ButtonVariant.LUMO_SMALL
+import com.vaadin.flow.component.checkbox.Checkbox
 import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.dependency.HtmlImport
 import com.vaadin.flow.component.dialog.Dialog
+import com.vaadin.flow.component.grid.ColumnTextAlign.CENTER
 import com.vaadin.flow.component.grid.ColumnTextAlign.END
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.Grid.SelectionMode
 import com.vaadin.flow.component.grid.GridSortOrder
 import com.vaadin.flow.component.grid.GridVariant.LUMO_COMPACT
+import com.vaadin.flow.component.icon.Icon
+import com.vaadin.flow.component.icon.VaadinIcon.CHECK_CIRCLE_O
+import com.vaadin.flow.component.icon.VaadinIcon.CIRCLE_THIN
 import com.vaadin.flow.component.icon.VaadinIcon.INSERT
 import com.vaadin.flow.component.icon.VaadinIcon.SPLIT
 import com.vaadin.flow.component.icon.VaadinIcon.TRASH
@@ -40,6 +45,7 @@ import com.vaadin.flow.component.textfield.TextFieldVariant.LUMO_ALIGN_RIGHT
 import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.data.provider.SortDirection.ASCENDING
+import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.data.renderer.NumberRenderer
 import com.vaadin.flow.data.value.ValueChangeMode.EAGER
 import com.vaadin.flow.router.PageTitle
@@ -87,6 +93,10 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
       val binder = Binder<ProdutoPedido>(ProdutoPedido::class.java)
       editor.binder = binder
       editor.isBuffered = true
+      val edtLoja = Checkbox().apply {
+        this.width = "100%"
+        this.isAutofocus = true
+      }
       val edtQtty = IntegerField().apply {
         this.isAutoselect = true
         this.width = "100%"
@@ -103,6 +113,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
           .filter = "event.key === 'Escape'"
       }
       binder.bind(edtQtty, ProdutoPedido::qttyEdit.name)
+      binder.bind(edtLoja, ProdutoPedido::estoqueLoja.name)
       
       addItemClickListener {event ->
         if(event.clickCount == 1) {
@@ -156,6 +167,17 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
         this.textAlign = END
         setEditorComponent(edtQtty)
       }
+      addColumnFor(ProdutoPedido::estoqueLoja, renderer = ComponentRenderer<Icon, ProdutoPedido> {produto ->
+        if(produto.estoqueLoja == true)
+          CHECK_CIRCLE_O.create()
+        else
+          CIRCLE_THIN.create()
+      }) {
+        setHeader("Loja")
+        flexGrow = 1
+        this.textAlign = CENTER
+        setEditorComponent(edtLoja)
+      }
       addColumnFor(ProdutoPedido::saldo, NumberRenderer(ProdutoPedido::saldo, DecimalFormat("0"))) {
         setHeader("Saldo")
         flexGrow = 1
@@ -163,7 +185,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
       }
       addComponentColumn {produto ->
         Button(TRASH.create()).apply {
-          this.addThemeVariants(LUMO_SMALL)
+          this.addThemeVariants(ButtonVariant.LUMO_SMALL)
           addClickListener {
             val produtoInfo = "${produto.prdno}${if(produto.grade == "") "" else " - ${produto.grade}"}"
             showQuestion("Pode excluir o produto $produtoInfo?") {

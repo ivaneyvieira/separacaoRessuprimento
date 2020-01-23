@@ -13,7 +13,7 @@ SELECT :ordnoNovo AS no, date, vendno, discount, 0 AS amt, package, custo_fin, o
        remarksInv, remarksRcv, remarksOrd, auxChar, c1, c2, c3, 'S' AS c4
 FROM ords
 WHERE storeno = :storeno AND
-      no = :ordno;
+      NO = :ordno;
 
 INSERT INTO oprd (storeno, ordno, mult, ipi, freight, icms, auxLong1, auxLong2, auxMy1, auxMy2,
                   icmsSubst, auxLong3, auxLong4, auxMy3, auxMy4, qtty, qtty_src, qtty_xfr, cost,

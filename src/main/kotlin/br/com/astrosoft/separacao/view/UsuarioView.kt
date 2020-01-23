@@ -7,7 +7,8 @@ import br.com.astrosoft.separacao.viewmodel.UsuarioViewModel
 import com.vaadin.flow.component.grid.ColumnTextAlign
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.GridVariant.LUMO_COMPACT
-import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.icon.VaadinIcon.CHECK_CIRCLE_O
+import com.vaadin.flow.component.icon.VaadinIcon.CIRCLE_THIN
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import org.vaadin.crudui.crud.CrudOperation.ADD
@@ -22,7 +23,6 @@ class UsuarioView: ViewLayout<UsuarioViewModel>(), IUsuarioView {
   override val viewModel = UsuarioViewModel(this)
   
   override fun isAccept(user: UserSaci) = user.admin
-  
   
   init {
     form("Editor de usuários")
@@ -86,9 +86,8 @@ class UsuarioView: ViewLayout<UsuarioViewModel>(), IUsuarioView {
   
   private fun Grid<UserSaci>.addColumnBool(caption: String, value: UserSaci.() -> Boolean) {
     val column = this.addComponentColumn {bean ->
-      val icon = if(bean.value()) VaadinIcon.CHECK_CIRCLE_O.create()
-      else VaadinIcon.CIRCLE_THIN.create()
-      icon
+      if(bean.value()) CHECK_CIRCLE_O.create()
+      else CIRCLE_THIN.create()
     }
     column.setHeader(caption)
     column.textAlign = ColumnTextAlign.CENTER

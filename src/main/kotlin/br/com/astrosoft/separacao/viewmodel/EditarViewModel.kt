@@ -8,6 +8,7 @@ import br.com.astrosoft.framework.viewmodel.ViewModel
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.Produto
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
+import br.com.astrosoft.separacao.model.enum.ETipoOrigem.LOJA
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem.SEPARADO
 import br.com.astrosoft.separacao.model.saci
 
@@ -16,12 +17,23 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
     val pedido = view.pedido ?: throw EViewModelError("Nenum pedido selecionado")
     val produtos = view.produtos
     produtos.forEach {produto ->
-      saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
-                        ordno = pedido.ordno,
-                        codigo = produto.prdno,
-                        grade = produto.grade,
-                        qttyEdit = produto.qttyEdit,
-                        localizacao = produto.localizacao)
+      val proximoNumero = saci.proximoNumero(pedido.storenoDestino)
+  
+      if(produto.estoqueLoja == true)
+        saci.atualizarQuantidade(ordno = pedido.ordno,
+                                 ordnoNovo = proximoNumero,
+                                 codigo = produto.prdnoSaci,
+                                 grade = produto.grade,
+                                 localizacao = produto.localizacao,
+                                 qtty = produto.qttyEdit,
+                                 tipo = LOJA)
+      else
+        saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
+                          ordno = pedido.ordno,
+                          codigo = produto.codigo,
+                          grade = produto.grade,
+                          qttyEdit = produto.qttyEdit,
+                          localizacao = produto.localizacao)
     }
     view.updateGrid()
   }
@@ -64,7 +76,7 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
   
   val pedidosSeparacao: List<Pedido>
     get() = Pedido.pedidosTemporarios.filter {
-      it.tipoOrigem == SEPARADO
+      it.tipoOrigem == SEPARADO || it.tipoOrigem == LOJA
     }
 }
 
