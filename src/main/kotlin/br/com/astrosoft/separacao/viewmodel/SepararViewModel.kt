@@ -8,6 +8,7 @@ import br.com.astrosoft.framework.viewmodel.ViewModel
 import br.com.astrosoft.separacao.model.QuerySaci
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
+import br.com.astrosoft.separacao.model.enum.ETipoOrigem.SEPARADO
 import br.com.astrosoft.separacao.model.saci
 
 class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
@@ -22,7 +23,7 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
     else
       produtosSelecionados.forEach {produto ->
         saci.atualizarQuantidade(ordno, proximoNumero, produto.prdnoSaci, produto.grade,
-                                 produto.localizacao, produto.qttyEdit)
+                                 produto.localizacao, produto.qttyEdit, SEPARADO)
       }
     print(proximoNumero)
     view.showInformation("Foi gerado o pedido número $proximoNumero")

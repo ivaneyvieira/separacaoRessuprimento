@@ -1,7 +1,11 @@
 package br.com.astrosoft.separacao.model.enum
 
-enum class ETipoOrigem(val descricao: String) {
-  DUPLICADO("Duplicado"),
-  SEPARADO("Separado"),
-  LOJA("Separado Loja")
+enum class ETipoOrigem(val descricao: String, val sigla: String) {
+  DUPLICADO("Duplicado", "D"),
+  SEPARADO("Separado", "S"),
+  LOJA("Separado Loja", "L");
+  
+  companion object {
+    fun value(sigla: String) = values().toList().firstOrNull {it.sigla == sigla}
+  }
 }
