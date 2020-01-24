@@ -139,6 +139,17 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
         }
       }
   
+      addColumnFor(ProdutoPedido::estoqueLoja, renderer = ComponentRenderer<Icon, ProdutoPedido> {produto ->
+        if(produto.estoqueLoja == true)
+          CHECK_CIRCLE_O.create()
+        else
+          CIRCLE_THIN.create()
+      }) {
+        setHeader("Loja")
+        flexGrow = 1
+        this.textAlign = CENTER
+        this.setId("colLoja")
+      }
       addColumnFor(ProdutoPedido::codigo) {
         setHeader("Código")
         flexGrow = 1
@@ -165,17 +176,6 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
         flexGrow = 1
         this.textAlign = END
         setEditorComponent(edtQtty)
-      }
-      addColumnFor(ProdutoPedido::estoqueLoja, renderer = ComponentRenderer<Icon, ProdutoPedido> {produto ->
-        if(produto.estoqueLoja == true)
-          CHECK_CIRCLE_O.create()
-        else
-          CIRCLE_THIN.create()
-      }) {
-        setHeader("Loja")
-        flexGrow = 1
-        this.textAlign = CENTER
-        this.setId("colLoja")
       }
       addColumnFor(ProdutoPedido::saldo, NumberRenderer(ProdutoPedido::saldo, DecimalFormat("0"))) {
         setHeader("Saldo")
