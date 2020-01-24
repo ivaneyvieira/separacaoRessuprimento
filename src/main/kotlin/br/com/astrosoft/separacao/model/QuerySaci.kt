@@ -46,7 +46,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.addParameter("ordno", ordno)
-        .executeAndFetch(Pedido::class.java)
+      q.executeAndFetch(Pedido::class.java)
         .isNotEmpty()
     }
   }
@@ -57,7 +57,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.addParameter("destino", destino)
-        .executeScalar(Int::class.java)
+      q.executeScalar(Int::class.java)
     }
   }
   
@@ -67,7 +67,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     val lista = query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.addParameter("ordno", ordno)
-        .executeAndFetch(ProdutoPedido::class.java)
+      q.executeAndFetch(ProdutoPedido::class.java)
     }
     lista.forEach {produto ->
       produto.qttyEdit = produto.qtty.toInt()
@@ -81,7 +81,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
-        .executeAndFetch(Pedido::class.java)
+      q.executeAndFetch(Pedido::class.java)
     }
   }
   
@@ -92,7 +92,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addOptionalParameter("storeno", storeno)
       q.addOptionalParameter("ordno", ordno)
       q.addOptionalParameter("ordnoNovo", ordnoNovo)
-        .executeUpdate()
+      q.executeUpdate()
     }
   }
   
@@ -103,7 +103,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addOptionalParameter("storeno", storeno)
       q.addOptionalParameter("numeroI", numeroI)
       q.addOptionalParameter("numeroF", numeroF)
-        .executeUpdate()
+      q.executeUpdate()
     }
   }
   
@@ -122,7 +122,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addOptionalParameter("localizacao", localizacao)
       q.addOptionalParameter("tipo", charTipo)
       q.addOptionalParameter("qtty", qtty)
-        .executeUpdate()
+      q.executeUpdate()
     }
   }
   
@@ -139,7 +139,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addOptionalParameter("grade", grade)
       q.addOptionalParameter("localizacao", localizacao)
       q.addOptionalParameter("qttyEdit", qttyEdit)
-        .executeUpdate()
+      q.executeUpdate()
     }
   }
   
