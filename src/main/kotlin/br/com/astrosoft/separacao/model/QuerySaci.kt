@@ -151,10 +151,11 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun adicionarProduto(pedido: Pedido, prdno: String, grade: String, qtty: Int, localizacao: String) {
+  fun adicionarProduto(pedido: Pedido, codigo: String, grade: String, qtty: Int, localizacao: String) {
     val sql = "/sqlSaci/adicionarProduto.sql"
     val storeno = 1
     val ordno = pedido.ordno
+    val prdno = codigo.lpad(16, " ")
     return script(sql) {q ->
       q.addOptionalParameter("storeno", storeno)
       q.addOptionalParameter("ordno", ordno)

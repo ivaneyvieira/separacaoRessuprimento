@@ -21,7 +21,7 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
       if(produto.estoqueLoja == true)
         saci.atualizarQuantidade(ordno = pedido.ordno,
                                  ordnoNovo = proximoNumero,
-                                 codigo = produto.prdnoSaci,
+                                 codigo = produto.prdno,
                                  grade = produto.grade,
                                  localizacao = produto.localizacao,
                                  qtty = produto.qttyEdit,
@@ -29,7 +29,7 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
       else
         saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
                           ordno = pedido.ordno,
-                          codigo = produto.codigo,
+                          codigo = produto.prdno,
                           grade = produto.grade,
                           qttyEdit = produto.qttyEdit,
                           localizacao = produto.localizacao)

@@ -18,8 +18,6 @@ data class ProdutoPedido(
     get() = qttyEdit in qttyMin..qttyMax
   val codigo
     get() = prdno.lpad(6, "0")
-  val prdnoSaci
-    get() = prdno.lpad(16, " ")
   var qttyEdit: Int = 0
   var estoqueLoja: Boolean? = false
   val qttyMax
