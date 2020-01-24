@@ -19,6 +19,7 @@ open class QueryDB(private val driver: String, val url: String, val username: St
     config.addDataSourceProperty("cachePrepStmts", "true")
     config.addDataSourceProperty("prepStmtCacheSize", "250")
     config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048")
+    config.isAutoCommit = false
     val ds = HikariDataSource(config)
     ds.maximumPoolSize = 5
     
