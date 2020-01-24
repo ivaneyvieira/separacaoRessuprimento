@@ -22,7 +22,7 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
       throw EViewModelError("Não há nenhum produto selecionado")
     else
       produtosSelecionados.forEach {produto ->
-        saci.atualizarQuantidade(ordno, proximoNumero, produto.prdnoSaci, produto.grade,
+        saci.atualizarQuantidade(ordno, proximoNumero, produto.prdno, produto.grade,
                                  produto.localizacao, produto.qttyEdit, SEPARADO)
       }
     print(proximoNumero)
