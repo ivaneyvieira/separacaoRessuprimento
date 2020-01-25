@@ -57,8 +57,21 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.addParameter("destino", destino)
-      q.executeScalar(Int::class.java)
-    }
+      q.executeScalarList(Int::class.java)
+    }.firstOrNull() ?: destino * 1000 + 1
+  }
+  
+  fun proximoNumeroPedidoLoja(destino: Int, abreviacao: String): Int {
+    val storeno = 1
+    val sql = "/sqlSaci/proximoNumeroLoja.sql"
+    val numero = query(sql) {q ->
+      q.addParameter("storeno", storeno)
+      q.addParameter("destino", destino)
+      q.addParameter("abreviacao", "${abreviacao}%")
+      q.executeScalarList(Int::class.java)
+    }.firstOrNull() ?: 0
+    
+    return if(numero == 0) proximoNumero(destino) else numero
   }
   
   fun listaProduto(ordno: Int): List<ProdutoPedido> {

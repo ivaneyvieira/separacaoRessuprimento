@@ -16,9 +16,9 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
   fun processar() = exec {
     val pedido = view.pedido ?: throw EViewModelError("Nenum pedido selecionado")
     val produtos = view.produtos
-    val proximoNumero = saci.proximoNumero(pedido.storenoDestino)
+    val proximoNumero = saci.proximoNumeroPedidoLoja(pedido.storenoDestino, pedido.abreviacoesLoja.firstOrNull() ?: "")
     produtos.forEach {produto ->
-      if(produto.estoqueLoja == true)
+      if(produto.estoqueLoja == true) {
         saci.atualizarQuantidade(ordno = pedido.ordno,
                                  ordnoNovo = proximoNumero,
                                  codigo = produto.prdno,
@@ -26,13 +26,15 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
                                  localizacao = produto.localizacao,
                                  qtty = produto.qttyEdit,
                                  tipo = LOJA)
-      else
+      }
+      else {
         saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
                           ordno = pedido.ordno,
                           codigo = produto.prdno,
                           grade = produto.grade,
                           qttyEdit = produto.qttyEdit,
                           localizacao = produto.localizacao)
+      }
     }
     view.updateGrid()
     if(produtos.any {it.estoqueLoja == true})
