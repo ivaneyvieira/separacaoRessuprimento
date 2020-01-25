@@ -42,7 +42,19 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
   val tipoOrigem: ETipoOrigem
     get() = ETipoOrigem.value(tipo) ?: DUPLICADO
   val abreviacoes
-    get() = produtos.filtraLocalizacoes().map {it.localizacao.mid(0, 4)}.distinct().sorted()
+    get() = produtos
+      .filtraLocalizacoes()
+      .groupBy {it.localizacao.mid(0, 4)}
+      .entries
+      .sortedBy { -it.value.size}
+      .map {it.key}
+  val abreviacoesLoja
+    get() = produtos
+      .filter {it.estoqueLoja == true}
+      .groupBy {it.localizacao.mid(0, 4)}
+      .entries
+      .sortedBy { -it.value.size}
+      .map {it.key}
   
   companion object {
     fun findTemp(numeroOrigem: Int?): Pedido? {
