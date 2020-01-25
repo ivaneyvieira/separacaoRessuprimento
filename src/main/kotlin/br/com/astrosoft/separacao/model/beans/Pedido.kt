@@ -85,4 +85,3 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
 }
 
 data class ProdutoKey(val prdno: String, val grade: String)
-
