@@ -16,7 +16,10 @@ object CupsUtils {
     return impressoras.any {it.name == printerName}
   }
   
-  fun printer(printerName: String) = printers.firstOrNull {it.name == printerName}
+  fun findPrinter(printerName: String): CupsPrinter? {
+    val printers = cupsClient.printers.toList()
+    return printers.firstOrNull {it.name == printerName}
+  }
   
   @Throws(ECupsPrinter::class)
   fun CupsPrinter.printText(text: String, resultMsg: (String) -> Unit = {}) {
@@ -37,7 +40,7 @@ object CupsUtils {
   @Throws(ECupsPrinter::class)
   fun printCups(impressora: String, text: String, resultMsg: (String) -> Unit = {}) {
     val printer =
-      printer(impressora) ?: throw ECupsPrinter("Impressora $impressora não está configurada no sistema operacional")
+      findPrinter(impressora) ?: throw ECupsPrinter("Impressora $impressora não está configurada no sistema operacional")
     printer.printText(text, resultMsg)
   }
   
