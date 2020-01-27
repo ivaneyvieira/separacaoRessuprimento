@@ -6,6 +6,7 @@ import br.com.astrosoft.framework.util.lpad
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.Produto
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
+import br.com.astrosoft.separacao.model.beans.Relatorio
 import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem
 
@@ -177,6 +178,16 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addOptionalParameter("localizacao", localizacao)
       q.addOptionalParameter("qtty", qtty)
       q.executeUpdate()
+    }
+  }
+  
+  fun listaRelatorio(ordno: Int): List<Relatorio> {
+    val sql = "/sqlSaci/relatorio.sql"
+    val storeno = 1
+    return query(sql) {q ->
+      q.addOptionalParameter("storeno", storeno)
+      q.addOptionalParameter("ordno", ordno)
+      q.executeAndFetch(Relatorio::class.java)
     }
   }
   
