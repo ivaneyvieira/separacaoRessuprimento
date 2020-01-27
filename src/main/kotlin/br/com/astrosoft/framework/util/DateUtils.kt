@@ -12,8 +12,10 @@ import java.util.*
 
 private const val DATE_PATTERN = "dd/MM/yy"
 private const val DATETIME_PATTERN = "dd/MM/yy HH:mm"
+private const val TIME_PATTERN = "HH:mm"
 private val DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_PATTERN)
 private val DATETIME_FORMATTER = DateTimeFormatter.ofPattern(DATETIME_PATTERN)
+private val TIME_FORMATTER = DateTimeFormatter.ofPattern(TIME_PATTERN)
 
 fun LocalDateTime?.toDate(): Date? {
   if(this == null) return null
@@ -70,6 +72,10 @@ fun Date?.format(): String? {
 
 fun LocalDate?.format(): String {
   return this?.format(DATE_FORMATTER) ?: ""
+}
+
+fun LocalTime?.format(): String {
+  return this?.format(TIME_FORMATTER) ?: ""
 }
 
 fun Int.localDate(): LocalDate? {

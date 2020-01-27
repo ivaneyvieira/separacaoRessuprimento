@@ -11,6 +11,6 @@ data class Relatorio(
   val tipo: String,
   val qtty: Double,
   val fornecedor: Int,
-  val Estoque: Double,
+  val estoque: Double,
   val embalagem: Double
                     )

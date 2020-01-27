@@ -2,25 +2,27 @@ package br.com.astrosoft.separacao.viewmodel
 
 import br.com.astrosoft.framework.util.lpad
 import br.com.astrosoft.framework.util.rpad
-import br.com.astrosoft.separacao.viewmodel.EAling.LEFT
+import java.io.File
 import java.text.DecimalFormat
 
-class PrintText<T> {
+abstract class PrintText<T> {
   private val columns = mutableListOf<Column<T, *>>()
   
-  fun columText(header: String, size: Int, process: (T) -> String): PrintText<T> {
-    val column = Column(header, size, LEFT, process) {str ->
-      str.lpad(size, " ")
+  fun columText(header: String, size: Int, lineBreak: Boolean = false,
+                process: T.() -> String): PrintText<T> {
+    val column = Column(header, size, lineBreak, process) {str ->
+      str.rpad(size, " ")
     }
     columns.add(column)
     return this
   }
   
-  fun columNumber(header: String, size: Int, process: (T) -> Double, format: String = "0,000.##"): PrintText<T> {
+  fun columNumber(header: String, size: Int, format: String = "#,##0.##", lineBreak: Boolean = false,
+                  process: T.() -> Double): PrintText<T> {
     val decimalFormat = DecimalFormat(format)
-    val column = Column(header, size, LEFT, process) {int ->
-      decimalFormat.format(int)
-        .rpad(size, " ")
+    val column = Column(header, size, lineBreak, process) {number ->
+      decimalFormat.format(number)
+        .lpad(size, " ")
     }
     columns.add(column)
     return this
@@ -34,23 +36,96 @@ class PrintText<T> {
     col.dataText(value)
   }
   
+  fun print(dados: List<T>) {
+    dados.firstOrNull()
+      ?.let {bean ->
+        val text = StringBuilder()
+        inicialize(text)
+        printTitle(text, bean)
+        
+        printHeader(text)
+        dados.forEach {bean ->
+          printDetail(text, bean)
+        }
+        finalize(text)
+        println(text.toString())
+        File("/tmp/relatorio.txt").writeText(text.toString())
+      }
+  }
+  
+  private fun inicialize(text: StringBuilder) {
+    text.append(0x1b.toChar())
+      .append(0x21.toChar())
+      .append(0x01.toChar())
+  }
+  
+  private fun finalize(text: StringBuilder) {
+    text.append(0x0a.toChar())
+      .append(0x0a.toChar())
+      .append(0x0a.toChar())
+      .append(0x1b.toChar())
+      .append(0x69.toChar())
+  }
+  
+  private fun printDetail(text: StringBuilder, bean: T) {
+    text.line(detail(bean))
+  }
+  
+  private fun printHeader(text: StringBuilder) {
+    text.line(header())
+  }
+  
+  private fun StringBuilder.boldLine(line: String): StringBuilder {
+    this.append(0x1b.toChar())
+      .append(0x45.toChar())
+      .append(0x01.toChar())
+      .append(line)
+      .append(0x1b.toChar())
+      .append(0x45.toChar())
+      .append(0x00.toChar())
+      .appendln()
+    return this
+  }
+  
+  private fun printTitle(text: StringBuilder, bean: T) {
+    titleLines(bean).forEach {line ->
+      text.line(line)
+    }
+  }
+  
+  protected abstract fun titleLines(bean: T): List<String>
+  
+  private fun StringBuilder.expandLine(line: String): StringBuilder {
+    this.append(0x1b.toChar())
+      .append(0x45.toChar())
+      .append(0x01.toChar())
+      .append(line)
+      .append(0x1b.toChar())
+      .append(0x45.toChar())
+      .append(0x00.toChar())
+      .appendln()
+    return this
+  }
+  
+  private fun StringBuilder.line(line: String): StringBuilder {
+    this.append(line)
+      .appendln()
+    return this
+  }
+  
   private fun montaLinha(process: (Column<T, *>) -> String): String {
-    return columns.joinToString(separator = " ") {col ->
-      process(col)
+    return columns.joinToString(separator = "") {col ->
+      val lineBreak = if(col.lineBreak) "\n" else " "
+      val linha = process(col)
+      "$linha$lineBreak"
     }
   }
 }
 
-data class Column<T, V>(val header: String, val size: Int, val align: EAling,
-                        val process: (T) -> V, val posProcess: (V) -> String) {
+data class Column<T, V>(val header: String, val size: Int, val lineBreak: Boolean,
+                        val process: T.() -> V, val posProcess: (V) -> String) {
   val columnText
-    get() = header.lpad(size, " ")
+    get() = header.rpad(size, "_")
   
   fun dataText(value: T) = posProcess(process(value))
-}
-
-enum class EAling {
-  RIGHT,
-  LEFT,
-  CENTER
 }
