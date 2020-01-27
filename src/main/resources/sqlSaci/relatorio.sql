@@ -1,7 +1,7 @@
 SELECT O.no AS ordno, O.storeno, LPAD(I.prdno * 1, 6, ' ') AS prdno,
        IFNULL(localizacao, '') AS localizacao, TRIM(MID(P.name, 1, 37)) AS name, I.grade,
-       P.mfno_ref AS mfno_ref, T.name AS tipo, ROUND(I.qtty) AS qtty, V.no AS fornecedor,
-       IFNULL((S.qtty_varejo / 1000 + S.qtty_atacado / 1000), 0) AS Estoque,
+       P.mfno_ref AS mfno_ref, T.name AS tipo, ROUND(I.qtty) AS qtty, P.mfno AS fornecedor,
+       IFNULL((S.qtty_varejo / 1000 + S.qtty_atacado / 1000), 0) AS estoque,
        P.qttyPackClosed / 1000 AS embalagem
 FROM sqldados.ords           AS O
   INNER JOIN sqldados.oprd   AS I
@@ -10,8 +10,6 @@ FROM sqldados.ords           AS O
                ON P.no = I.prdno
   INNER JOIN sqldados.type   AS T
                ON T.no = P.typeno
-  INNER JOIN sqldados.vend   AS V
-               ON V.no = P.mfno
   LEFT JOIN  sqldados.stk    AS S
                ON S.prdno = I.prdno AND S.grade = I.grade AND S.storeno = 4
   LEFT JOIN  sqldados.prdloc AS LOC
