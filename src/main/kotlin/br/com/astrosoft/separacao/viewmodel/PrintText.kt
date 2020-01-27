@@ -1,5 +1,6 @@
 package br.com.astrosoft.separacao.viewmodel
 
+import br.com.astrosoft.framework.util.CupsUtils
 import br.com.astrosoft.framework.util.lpad
 import br.com.astrosoft.framework.util.rpad
 import java.io.File
@@ -36,7 +37,7 @@ abstract class PrintText<T> {
     col.dataText(value)
   }
   
-  fun print(dados: List<T>) {
+  fun print(impressora: String, dados: List<T>) {
     dados.firstOrNull()
       ?.let {bean ->
         val text = StringBuilder()
@@ -50,6 +51,7 @@ abstract class PrintText<T> {
         finalize(text)
         println(text.toString())
         File("/tmp/relatorio.txt").writeText(text.toString())
+        CupsUtils.printCups(impressora, text.toString())
       }
   }
   

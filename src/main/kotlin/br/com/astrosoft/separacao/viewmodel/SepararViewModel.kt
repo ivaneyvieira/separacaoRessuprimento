@@ -37,7 +37,7 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
     //  Ssh("172.20.47.1", "ivaney", "ivaney").shell {
     //    execCommand("/u/saci/shells/printRessuprimento.sh $ordno")
     //  }
-    RelatorioText().print(saci.listaRelatorio(ordno))
+    RelatorioText().print("ressu4200", saci.listaRelatorio(ordno))
   }
   
   fun proximoNumero(): Int? {
