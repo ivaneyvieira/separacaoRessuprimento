@@ -1,4 +1,4 @@
-SELECT O.no AS ordno, O.storeno, LPAD(I.prdno * 1, 6, ' ') AS prdno,
+SELECT O.no AS ordno, O.storeno, cast(TRIM(I.prdno) AS CHAR) AS prdno,
        IFNULL(localizacao, '') AS localizacao, TRIM(MID(P.name, 1, 37)) AS name, I.grade,
        P.mfno_ref AS mfno_ref, T.name AS tipo, ROUND(I.qtty) AS qtty, P.mfno AS fornecedor,
        IFNULL((S.qtty_varejo / 1000 + S.qtty_atacado / 1000), 0) AS estoque,
