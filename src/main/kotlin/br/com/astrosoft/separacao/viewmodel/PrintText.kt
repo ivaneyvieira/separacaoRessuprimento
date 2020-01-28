@@ -18,6 +18,10 @@ abstract class PrintText<T> {
     return this
   }
   
+  open fun sumaryLine(): String {
+    return ""
+  }
+  
   fun columNumber(header: String, size: Int, format: String = "#,##0.##", lineBreak: Boolean = false,
                   process: T.() -> Double): PrintText<T> {
     val decimalFormat = DecimalFormat(format)
@@ -48,11 +52,16 @@ abstract class PrintText<T> {
         dados.forEach {bean ->
           printDetail(text, bean)
         }
+        sumary(text)
         finalize(text)
         println(text.toString())
         File("/tmp/relatorio.txt").writeText(text.toString())
         CupsUtils.printCups(impressora, text.toString())
       }
+  }
+  
+  private fun sumary(text: StringBuilder) {
+    text.line(sumaryLine())
   }
   
   private fun inicialize(text: StringBuilder) {

@@ -23,6 +23,14 @@ class RelatorioText: PrintText<Relatorio>() {
     columText("Referencia", 27) {mfno_ref}
   }
   
+  override fun sumaryLine() : String {
+    return """
+    
+DOCUMENTO NAO FISCAL
+ 
+    """.trimIndent()
+  }
+  
   override fun titleLines(relatorio: Relatorio): List<String> {
     val pedido = relatorio.ordno
     val abreviacao = relatorio.localizacao.mid(0, 4)
