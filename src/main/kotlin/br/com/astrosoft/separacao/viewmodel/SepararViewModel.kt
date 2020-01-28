@@ -16,7 +16,7 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
     val pedido = view.pedido ?: throw EViewModelError("Pedido inválido")
     val storenoDestino = pedido.storenoDestino
     val ordno = pedido.ordno
-    val proximoNumero = saci.proximoNumeroDuplicado(storenoDestino)
+    val proximoNumero = proximoNumero() ?: throw EViewModelError("Próximo número não encontrado")
     val produtosSelecionados = view.produtosSelecionados
     if(produtosSelecionados.isEmpty())
       throw EViewModelError("Não há nenhum produto selecionado")
@@ -49,7 +49,7 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
   
   fun proximoNumero(): Int? {
     val storenoDestino = view.pedido?.storenoDestino ?: return null
-    return saci.proximoNumeroDuplicado(storenoDestino)
+    return saci.proximoNumeroSeparado(storenoDestino)
   }
 }
 

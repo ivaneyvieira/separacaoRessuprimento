@@ -55,34 +55,39 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   fun proximoNumeroDuplicado(destino: Int): Int {
     val storeno = 1
     val sql = "/sqlSaci/proximoNumero.sql"
-    return query(sql) {q ->
+    val proximoNumero = query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.addParameter("destino", destino)
       q.executeScalarList(Int::class.java)
-    }.firstOrNull() ?: destino * 1000 + 1
+    }.firstOrNull() ?: 0
+    return if(proximoNumero == 0)
+      destino * 1000 + 1
+    else proximoNumero
   }
   
   fun proximoNumeroSeparado(destino: Int): Int {
     val storeno = 1
-    val sql = "/sqlSaci/proximoNumero.sql"
-    return query(sql) {q ->
+    val sql = "/sqlSaci/proximoNumeroSeparado.sql"
+    val proximoNumero = query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.addParameter("destino", destino)
       q.executeScalarList(Int::class.java)
-    }.firstOrNull() ?: destino * 1000 + 1
+    }.firstOrNull() ?: 0
+    return if(proximoNumero == 0)
+      destino * 100000000 + 1
+    else proximoNumero
   }
   
   fun proximoNumeroPedidoLoja(destino: Int, abreviacao: String): Int {
     val storeno = 1
     val sql = "/sqlSaci/proximoNumeroLoja.sql"
-    val numero = query(sql) {q ->
+    val proximoNumero = query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.addParameter("destino", destino)
       q.addParameter("abreviacao", "${abreviacao}%")
       q.executeScalarList(Int::class.java)
     }.firstOrNull() ?: 0
-    
-    return if(numero == 0) proximoNumeroDuplicado(destino) else numero
+    return if(proximoNumero == 0) proximoNumeroSeparado(destino) else proximoNumero
   }
   
   fun listaProduto(ordno: Int): List<ProdutoPedido> {
