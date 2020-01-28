@@ -71,7 +71,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
         colspan = 1
         setItems(viewModel.pedidosSeparacao)
         setItemLabelGenerator {
-          "${it.ordnoOrigem.toString()} - ${it.tipoOrigem.descricao}"
+          "${it.ordno} - ${it.tipoOrigem.descricao}"
         }
         isAllowCustomValue = false
         isPreventInvalidInput = false
@@ -222,7 +222,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
   }
   
   override val pedido: Pedido?
-    get() = Pedido.findTemp(cmbPedido.value?.ordno ?: 0)
+    get() = Pedido.findPedidos(cmbPedido.value?.ordno ?: 0)
   override val produtos: List<ProdutoPedido>
     get() = dataProviderProdutos.getAll()
   

@@ -78,7 +78,7 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
   }
   
   val pedidosSeparacao: List<Pedido>
-    get() = Pedido.pedidosTemporarios.filter {
+    get() = Pedido.pedidos.filter {
       it.tipoOrigem == SEPARADO || it.tipoOrigem == LOJA
     }
 }
