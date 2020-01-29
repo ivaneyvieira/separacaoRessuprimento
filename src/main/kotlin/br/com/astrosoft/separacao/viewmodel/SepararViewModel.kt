@@ -9,6 +9,7 @@ import br.com.astrosoft.framework.viewmodel.ViewModel
 import br.com.astrosoft.separacao.model.QuerySaci
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
+import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem.SEPARADO
 import br.com.astrosoft.separacao.model.saci
 
@@ -51,6 +52,11 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
   fun proximoNumero(): Int? {
     val storenoDestino = view.pedido?.storenoDestino ?: return null
     return saci.proximoNumeroSeparado(storenoDestino)
+  }
+  
+  fun pedidos(): List<Pedido> {
+    val user = UserSaci.userAtual
+    return Pedido.pedidos(user)
   }
 }
 

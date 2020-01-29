@@ -95,14 +95,6 @@ abstract class ViewLayout<VM: ViewModel<*>>(): VerticalLayout(), IView, BeforeLe
       em(title) {
         colspan = 2
       }
-      /*
-      val token =
-        UI.getCurrent()
-          .csrfToken
-      em(token) {
-        colspan = 1
-      }
-       */
       componentes()
     }
   }

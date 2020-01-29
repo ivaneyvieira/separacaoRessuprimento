@@ -29,7 +29,7 @@ class DuplicarView: ViewLayout<DuplicarViewModel>(), IDuplicarView {
     form("Duplicar") {
       cmbPedidoOrigem = comboBox("Pedido origem") {
         colspan = 1
-        setItems(Pedido.pedidos)
+        setItems(viewModel.pedidos())
         setItemLabelGenerator {it.ordno.toString()}
         isAllowCustomValue = false
         isPreventInvalidInput = false
@@ -62,7 +62,9 @@ class DuplicarView: ViewLayout<DuplicarViewModel>(), IDuplicarView {
   override var numeroOrigem: Int?
     get() = cmbPedidoOrigem.value.ordno
     set(value) {
-      cmbPedidoOrigem.value = Pedido.pedidos.firstOrNull {it.storenoDestino == value}
+      cmbPedidoOrigem.value =
+        viewModel.pedidos()
+          .firstOrNull {it.storenoDestino == value}
     }
   override var numeroDestino: Int?
     get() = edtPedidoDestino.value

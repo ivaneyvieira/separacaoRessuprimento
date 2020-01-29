@@ -1,5 +1,8 @@
 package br.com.astrosoft.separacao.model.beans
 
+import br.com.astrosoft.framework.model.RegistryUserInfo
+import br.com.astrosoft.framework.util.mid
+import br.com.astrosoft.separacao.model.saci
 import kotlin.math.pow
 
 class UserSaci() {
@@ -15,8 +18,19 @@ class UserSaci() {
   var separar: Boolean = false
   var remover: Boolean = false
   var editar: Boolean = false
+  var abreviacoes: String = ""
   val admin
     get() = login == "ADM"
+  var listAbreviacoes: Set<String>
+    get() = abreviacoes.trim()
+      .split(",")
+      .toList()
+      .filter {it != ""}
+      .toSet()
+    set(value) {
+      abreviacoes = value.joinToString(separator = ",")
+        .trim()
+    }
   
   fun initVars(): UserSaci {
     val bits = bitAcesso ?: 0
@@ -39,5 +53,18 @@ class UserSaci() {
     else 0
     val editarSum = if(editar) 2.toDouble().pow(4).toInt() else 0
     return ativoSum + duplicarSum + separarSum + removerSum + editarSum
+  }
+  
+  fun isLocalizacaoCompativel(localizacao: String): Boolean {
+    return if(admin) true
+    else {
+      val abreviacao = localizacao.mid(0, 4)
+      abreviacao in listAbreviacoes
+    }
+  }
+  
+  companion object {
+    val userAtual
+      get() = saci.findUser(RegistryUserInfo.usuario)
   }
 }

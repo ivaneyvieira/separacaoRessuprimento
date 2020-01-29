@@ -229,7 +229,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
   override fun updateGrid() {
     val pedidoAtual = pedido
     updateGrid(pedidoAtual)
-    cmbPedido.setItems(Pedido.pedidos)
+    cmbPedido.setItems(viewModel.pedidos())
     cmbPedido.value = pedidoAtual
   }
   
@@ -240,9 +240,10 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
   }
   
   private fun updateGrid(pedidoNovo: Pedido?) {
+    val userSaci = UserSaci.userAtual
     gridProduto.selectionModel.deselectAll()
     dataProviderProdutos.items.clear()
-    dataProviderProdutos.items.addAll(pedidoNovo?.produtos.orEmpty())
+    dataProviderProdutos.items.addAll(pedidoNovo?.produtos(userSaci).orEmpty())
     dataProviderProdutos.refreshAll()
     pedidoMae.value = pedidoNovo?.ordnoMae
   }

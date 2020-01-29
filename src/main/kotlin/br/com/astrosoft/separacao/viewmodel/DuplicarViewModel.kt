@@ -4,6 +4,7 @@ import br.com.astrosoft.framework.viewmodel.EViewModelError
 import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
 import br.com.astrosoft.separacao.model.beans.Pedido
+import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.model.saci
 
 class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
@@ -20,10 +21,11 @@ class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
   }
   
   fun duplicar() = exec {
+    val userSaci = UserSaci.userAtual
     val pedidoOrigem = Pedido.findPedidos(view.numeroOrigem) ?: throw EViewModelError("Pedido de origem não encontrado")
     val pedidoDestino = Pedido.findPedidos(view.numeroDestino) ?: Pedido(1, view.numeroDestino ?: 0, 0, "")
     when {
-      pedidoDestino.isNotEmpty                -> throw EViewModelError("O pedido de destino já existe")
+      pedidoDestino.isNotEmpty(userSaci)      -> throw EViewModelError("O pedido de destino já existe")
       !pedidoDestino.compativel(pedidoOrigem) -> throw EViewModelError("O pedido de destino " +
                                                                        "não é compatível com " +
                                                                        "o pedido de Origem")
@@ -34,6 +36,11 @@ class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
       }
     }
     view.showInformation("Pedido duplicado com sucesso. Novo pedido: ${pedidoDestino.ordno}")
+  }
+  
+  fun pedidos(): List<Pedido> {
+    val user = UserSaci.userAtual
+    return Pedido.pedidos(user)
   }
 }
 

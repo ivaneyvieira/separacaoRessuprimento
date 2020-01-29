@@ -37,6 +37,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     script(sql) {q ->
       q.addParameter("login", user.login)
       q.addParameter("bitAcesso", user.bitAcesso())
+      q.addParameter("abreviacoes", user.abreviacoes)
       q.executeUpdate()
     }
   }
@@ -202,6 +203,14 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addOptionalParameter("storeno", storeno)
       q.addOptionalParameter("ordno", ordno)
       q.executeAndFetch(Relatorio::class.java)
+    }
+  }
+  
+  fun findAbreviacoes(): List<String> {
+    val sql = "/sqlSaci/findAbreviacoes.sql"
+    val storeno = 1
+    return query(sql) {q ->
+      q.executeScalarList(String::class.java)
     }
   }
   

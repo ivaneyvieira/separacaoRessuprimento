@@ -4,6 +4,7 @@ import br.com.astrosoft.framework.viewmodel.EViewModelError
 import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
 import br.com.astrosoft.separacao.model.beans.Pedido
+import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.model.saci
 
 class RemoverViewModel(view: IRemoverView): ViewModel<IRemoverView>(view) {
@@ -16,6 +17,11 @@ class RemoverViewModel(view: IRemoverView): ViewModel<IRemoverView>(view) {
     else
       saci.removePedido(pedidoIncial.ordno, pedidoFinal.ordno)
     view.showInformation("Pedidos excluidos com sucesso")
+  }
+  
+  fun pedidos(): List<Pedido> {
+    val user = UserSaci.userAtual
+    return Pedido.pedidos(user)
   }
 }
 

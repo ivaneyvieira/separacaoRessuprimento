@@ -56,7 +56,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
       isExpand = false
       cmbPedido = comboBox("Pedido origem") {
         colspan = 1
-        setItems(Pedido.pedidos)
+        setItems(viewModel.pedidos())
         setItemLabelGenerator {
           "${it.ordno} - ${it.tipoOrigem.descricao}"
         }
@@ -293,14 +293,15 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
   override fun updateGrid() {
     val pedidoAtual = pedido
     updateGrid(pedidoAtual)
-    cmbPedido.setItems(Pedido.pedidos)
+    cmbPedido.setItems(viewModel.pedidos())
     cmbPedido.value = pedidoAtual
   }
   
   private fun updateGrid(pedidoNovo: Pedido?) {
+    val userSaci = UserSaci.userAtual
     gridProduto.selectionModel.deselectAll()
     dataProviderProdutos.items.clear()
-    dataProviderProdutos.items.addAll(pedidoNovo?.produtos.orEmpty())
+    dataProviderProdutos.items.addAll(pedidoNovo?.produtos(userSaci).orEmpty())
     dataProviderProdutos.refreshAll()
     proximoNumero.value = viewModel.proximoNumero()
   }

@@ -26,7 +26,7 @@ class RemoverView: ViewLayout<RemoverViewModel>(), IRemoverView {
     form("Remover") {
       cmbNumeroInicial = comboBox("Pedido incial") {
         colspan = 1
-        setItems(Pedido.pedidos)
+        setItems(viewModel.pedidos())
         setItemLabelGenerator {it.ordno.toString()}
         isAllowCustomValue = false
         isPreventInvalidInput = false
@@ -34,7 +34,7 @@ class RemoverView: ViewLayout<RemoverViewModel>(), IRemoverView {
       br()
       cmbNumeroFinal = comboBox("Pedido final") {
         colspan = 1
-        setItems(Pedido.pedidos)
+        setItems(viewModel.pedidos())
         setItemLabelGenerator {it.ordno.toString()}
         isAllowCustomValue = false
         isPreventInvalidInput = false
