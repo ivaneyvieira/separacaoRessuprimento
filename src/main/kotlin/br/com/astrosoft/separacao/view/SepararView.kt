@@ -56,9 +56,9 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
       isExpand = false
       cmbPedido = comboBox("Pedido origem") {
         colspan = 1
-        setItems(Pedido.pedidosTemporarios)
+        setItems(Pedido.pedidos)
         setItemLabelGenerator {
-          "${it.ordnoOrigem.toString()} - ${it.tipoOrigem.descricao}"
+          "${it.ordno} - ${it.tipoOrigem.descricao}"
         }
         isAllowCustomValue = false
         isPreventInvalidInput = false
@@ -286,14 +286,14 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
   }
   
   override val pedido: Pedido?
-    get() = Pedido.findTemp(cmbPedido.value?.ordno ?: 0)
+    get() = Pedido.findPedidos(cmbPedido.value?.ordno ?: 0)
   override val produtosSelecionados: List<ProdutoPedido>
     get() = gridProduto.selectedItems.toList()
   
   override fun updateGrid() {
     val pedidoAtual = pedido
     updateGrid(pedidoAtual)
-    cmbPedido.setItems(Pedido.pedidosTemporarios)
+    cmbPedido.setItems(Pedido.pedidos)
     cmbPedido.value = pedidoAtual
   }
   
