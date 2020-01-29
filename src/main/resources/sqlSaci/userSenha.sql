@@ -7,7 +7,7 @@ SELECT users.no, users.name, login, auxLong1 AS storeno,
                           CHAR(ascii(SUBSTRING(pswd, 6, 1)) + ascii(' ') - ascii(')')),
                           CHAR(ascii(SUBSTRING(pswd, 7, 1)) + ascii(' ') - ascii(')')),
                           CHAR(ascii(SUBSTRING(pswd, 8, 1)) + ascii(' ') - ascii('-'))) AS CHAR),
-              '') AS senha, bits2 AS bitAcesso
+              '') AS senha, bits2 AS bitAcesso, auxStr AS abreviacoes
 FROM users
 WHERE login = :login OR
       :login = 'TODOS'

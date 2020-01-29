@@ -71,7 +71,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
         colspan = 1
         setItems(viewModel.pedidosSeparacao)
         setItemLabelGenerator {
-          "${it.ordnoOrigem.toString()} - ${it.tipoOrigem.descricao}"
+          "${it.ordno} - ${it.tipoOrigem.descricao}"
         }
         isAllowCustomValue = false
         isPreventInvalidInput = false
@@ -222,13 +222,15 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
   }
   
   override val pedido: Pedido?
-    get() = Pedido.findTemp(cmbPedido.value?.ordno ?: 0)
+    get() = Pedido.findPedidos(cmbPedido.value?.ordno ?: 0)
   override val produtos: List<ProdutoPedido>
     get() = dataProviderProdutos.getAll()
   
   override fun updateGrid() {
     val pedidoAtual = pedido
     updateGrid(pedidoAtual)
+    cmbPedido.setItems(viewModel.pedidos())
+    cmbPedido.value = pedidoAtual
   }
   
   override fun novoProduto(pedido: Pedido) {
@@ -238,9 +240,10 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
   }
   
   private fun updateGrid(pedidoNovo: Pedido?) {
+    val userSaci = UserSaci.userAtual
     gridProduto.selectionModel.deselectAll()
     dataProviderProdutos.items.clear()
-    dataProviderProdutos.items.addAll(pedidoNovo?.produtos.orEmpty())
+    dataProviderProdutos.items.addAll(pedidoNovo?.produtos(userSaci).orEmpty())
     dataProviderProdutos.refreshAll()
     pedidoMae.value = pedidoNovo?.ordnoMae
   }

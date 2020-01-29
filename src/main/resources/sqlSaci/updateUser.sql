@@ -1,3 +1,4 @@
 UPDATE users
-SET bits2 = :bitAcesso
+SET bits2  = :bitAcesso,
+    auxStr = :abreviacoes
 WHERE login = :login

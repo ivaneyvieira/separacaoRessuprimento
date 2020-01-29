@@ -37,6 +37,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     script(sql) {q ->
       q.addParameter("login", user.login)
       q.addParameter("bitAcesso", user.bitAcesso())
+      q.addParameter("abreviacoes", user.abreviacoes)
       q.executeUpdate()
     }
   }
@@ -52,27 +53,41 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun proximoNumero(destino: Int): Int {
+  fun proximoNumeroDuplicado(destino: Int): Int {
     val storeno = 1
     val sql = "/sqlSaci/proximoNumero.sql"
-    return query(sql) {q ->
+    val proximoNumero = query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.addParameter("destino", destino)
-      q.executeScalarList(Int::class.java)
-    }.firstOrNull() ?: destino * 1000 + 1
-  }
-  
-  fun proximoNumeroPedidoLoja(destino: Int, abreviacao: String): Int {
-    val storeno = 1
-    val sql = "/sqlSaci/proximoNumeroLoja.sql"
-    val numero = query(sql) {q ->
-      q.addParameter("storeno", storeno)
-      q.addParameter("destino", destino)
-      q.addParameter("abreviacao", "${abreviacao}%")
       q.executeScalarList(Int::class.java)
     }.firstOrNull() ?: 0
-    
-    return if(numero == 0) proximoNumero(destino) else numero
+    return if(proximoNumero == 0)
+      destino * 1000 + 1
+    else proximoNumero
+  }
+  
+  fun proximoNumeroSeparado(destino: Int): Int {
+    val storeno = 1
+    val sql = "/sqlSaci/proximoNumeroSeparado.sql"
+    val proximoNumero = query(sql) {q ->
+      q.addParameter("storeno", storeno)
+      q.addParameter("destino", destino)
+      q.executeScalarList(Int::class.java)
+    }.firstOrNull() ?: 0
+    return if(proximoNumero == 0)
+      destino * 100000000 + 1
+    else proximoNumero
+  }
+  
+  fun proximoNumeroPedidoLoja(destino: Int): Int {
+    val storeno = 1
+    val sql = "/sqlSaci/proximoNumeroLoja.sql"
+    val proximoNumero = query(sql) {q ->
+      q.addParameter("storeno", storeno)
+      q.addParameter("destino", destino)
+      q.executeScalarList(Int::class.java)
+    }.firstOrNull() ?: 0
+    return if(proximoNumero == 0) proximoNumeroSeparado(destino) else proximoNumero
   }
   
   fun listaProduto(ordno: Int): List<ProdutoPedido> {
@@ -188,6 +203,14 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addOptionalParameter("storeno", storeno)
       q.addOptionalParameter("ordno", ordno)
       q.executeAndFetch(Relatorio::class.java)
+    }
+  }
+  
+  fun findAbreviacoes(): List<String> {
+    val sql = "/sqlSaci/findAbreviacoes.sql"
+    val storeno = 1
+    return query(sql) {q ->
+      q.executeScalarList(String::class.java)
     }
   }
   

@@ -13,21 +13,36 @@ class UsuarioViewModel(view: IUsuarioView): ViewModel<IUsuarioView>(view) {
   }
   
   fun add(user: UserSaci): UserSaci? {
-    user.ativo = true
-    saci.updateUser(user)
+    exec {
+      user.ativo = true
+      validaUser(user)
+      saci.updateUser(user)
+    }
     return user
   }
   
+  fun validaUser(user: UserSaci?): UserSaci {
+    saci.findUser(user?.login) ?: throw EViewModelError("Usuário não encontrado no saci")
+    return user ?: throw EViewModelError("Usuário não selecionado")
+  }
+  
   fun update(user: UserSaci?): UserSaci? {
-    user ?: throw EViewModelError("Usuário não selecionado")
-    saci.updateUser(user)
+    exec {
+      saci.updateUser(validaUser(user))
+    }
     return user
   }
   
   fun delete(user: UserSaci?) {
-    user ?: throw EViewModelError("Usuário não selecionado")
-    user.ativo = false
-    saci.updateUser(user)
+    exec {
+      val userValid = validaUser(user)
+      userValid.ativo = false
+      saci.updateUser(userValid)
+    }
+  }
+  
+  fun abreviacoes(): List<String> {
+    return saci.findAbreviacoes()
   }
 }
 

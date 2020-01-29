@@ -4,7 +4,7 @@ import br.com.astrosoft.framework.viewmodel.EViewModelError
 import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
 import br.com.astrosoft.separacao.model.beans.Pedido
-import br.com.astrosoft.separacao.model.enum.ESituacaoPedido.TEMPORARIO
+import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.model.saci
 
 class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
@@ -14,20 +14,18 @@ class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
   
   fun proximoNumero(): Int? {
     val pedidoOrigem = Pedido(1, view.numeroOrigem ?: 0, 0, "")
-    return if(pedidoOrigem.tipoPedido == TEMPORARIO) {
+    return run {
       val loja = pedidoOrigem.storenoDestino
-      saci.proximoNumero(loja)
+      saci.proximoNumeroDuplicado(loja)
     }
-    else null
   }
   
   fun duplicar() = exec {
-    val pedidoOrigem = Pedido.findTemp(view.numeroOrigem) ?: throw EViewModelError("Pedido de origem não encontrado")
-    val pedidoDestino = Pedido.findTemp(view.numeroDestino) ?: Pedido(1, view.numeroDestino ?: 0, 0, "" +
-                                                                                                     "")
+    val userSaci = UserSaci.userAtual
+    val pedidoOrigem = Pedido.findPedidos(view.numeroOrigem) ?: throw EViewModelError("Pedido de origem não encontrado")
+    val pedidoDestino = Pedido.findPedidos(view.numeroDestino) ?: Pedido(1, view.numeroDestino ?: 0, 0, "")
     when {
-      pedidoDestino.isTemporario              -> throw EViewModelError("O pedido destino não é válido")
-      pedidoDestino.isNotEmpty                -> throw EViewModelError("O pedido de destino já existe")
+      pedidoDestino.isNotEmpty(userSaci)      -> throw EViewModelError("O pedido de destino já existe")
       !pedidoDestino.compativel(pedidoOrigem) -> throw EViewModelError("O pedido de destino " +
                                                                        "não é compatível com " +
                                                                        "o pedido de Origem")
@@ -38,6 +36,11 @@ class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
       }
     }
     view.showInformation("Pedido duplicado com sucesso. Novo pedido: ${pedidoDestino.ordno}")
+  }
+  
+  fun pedidos(): List<Pedido> {
+    val user = UserSaci.userAtual
+    return Pedido.pedidos(user)
   }
 }
 

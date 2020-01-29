@@ -6,8 +6,10 @@ import br.com.astrosoft.framework.util.execCommand
 import br.com.astrosoft.framework.viewmodel.EViewModelError
 import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
+import br.com.astrosoft.separacao.model.QuerySaci
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
+import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem.SEPARADO
 import br.com.astrosoft.separacao.model.saci
 
@@ -16,7 +18,7 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
     val pedido = view.pedido ?: throw EViewModelError("Pedido inválido")
     val storenoDestino = pedido.storenoDestino
     val ordno = pedido.ordno
-    val proximoNumero = saci.proximoNumero(storenoDestino)
+    val proximoNumero = proximoNumero() ?: throw EViewModelError("Próximo número não encontrado")
     val produtosSelecionados = view.produtosSelecionados
     if(produtosSelecionados.isEmpty())
       throw EViewModelError("Não há nenhum produto selecionado")
@@ -36,20 +38,25 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
   }
   
   private fun print(ordno: Int) {
-    //if(!QuerySaci.test)
-    try {
-      RelatorioText().print("RESSUPRIMENTO", saci.listaRelatorio(ordno))
-    } catch(e: ECupsPrinter) {
-      view.showError(e.message ?: "Erro de impressão")
-      Ssh("172.20.47.1", "ivaney", "ivaney").shell {
-        execCommand("/u/saci/shells/printRessuprimento.sh $ordno")
+    if(!QuerySaci.test)
+      try {
+        RelatorioText().print("RESSUPRIMENTO", saci.listaRelatorio(ordno))
+      } catch(e: ECupsPrinter) {
+        view.showError(e.message ?: "Erro de impressão")
+        Ssh("172.20.47.1", "ivaney", "ivaney").shell {
+          execCommand("/u/saci/shells/printRessuprimento.sh $ordno")
+        }
       }
-    }
   }
   
   fun proximoNumero(): Int? {
     val storenoDestino = view.pedido?.storenoDestino ?: return null
-    return saci.proximoNumero(storenoDestino)
+    return saci.proximoNumeroSeparado(storenoDestino)
+  }
+  
+  fun pedidos(): List<Pedido> {
+    val user = UserSaci.userAtual
+    return Pedido.pedidos(user)
   }
 }
 

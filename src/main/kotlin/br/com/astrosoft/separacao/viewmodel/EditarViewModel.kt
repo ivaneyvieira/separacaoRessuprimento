@@ -8,6 +8,7 @@ import br.com.astrosoft.framework.viewmodel.ViewModel
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.Produto
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
+import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem.LOJA
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem.SEPARADO
 import br.com.astrosoft.separacao.model.saci
@@ -16,7 +17,7 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
   fun processar() = exec {
     val pedido = view.pedido ?: throw EViewModelError("Nenum pedido selecionado")
     val produtos = view.produtos
-    val proximoNumero = saci.proximoNumeroPedidoLoja(pedido.storenoDestino, pedido.abreviacoesLoja.firstOrNull() ?: "")
+    val proximoNumero = saci.proximoNumeroPedidoLoja(pedido.storenoDestino)
     produtos.forEach {produto ->
       if(produto.estoqueLoja == true) {
         saci.atualizarQuantidade(ordno = pedido.ordno,
@@ -53,13 +54,14 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
   }
   
   fun salvaProduto(produto: ProdutoDlg) = exec {
+    val userSaci = UserSaci.userAtual
     produto.validadialog()
     val pedido = view.pedido ?: throw EViewModelError("Pedido não selecionado")
     val prdno = produto.codigo.lpad(16, " ")
     val grade = produto.grade
     val localizacao = produto.localizacao
     val qtty = produto.qtty ?: throw EViewModelError("Quantidade não informada")
-    if(pedido.produtos.any {it.prdno == produto.codigo && it.grade == produto.grade})
+    if(pedido.produtos(userSaci).any {it.prdno == produto.codigo && it.grade == produto.grade})
       throw EViewModelError("O produto já está adicionado")
     saci.adicionarProduto(pedido, prdno, grade, qtty, localizacao)
     view.updateGrid()
@@ -77,8 +79,13 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
     view.updateGrid()
   }
   
+  fun pedidos(): List<Pedido> {
+    val user = UserSaci.userAtual
+    return Pedido.pedidos(user)
+  }
+  
   val pedidosSeparacao: List<Pedido>
-    get() = Pedido.pedidosTemporarios.filter {
+    get() = pedidos().filter {
       it.tipoOrigem == SEPARADO || it.tipoOrigem == LOJA
     }
 }
@@ -99,13 +106,14 @@ class ProdutoDlg(val pedido: Pedido) {
   var produtos: List<Produto> = emptyList()
   
   fun validadialog() {
+    val userSaci = UserSaci.userAtual
     if(produtos.isEmpty())
       throw EViewModelError("Produto inválido")
     val quantidade = qtty ?: 0
     if(quantidade <= 0)
       throw EViewModelError("Quantidade inválida")
     val abreviacao = localizacao.mid(0, 4)
-    if(!pedido.abreviacoes.contains(abreviacao))
+    if(!pedido.abreviacoes(userSaci).contains(abreviacao))
       throw EViewModelError("A localização $abreviacao não é compativel")
   }
 }

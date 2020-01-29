@@ -29,8 +29,8 @@ class DuplicarView: ViewLayout<DuplicarViewModel>(), IDuplicarView {
     form("Duplicar") {
       cmbPedidoOrigem = comboBox("Pedido origem") {
         colspan = 1
-        setItems(Pedido.pedidosTemporarios)
-        setItemLabelGenerator {it.ordnoOrigem.toString()}
+        setItems(viewModel.pedidos())
+        setItemLabelGenerator {it.ordno.toString()}
         isAllowCustomValue = false
         isPreventInvalidInput = false
       }
@@ -60,9 +60,11 @@ class DuplicarView: ViewLayout<DuplicarViewModel>(), IDuplicarView {
   }
   
   override var numeroOrigem: Int?
-    get() = cmbPedidoOrigem.value.ordnoOrigem
+    get() = cmbPedidoOrigem.value.ordno
     set(value) {
-      cmbPedidoOrigem.value = Pedido.pedidosBackup.firstOrNull {it.storenoDestino == value}
+      cmbPedidoOrigem.value =
+        viewModel.pedidos()
+          .firstOrNull {it.storenoDestino == value}
     }
   override var numeroDestino: Int?
     get() = edtPedidoDestino.value

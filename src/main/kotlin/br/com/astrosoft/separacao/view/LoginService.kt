@@ -8,8 +8,6 @@ import com.vaadin.flow.server.VaadinSession
 
 object LoginService {
   fun login(loginInfo: LoginInfo) {
-    // VaadinSession.getCurrent().session.invalidate()
-    // UI.getCurrent().page.reload()
     SessionUitl.loginInfo = loginInfo
     RegistryUserInfo.loginInfoProvider = SessionLoginInfoProvider()
   }
@@ -17,13 +15,6 @@ object LoginService {
   fun logout() {
     SessionUitl.loginInfo = null
     RegistryUserInfo.loginInfoProvider = null
-    /*
-    VaadinSession.getCurrent()
-      .session.invalidate()
-    UI.getCurrent()
-      .page.reload()
-      *
-     */
   }
   
   fun isLogged(): Boolean {
