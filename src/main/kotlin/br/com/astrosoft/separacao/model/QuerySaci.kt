@@ -78,13 +78,12 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     else proximoNumero
   }
   
-  fun proximoNumeroPedidoLoja(destino: Int, abreviacao: String): Int {
+  fun proximoNumeroPedidoLoja(destino: Int): Int {
     val storeno = 1
     val sql = "/sqlSaci/proximoNumeroLoja.sql"
     val proximoNumero = query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.addParameter("destino", destino)
-      q.addParameter("abreviacao", "${abreviacao}%")
       q.executeScalarList(Int::class.java)
     }.firstOrNull() ?: 0
     return if(proximoNumero == 0) proximoNumeroSeparado(destino) else proximoNumero

@@ -229,6 +229,8 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
   override fun updateGrid() {
     val pedidoAtual = pedido
     updateGrid(pedidoAtual)
+    cmbPedido.setItems(Pedido.pedidos)
+    cmbPedido.value = pedidoAtual
   }
   
   override fun novoProduto(pedido: Pedido) {

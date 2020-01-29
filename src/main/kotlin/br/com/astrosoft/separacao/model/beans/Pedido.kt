@@ -24,13 +24,6 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
       .entries
       .sortedBy { -it.value.size}
       .map {it.key}
-  val abreviacoesLoja
-    get() = produtos
-      .filter {it.estoqueLoja == true}
-      .groupBy {it.localizacao.mid(0, 4)}
-      .entries
-      .sortedBy { -it.value.size}
-      .map {it.key}
   
   companion object {
     fun findPedidos(numeroOrigem: Int?): Pedido? {
