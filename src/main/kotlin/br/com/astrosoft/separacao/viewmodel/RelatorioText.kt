@@ -3,6 +3,7 @@ package br.com.astrosoft.separacao.viewmodel
 import br.com.astrosoft.framework.util.format
 import br.com.astrosoft.framework.util.lpad
 import br.com.astrosoft.framework.util.mid
+import br.com.astrosoft.framework.viewmodel.PrintText
 import br.com.astrosoft.separacao.model.beans.Relatorio
 import java.time.LocalDate
 import java.time.LocalTime

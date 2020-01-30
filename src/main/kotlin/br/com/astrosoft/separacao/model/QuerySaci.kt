@@ -12,6 +12,7 @@ import br.com.astrosoft.separacao.model.enum.ETipoOrigem
 
 class QuerySaci: QueryDB(driver, url, username, password) {
   fun findUser(login: String?): UserSaci? {
+    login ?: return null
     val sql = "/sqlSaci/userSenha.sql"
     return query(sql) {q ->
       q.addParameter("login", login)
