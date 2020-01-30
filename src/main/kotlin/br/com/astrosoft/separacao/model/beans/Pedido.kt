@@ -3,6 +3,7 @@ package br.com.astrosoft.separacao.model.beans
 import br.com.astrosoft.framework.util.mid
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem.DUPLICADO
+import br.com.astrosoft.separacao.model.enum.ETipoOrigem.SEPARADO
 import br.com.astrosoft.separacao.model.saci
 
 data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val tipo: String) {
@@ -35,9 +36,32 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
       return pedidos(user).firstOrNull {it.ordno == numeroOrigem}
     }
     
+    fun proximoNumeroSeparado(storenoDestino: Int): Int {
+      return if(storenoDestino == 0) 0
+      else saci.proximoNumeroSeparado(storenoDestino)
+    }
+    
+    fun atualizarQuantidade(ordno: Int, proximoNumero: Int, produto: ProdutoPedido, tipo: ETipoOrigem) {
+      saci.atualizarQuantidade(ordno, proximoNumero, produto.prdno, produto.grade,
+                               produto.localizacao, produto.qttyEdit, SEPARADO)
+    }
+    
+    fun retornaSaldo(pedido: Pedido, produto: ProdutoPedido) {
+      saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
+                        ordno = pedido.ordno,
+                        codigo = produto.prdno,
+                        grade = produto.grade,
+                        qttyEdit = produto.qttyEdit,
+                        localizacao = produto.localizacao)
+    }
+    
     fun pedidos(user: UserSaci?) = saci.listaPedido().filter {it.storenoDestino in 2..5}
       .filter {it.isNotEmpty(user)}
       .sortedWith(compareBy(Pedido::ordno, Pedido::ordno))
+    
+    fun listaRelatorio(ordno: Int): List<Relatorio> {
+      return saci.listaRelatorio(ordno)
+    }
   }
   
   private fun List<ProdutoPedido>.filtraLocalizacoes(): List<ProdutoPedido> {
