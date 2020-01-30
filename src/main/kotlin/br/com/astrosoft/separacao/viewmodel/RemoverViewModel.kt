@@ -20,7 +20,6 @@ class RemoverViewModel(view: IRemoverView): ViewModel<IRemoverView>(view) {
   }
   
   fun pedidos(): List<Pedido> {
-    val user = UserSaci.userAtual
     return Pedido.pedidos()
   }
 }
