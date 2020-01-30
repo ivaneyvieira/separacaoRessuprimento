@@ -54,13 +54,41 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
                         qttyEdit = produto.qttyEdit,
                         localizacao = produto.localizacao)
     }
-    
+  
     fun pedidos(user: UserSaci?) = saci.listaPedido().filter {it.storenoDestino in 2..5}
       .filter {it.isNotEmpty(user)}
       .sortedWith(compareBy(Pedido::ordno, Pedido::ordno))
-    
+  
     fun listaRelatorio(ordno: Int): List<Relatorio> {
       return saci.listaRelatorio(ordno)
+    }
+  
+    fun proximoNumeroPedidoLoja(storenoDestino: Int): Int {
+      return saci.proximoNumeroPedidoLoja(storenoDestino)
+    }
+  
+    fun proximoNumeroDuplicado(storeno: Int): Int {
+      return saci.proximoNumeroDuplicado(storeno)
+    }
+  
+    fun duplicar(pedidoOrigem: Pedido, pedidoDestino: Pedido) {
+      saci.duplicar(pedidoOrigem.ordno, pedidoDestino.ordno)
+    }
+  
+    fun removePedido(pedidoIncial: Pedido, pedidoFinal: Pedido) {
+      saci.removePedido(pedidoIncial.ordno, pedidoFinal.ordno)
+    }
+  
+    fun findProduto(prdno: String): List<Produto> {
+      return saci.findProduto(prdno)
+    }
+  
+    fun adicionarProduto(pedido: Pedido, codigo: String, grade: String, qtty: Int, localizacao: String) {
+      saci.adicionarProduto(pedido, codigo, grade, qtty, localizacao)
+    }
+  
+    fun findAbreviacoes(): List<String> {
+      return saci.findAbreviacoes()
     }
   }
   

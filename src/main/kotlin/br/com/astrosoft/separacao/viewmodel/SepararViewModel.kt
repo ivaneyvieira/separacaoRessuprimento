@@ -3,9 +3,9 @@ package br.com.astrosoft.separacao.viewmodel
 import br.com.astrosoft.framework.util.ECupsPrinter
 import br.com.astrosoft.framework.util.Ssh
 import br.com.astrosoft.framework.util.execCommand
-import br.com.astrosoft.framework.viewmodel.EViewModelError
 import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
+import br.com.astrosoft.framework.viewmodel.fail
 import br.com.astrosoft.separacao.model.QuerySaci
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
@@ -14,13 +14,13 @@ import br.com.astrosoft.separacao.model.enum.ETipoOrigem.SEPARADO
 
 class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
   fun separar() = exec {
-    val pedido = view.pedido ?: throw EViewModelError("Pedido inválido")
+    val pedido = view.pedido ?: fail("Pedido inválido")
     val storenoDestino = pedido.storenoDestino
     val ordno = pedido.ordno
     val proximoNumero = Pedido.proximoNumeroSeparado(storenoDestino)
     val produtosSelecionados = view.produtosSelecionados
     if(produtosSelecionados.isEmpty())
-      throw EViewModelError("Não há nenhum produto selecionado")
+      fail("Não há nenhum produto selecionado")
     else
       produtosSelecionados.forEach {produto ->
         Pedido.atualizarQuantidade(ordno, proximoNumero, produto, SEPARADO)
@@ -37,7 +37,7 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
   }
   
   fun imprimir() = exec {
-    val pedido = view.pedido ?: throw EViewModelError("Pedido inválido")
+    val pedido = view.pedido ?: fail("Pedido inválido")
     print(pedido.ordno)
   }
   

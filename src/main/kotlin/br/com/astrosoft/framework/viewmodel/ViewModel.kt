@@ -6,12 +6,8 @@ open class ViewModel<V: IView>(val view: V) {
   fun exec(block: () -> Unit) {
     try {
       block()
-    } catch(e: EViewModelError) {
+    } catch(e: EViewModelFail) {
       view.showError(e.message ?: "Erro generico")
-      log?.error(e.toString())
-      throw e
-    } catch(e: EViewModelWarning) {
-      view.showWarning(e.message ?: "Aviso generico")
       log?.error(e.toString())
       throw e
     }
@@ -19,6 +15,10 @@ open class ViewModel<V: IView>(val view: V) {
   
   open fun init() {
   }
+}
+
+fun fail(message: String): Nothing {
+  throw EViewModelFail(message)
 }
 
 interface IView {

@@ -1,40 +1,30 @@
 package br.com.astrosoft.separacao.viewmodel
 
-import br.com.astrosoft.framework.util.lpad
 import br.com.astrosoft.framework.util.mid
-import br.com.astrosoft.framework.viewmodel.EViewModelError
 import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
+import br.com.astrosoft.framework.viewmodel.fail
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.Produto
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
 import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem.LOJA
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem.SEPARADO
-import br.com.astrosoft.separacao.model.saci
 
 class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
   fun processar() = exec {
-    val pedido = view.pedido ?: throw EViewModelError("Nenum pedido selecionado")
+    val pedido = view.pedido ?: fail("Nenum pedido selecionado")
     val produtos = view.produtos
-    val proximoNumero = saci.proximoNumeroPedidoLoja(pedido.storenoDestino)
+    val proximoNumero = Pedido.proximoNumeroPedidoLoja(pedido.storenoDestino)
     produtos.forEach {produto ->
       if(produto.estoqueLoja == true) {
-        saci.atualizarQuantidade(ordno = pedido.ordno,
-                                 ordnoNovo = proximoNumero,
-                                 codigo = produto.prdno,
-                                 grade = produto.grade,
-                                 localizacao = produto.localizacao,
-                                 qtty = produto.qttyEdit,
-                                 tipo = LOJA)
+        Pedido.atualizarQuantidade(ordno = pedido.ordno,
+                                   proximoNumero = proximoNumero,
+                                   produto = produto,
+                                   tipo = LOJA)
       }
       else {
-        saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
-                          ordno = pedido.ordno,
-                          codigo = produto.prdno,
-                          grade = produto.grade,
-                          qttyEdit = produto.qttyEdit,
-                          localizacao = produto.localizacao)
+        Pedido.retornaSaldo(pedido, produto)
       }
     }
     view.updateGrid()
@@ -50,32 +40,28 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
   
   fun findProduto(prdno: String?): List<Produto> {
     prdno ?: return emptyList()
-    return saci.findProduto(prdno)
+    return Pedido.findProduto(prdno)
   }
   
   fun salvaProduto(produto: ProdutoDlg) = exec {
     val userSaci = UserSaci.userAtual
     produto.validadialog()
-    val pedido = view.pedido ?: throw EViewModelError("Pedido não selecionado")
-    val prdno = produto.codigo.lpad(16, " ")
+    val pedido = view.pedido ?: fail("Pedido não selecionado")
+    val codigo = produto.codigo
     val grade = produto.grade
     val localizacao = produto.localizacao
-    val qtty = produto.qtty ?: throw EViewModelError("Quantidade não informada")
+    val qtty = produto.qtty ?: fail("Quantidade não informada")
     if(pedido.produtos(userSaci).any {it.prdno == produto.codigo && it.grade == produto.grade})
-      throw EViewModelError("O produto já está adicionado")
-    saci.adicionarProduto(pedido, prdno, grade, qtty, localizacao)
+      fail("O produto já está adicionado")
+    Pedido.adicionarProduto(pedido, codigo, grade, qtty, localizacao)
     view.updateGrid()
   }
   
   fun removePedido(produto: ProdutoPedido?) = exec {
-    val pedido = view.pedido ?: throw EViewModelError("Nenum pedido selecionado")
-    produto ?: throw EViewModelError("Produto não selecionado")
-    saci.retornaSaldo(ordnoMae = pedido.ordnoMae,
-                      ordno = pedido.ordno,
-                      codigo = produto.prdno,
-                      grade = produto.grade,
-                      qttyEdit = 0,
-                      localizacao = produto.localizacao)
+    val pedido = view.pedido ?: fail("Nenum pedido selecionado")
+    produto ?: fail("Produto não selecionado")
+    Pedido.retornaSaldo(pedido, produto.apply {qttyEdit = 0})
+  
     view.updateGrid()
   }
   
@@ -108,12 +94,12 @@ class ProdutoDlg(val pedido: Pedido) {
   fun validadialog() {
     val userSaci = UserSaci.userAtual
     if(produtos.isEmpty())
-      throw EViewModelError("Produto inválido")
+      fail("Produto inválido")
     val quantidade = qtty ?: 0
     if(quantidade <= 0)
-      throw EViewModelError("Quantidade inválida")
+      fail("Quantidade inválida")
     val abreviacao = localizacao.mid(0, 4)
     if(!pedido.abreviacoes(userSaci).contains(abreviacao))
-      throw EViewModelError("A localização $abreviacao não é compativel")
+      fail("A localização $abreviacao não é compativel")
   }
 }
