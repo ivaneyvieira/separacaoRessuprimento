@@ -21,7 +21,7 @@ import com.vaadin.flow.theme.lumo.Lumo
 class LoginView: VerticalLayout(), BeforeEnterObserver {
   private val appName = RegistryUserInfo.appName
   private val version = "Verssão ${RegistryUserInfo.version}"
-  private val loginForm = LoginFormApp(appName, version) {user ->
+  private val loginForm = LoginFormApp(appName, version) {
     SeparacaoLayout.updateLayout()
     navigateToView<LoginView>()
   }

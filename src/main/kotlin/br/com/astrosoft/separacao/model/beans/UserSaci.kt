@@ -70,5 +70,18 @@ class UserSaci() {
   companion object {
     val userAtual
       get() = saci.findUser(RegistryUserInfo.usuario)
+  
+    fun findAll(): List<UserSaci>? {
+      return saci.findAllUser()
+        .filter {it.ativo}
+    }
+  
+    fun updateUser(user: UserSaci) {
+      saci.updateUser(user)
+    }
+  
+    fun findUser(login: String?): UserSaci? {
+      return saci.findUser(login)
+    }
   }
 }
