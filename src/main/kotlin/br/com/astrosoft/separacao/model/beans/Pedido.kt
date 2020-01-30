@@ -54,11 +54,14 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
                         qttyEdit = produto.qttyEdit,
                         localizacao = produto.localizacao)
     }
-    
+  
     fun pedidos(user: UserSaci?) = saci.listaPedido().filter {it.storenoDestino in 2..5}
       .filter {it.isNotEmpty(user)}
       .sortedWith(compareBy(Pedido::ordno, Pedido::ordno))
-    
+  
+    fun pedidos() = saci.listaPedido().filter {it.storenoDestino in 2..5}
+      .sortedWith(compareBy(Pedido::ordno, Pedido::ordno))
+  
     fun listaRelatorio(ordno: Int): List<Relatorio> {
       return saci.listaRelatorio(ordno)
     }

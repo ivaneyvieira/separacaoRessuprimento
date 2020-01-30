@@ -39,8 +39,7 @@ class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
   }
   
   fun pedidos(): List<Pedido> {
-    val user = UserSaci.userAtual
-    return Pedido.pedidos(user)
+    return Pedido.pedidos()
   }
 }
 
