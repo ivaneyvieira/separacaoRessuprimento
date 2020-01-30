@@ -57,12 +57,13 @@ class UserSaci() {
   
   fun isLocalizacaoCompativel(localizacao: String): Boolean {
     return when {
-      admin  -> true
-      editar -> {
+      localizacao == "" -> true
+      admin             -> true
+      editar            -> {
         val abreviacao = localizacao.mid(0, 4)
         abreviacao in listAbreviacoes
       }
-      else   -> true
+      else              -> true
     }
   }
   

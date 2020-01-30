@@ -11,25 +11,29 @@ import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
 import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem.SEPARADO
-import br.com.astrosoft.separacao.model.saci
 
 class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
   fun separar() = exec {
     val pedido = view.pedido ?: throw EViewModelError("Pedido inválido")
     val storenoDestino = pedido.storenoDestino
     val ordno = pedido.ordno
-    val proximoNumero = proximoNumero() ?: throw EViewModelError("Próximo número não encontrado")
+    val proximoNumero = Pedido.proximoNumeroSeparado(storenoDestino)
     val produtosSelecionados = view.produtosSelecionados
     if(produtosSelecionados.isEmpty())
       throw EViewModelError("Não há nenhum produto selecionado")
     else
       produtosSelecionados.forEach {produto ->
-        saci.atualizarQuantidade(ordno, proximoNumero, produto.prdno, produto.grade,
-                                 produto.localizacao, produto.qttyEdit, SEPARADO)
+        Pedido.atualizarQuantidade(ordno, proximoNumero, produto, SEPARADO)
       }
     print(proximoNumero)
     view.showInformation("Foi gerado o pedido número $proximoNumero")
     view.updateGrid()
+  }
+  
+  fun proximoNumero(): Int {
+    val pedido = view.pedido
+    val storenoDestino = pedido?.storenoDestino ?: 0
+    return Pedido.proximoNumeroSeparado(storenoDestino)
   }
   
   fun imprimir() = exec {
@@ -40,18 +44,13 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
   private fun print(ordno: Int) {
     if(!QuerySaci.test)
       try {
-        RelatorioText().print("RESSUPRIMENTO", saci.listaRelatorio(ordno))
+        RelatorioText().print("RESSUPRIMENTO", Pedido.listaRelatorio(ordno))
       } catch(e: ECupsPrinter) {
         view.showError(e.message ?: "Erro de impressão")
         Ssh("172.20.47.1", "ivaney", "ivaney").shell {
           execCommand("/u/saci/shells/printRessuprimento.sh $ordno")
         }
       }
-  }
-  
-  fun proximoNumero(): Int? {
-    val storenoDestino = view.pedido?.storenoDestino ?: return null
-    return saci.proximoNumeroSeparado(storenoDestino)
   }
   
   fun pedidos(): List<Pedido> {
