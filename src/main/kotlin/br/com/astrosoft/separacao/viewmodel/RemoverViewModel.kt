@@ -4,7 +4,6 @@ import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
 import br.com.astrosoft.framework.viewmodel.fail
 import br.com.astrosoft.separacao.model.beans.Pedido
-import br.com.astrosoft.separacao.model.beans.UserSaci
 
 class RemoverViewModel(view: IRemoverView): ViewModel<IRemoverView>(view) {
   fun remover() {
@@ -20,8 +19,7 @@ class RemoverViewModel(view: IRemoverView): ViewModel<IRemoverView>(view) {
   }
   
   fun pedidos(): List<Pedido> {
-    val user = UserSaci.userAtual
-    return Pedido.pedidos(user)
+    return Pedido.pedidos()
   }
 }
 
