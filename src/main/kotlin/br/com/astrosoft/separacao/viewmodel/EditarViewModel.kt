@@ -15,21 +15,28 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
   fun processar() = exec {
     val pedido = view.pedido ?: fail("Nenum pedido selecionado")
     val produtos = view.produtos
-    val proximoNumero = Pedido.proximoNumeroPedidoLoja(pedido.storenoDestino)
+    val setPedidosLoja = mutableSetOf<PedidosLojaAbreviacao>()
+    
     produtos.forEach {produto ->
       if(produto.estoqueLoja == true) {
+        val abreviacao = produto.localizacao.mid(0, 4)
+        val proximoNumero = Pedido.proximoNumeroPedidoLoja(pedido.storenoDestino, abreviacao)
         Pedido.atualizarQuantidade(ordno = pedido.ordno,
                                    proximoNumero = proximoNumero,
                                    produto = produto,
                                    tipo = LOJA)
+        setPedidosLoja.add(PedidosLojaAbreviacao(proximoNumero, abreviacao))
       }
       else {
         Pedido.retornaSaldo(pedido, produto)
       }
     }
+    setPedidosLoja.forEach {pedidosLojaAbreviacao ->
+      pedidosLojaAbreviacao.run {
+        view.showInformation("Foi criado o pedido para o estoque de loja número $numero ($abreviacao)")
+      }
+    }
     view.updateGrid()
-    if(produtos.any {it.estoqueLoja == true})
-      view.showInformation("Foi criado o pedido para o estode de loja número $proximoNumero")
   }
   
   fun novoProduto() = exec {
@@ -61,7 +68,7 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
     val pedido = view.pedido ?: fail("Nenum pedido selecionado")
     produto ?: fail("Produto não selecionado")
     Pedido.retornaSaldo(pedido, produto.apply {qttyEdit = 0})
-  
+    
     view.updateGrid()
   }
   
@@ -103,3 +110,5 @@ class ProdutoDlg(val pedido: Pedido) {
       fail("A localização $abreviacao não é compativel")
   }
 }
+
+data class PedidosLojaAbreviacao(val numero: Int, val abreviacao: String)
