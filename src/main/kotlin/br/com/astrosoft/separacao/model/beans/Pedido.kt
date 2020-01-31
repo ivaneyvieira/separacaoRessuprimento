@@ -43,7 +43,7 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
     
     fun atualizarQuantidade(ordno: Int, proximoNumero: Int, produto: ProdutoPedido, tipo: ETipoOrigem) {
       saci.atualizarQuantidade(ordno, proximoNumero, produto.prdno, produto.grade,
-                               produto.localizacao, produto.qttyEdit, SEPARADO)
+                               produto.localizacao, produto.qttyEdit, tipo)
     }
     
     fun retornaSaldo(pedido: Pedido, produto: ProdutoPedido) {
@@ -66,8 +66,8 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
       return saci.listaRelatorio(ordno)
     }
   
-    fun proximoNumeroPedidoLoja(storenoDestino: Int): Int {
-      return saci.proximoNumeroPedidoLoja(storenoDestino)
+    fun proximoNumeroPedidoLoja(storenoDestino: Int, abreviacao : String): Int {
+      return saci.proximoNumeroPedidoLoja(storenoDestino, abreviacao)
     }
   
     fun proximoNumeroDuplicado(storeno: Int): Int {
