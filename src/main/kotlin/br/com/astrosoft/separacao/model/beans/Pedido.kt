@@ -3,7 +3,6 @@ package br.com.astrosoft.separacao.model.beans
 import br.com.astrosoft.framework.util.mid
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem.DUPLICADO
-import br.com.astrosoft.separacao.model.enum.ETipoOrigem.SEPARADO
 import br.com.astrosoft.separacao.model.saci
 
 data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val tipo: String) {

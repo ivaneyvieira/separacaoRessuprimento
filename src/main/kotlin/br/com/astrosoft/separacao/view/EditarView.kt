@@ -67,7 +67,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
   init {
     form("Editar pedidos") {
       isExpand = false
-      cmbPedido = comboBox<Pedido>("Numero do pedido") {
+      cmbPedido = comboBox("Numero do pedido") {
         colspan = 1
         setItems(viewModel.pedidosSeparacao)
         setItemLabelGenerator {
