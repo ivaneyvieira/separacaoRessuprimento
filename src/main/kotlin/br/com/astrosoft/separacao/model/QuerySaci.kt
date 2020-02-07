@@ -68,10 +68,8 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   }
   
   fun proximoNumeroSeparado(destino: Int): Int {
-    val storeno = 1
     val sql = "/sqlSaci/proximoNumeroSeparado.sql"
     val proximoNumero = query(sql) {q ->
-      q.addParameter("storeno", storeno)
       q.addParameter("destino", destino)
       q.executeScalarList(Int::class.java)
     }.firstOrNull() ?: 0
@@ -80,7 +78,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     else proximoNumero
   }
   
-  fun proximoNumeroPedidoLoja(destino: Int, abreviacao : String): Int {
+  fun proximoNumeroPedidoLoja(destino: Int, abreviacao: String): Int {
     val storeno = 1
     val sql = "/sqlSaci/proximoNumeroLoja.sql"
     val proximoNumero = query(sql) {q ->
@@ -90,6 +88,14 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.executeScalarList(Int::class.java)
     }.firstOrNull() ?: 0
     return if(proximoNumero == 0) proximoNumeroSeparado(destino) else proximoNumero
+  }
+  
+  fun insertNewNumber(no: Int) {
+    val sql = "/sqlSaci/insertNewNumber.sql"
+    script(sql) {q ->
+      q.addParameter("no", no)
+      q.executeUpdate()
+    }
   }
   
   fun listaProduto(ordno: Int): List<ProdutoPedido> {
@@ -155,6 +161,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addOptionalParameter("qtty", qtty)
       q.executeUpdate()
     }
+    insertNewNumber(ordnoNovo)
   }
   
   fun retornaSaldo(ordnoMae: Int, ordno: Int, codigo: String, grade: String,
