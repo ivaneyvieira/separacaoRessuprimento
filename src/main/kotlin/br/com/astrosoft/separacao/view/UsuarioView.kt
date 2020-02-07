@@ -108,7 +108,7 @@ class UsuarioView: ViewLayout<UsuarioViewModel>(), IUsuarioView {
     return crud
   }
   
-  private fun UsuarioView.setOperationd(crud: GridCrud<UserSaci>) {
+  private fun setOperationd(crud: GridCrud<UserSaci>) {
     crud.setOperations(
       {viewModel.findAll()},
       {user: UserSaci -> viewModel.add(user)},
@@ -126,7 +126,7 @@ class UsuarioView: ViewLayout<UsuarioViewModel>(), IUsuarioView {
   }
 }
 
-class UserCrudFormFactory(val viewModel: UsuarioViewModel): AbstractCrudFormFactory<UserSaci>() {
+class UserCrudFormFactory(private val viewModel: UsuarioViewModel): AbstractCrudFormFactory<UserSaci>() {
   override fun buildNewForm(operation: CrudOperation?,
                             domainObject: UserSaci?,
                             readOnly: Boolean,

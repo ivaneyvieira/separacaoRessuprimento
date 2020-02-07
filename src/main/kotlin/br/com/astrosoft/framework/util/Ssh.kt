@@ -6,11 +6,11 @@ import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
 import java.util.*
 
-class Ssh(val host: String, val user: String, val password: String, val port: Int = 22) {
+class Ssh(private val host: String, val user: String, private val password: String, private val port: Int = 22) {
   private val config = Properties()
   
   fun shell(exec: Session.() -> Unit) {
-    conectSession() {session ->
+    conectSession {session ->
       session.exec()
     }
   }
@@ -55,7 +55,7 @@ private fun getOutput(channel: Channel): String {
       stringBuild.append(tmp)
     }
     if(channel.isClosed) {
-      System.out.println("exit-status: " + channel.getExitStatus())
+      println("exit-status: " + channel.exitStatus)
       break
     }
     try {

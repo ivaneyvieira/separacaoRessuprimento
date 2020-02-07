@@ -2,7 +2,7 @@ package br.com.astrosoft.separacao.view
 
 import br.com.astrosoft.framework.model.RegistryUserInfo
 import com.github.appreciated.app.layout.behaviour.AppLayout
-import com.github.appreciated.app.layout.behaviour.Behaviour
+import com.github.appreciated.app.layout.behaviour.Behaviour.LEFT_RESPONSIVE
 import com.github.appreciated.app.layout.builder.AppLayoutBuilder
 import com.github.appreciated.app.layout.component.appbar.AppBarBuilder
 import com.github.appreciated.app.layout.component.menu.left.builder.LeftAppMenuBuilder
@@ -15,6 +15,7 @@ import com.github.mvysny.karibudsl.v10.navigateToView
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.html.Hr
 import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.icon.VaadinIcon.CLOSE_CIRCLE
 import com.vaadin.flow.component.icon.VaadinIcon.COPY
 import com.vaadin.flow.component.icon.VaadinIcon.EDIT
 import com.vaadin.flow.component.icon.VaadinIcon.ERASER
@@ -42,7 +43,7 @@ class SeparacaoLayout: AppLayoutRouterLayout() {
     init(atualizaMenu())
   }
   
-  fun atualizaMenu(): AppLayout? {
+  private fun atualizaMenu(): AppLayout? {
     /*
      val appMenu = headerMenu(RegistryUserInfo.commpany, "Versão ${RegistryUserInfo.version}")
        .addMenu("Duplicar", COPY, DuplicarView::class, usuario?.duplicar)
@@ -58,15 +59,14 @@ class SeparacaoLayout: AppLayoutRouterLayout() {
   }
   
   private fun appLayout(title: String, appMenu: Component): AppLayout {
-    val appLayout = AppLayoutBuilder.get(Behaviour.LEFT_RESPONSIVE)
+    return AppLayoutBuilder.get(LEFT_RESPONSIVE)
       .withTitle(title)
-      .withAppBar(AppBarBuilder.get().add(TopClickableItem(null, VaadinIcon.CLOSE_CIRCLE.create()) {
+      .withAppBar(AppBarBuilder.get().add(TopClickableItem(null, CLOSE_CIRCLE.create()) {
         LoginService.logout()
         navigateToView(DefaultView::class)
       }).build())
       .withAppMenu(appMenu)
       .build()
-    return appLayout
   }
   
   companion object {
@@ -85,8 +85,8 @@ class SeparacaoLayout: AppLayoutRouterLayout() {
         println("OK")
       }
     }
-    
-    fun Component.localeMenu(caption: String): Component? {
+  
+    private fun Component.localeMenu(caption: String): Component? {
       println(this)
       this.children.forEach {
         it.localeMenu(caption)

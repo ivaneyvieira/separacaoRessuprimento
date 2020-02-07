@@ -20,7 +20,7 @@ class UsuarioViewModel(view: IUsuarioView): ViewModel<IUsuarioView>(view) {
     return user
   }
   
-  fun validaUser(user: UserSaci?): UserSaci {
+  private fun validaUser(user: UserSaci?): UserSaci {
     UserSaci.findUser(user?.login) ?: fail("Usuário não encontrado no saci")
     return user ?: fail("Usuário não selecionado")
   }
@@ -45,5 +45,4 @@ class UsuarioViewModel(view: IUsuarioView): ViewModel<IUsuarioView>(view) {
   }
 }
 
-interface IUsuarioView: IView {
-}
+interface IUsuarioView: IView

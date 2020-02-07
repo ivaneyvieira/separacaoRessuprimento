@@ -16,7 +16,7 @@ object CupsUtils {
     return impressoras.any {it.name == printerName}
   }
   
-  fun findPrinter(printerName: String): CupsPrinter? {
+  private fun findPrinter(printerName: String): CupsPrinter? {
     val printers = cupsClient.printers.toList()
     return printers.firstOrNull {it.name == printerName}
   }
@@ -62,7 +62,7 @@ object CupsUtils {
 class ECupsPrinter(msg: String): Exception(msg)
 
 class PrinterInfo(private val printer: CupsPrinter) {
-  val name get() = printer.name
-  val location get() = printer.location
-  val description get() = printer.description
+  val name: String get() = printer.name
+  val location: String get() = printer.location
+  val description: String get() = printer.description
 }

@@ -5,13 +5,13 @@ import br.com.astrosoft.framework.util.mid
 import br.com.astrosoft.separacao.model.saci
 import kotlin.math.pow
 
-class UserSaci() {
+class UserSaci {
   var no: Int? = 0
   var name: String? = ""
   var storeno: Int? = 0
   var login: String? = ""
   var senha: String? = ""
-  var bitAcesso: Int? = 0
+  private var bitAcesso: Int? = 0
   //Otiros campos
   var ativo: Boolean = true
   var duplicar: Boolean = false

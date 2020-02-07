@@ -7,7 +7,7 @@ import org.sql2o.Connection
 import org.sql2o.Query
 import org.sql2o.Sql2o
 
-open class QueryDB(private val driver: String, val url: String, val username: String, val password: String) {
+open class QueryDB(driver: String, url: String, username: String, password: String) {
   private val sql2o: Sql2o
   
   init {
@@ -84,7 +84,7 @@ open class QueryDB(private val driver: String, val url: String, val username: St
     return this
   }
   
-  fun transaction(block: (Connection) -> Unit) {
+  private fun transaction(block: (Connection) -> Unit) {
     sql2o.beginTransaction()
       .use {con ->
         block(con)

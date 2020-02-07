@@ -46,9 +46,9 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
   private var gridProduto: Grid<ProdutoPedido>
   private lateinit var cmbPedido: ComboBox<Pedido>
   override val viewModel = SepararViewModel(this)
-  val dataProviderProdutos = ListDataProvider<ProdutoPedido>(mutableListOf())
-  var produtoInicial: ProdutoPedido? = null
-  var produtoFinal: ProdutoPedido? = null
+  private val dataProviderProdutos = ListDataProvider<ProdutoPedido>(mutableListOf())
+  private var produtoInicial: ProdutoPedido? = null
+  private var produtoFinal: ProdutoPedido? = null
   override fun isAccept(user: UserSaci) = user.separar
   
   init {
@@ -116,7 +116,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
         this.width = "100%"
         this.isAutofocus = true
         this.element
-          .addEventListener("keydown") {_ -> this@grid.editor.cancel()}
+          .addEventListener("keydown") {this@grid.editor.cancel()}
           .filter = "event.key === 'Enter'"
       }
       
@@ -127,7 +127,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
         edtQtty.focus()
       }
   
-      binder.addValueChangeListener {_ ->
+      binder.addValueChangeListener {
         editor.refresh()
       }
       
@@ -264,14 +264,14 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
   
   private fun comparator(grade: Grid<ProdutoPedido>): Comparator<ProdutoPedido>? {
     if(grade.sortOrder.isEmpty()) return null
-    val queryOrdem = grade.sortOrder.mapNotNull {gridSort ->
+    return grade.sortOrder.mapNotNull {gridSort ->
       val prop = ProdutoPedido::class.members.toList()
         .filterIsInstance<KProperty1<ProdutoPedido, Comparable<*>>>()
         .firstOrNull {prop ->
           prop.name == gridSort.sorted.key
         }
       if(gridSort.direction == DESCENDING)
-        compareByDescending<ProdutoPedido> {
+        compareByDescending {
           prop?.get(it)
         }
       else
@@ -282,7 +282,6 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
       .reduce {acc, comparator ->
         acc.thenComparing(comparator)
       }
-    return queryOrdem
   }
   
   override val pedido: Pedido?
@@ -307,7 +306,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
   }
 }
 
-class TextFieldFiltro(val property: KProperty1<ProdutoPedido, Any>): TextField() {
+class TextFieldFiltro(private val property: KProperty1<ProdutoPedido, Any>): TextField() {
   val filtro
     get() = SerializablePredicate<ProdutoPedido> {produto ->
       property.get(produto)

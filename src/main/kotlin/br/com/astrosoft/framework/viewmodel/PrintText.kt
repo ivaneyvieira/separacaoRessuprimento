@@ -33,11 +33,11 @@ abstract class PrintText<T> {
     return this
   }
   
-  fun header() = montaLinha {col ->
+  private fun header() = montaLinha {col ->
     col.columnText
   }
   
-  fun detail(value: T) = montaLinha {col ->
+  private fun detail(value: T) = montaLinha {col ->
     col.dataText(value)
   }
   

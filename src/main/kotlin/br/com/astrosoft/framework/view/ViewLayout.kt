@@ -22,8 +22,8 @@ import com.vaadin.flow.router.BeforeLeaveObserver
 import org.claspina.confirmdialog.ButtonOption
 import org.claspina.confirmdialog.ConfirmDialog
 
-abstract class ViewLayout<VM: ViewModel<*>>(): VerticalLayout(), IView, BeforeLeaveObserver,
-                                               BeforeEnterObserver, AfterNavigationObserver {
+abstract class ViewLayout<VM: ViewModel<*>>: VerticalLayout(), IView, BeforeLeaveObserver,
+                                             BeforeEnterObserver, AfterNavigationObserver {
   abstract val viewModel: VM
   
   init {
@@ -58,7 +58,7 @@ abstract class ViewLayout<VM: ViewModel<*>>(): VerticalLayout(), IView, BeforeLe
     showQuestion(msg, execYes, {})
   }
   
-  fun showQuestion(msg: String, execYes: () -> Unit, execNo: () -> Unit) {
+  private fun showQuestion(msg: String, execYes: () -> Unit, execNo: () -> Unit) {
     ConfirmDialog.createQuestion()
       .withCaption("Confirmação")
       .withMessage(msg)
