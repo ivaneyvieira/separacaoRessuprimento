@@ -33,7 +33,7 @@ DOCUMENTO NAO FISCAL
   }
   
   override fun titleLines(bean: Relatorio): List<String> {
-    val pedido = bean.ordno
+    val pedido = "${bean.ordno}"
     val abreviacao = bean.localizacao.mid(0, 4)
     val data =
       LocalDate.now()
@@ -46,6 +46,6 @@ DOCUMENTO NAO FISCAL
                   "",
                   "Pedido Loja: _________________ Separador: __________________".negrito(),
                   "",
-                  pedido.toString().barras())
+                  "00$pedido".barras())
   }
 }
