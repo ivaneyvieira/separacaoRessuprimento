@@ -29,22 +29,23 @@ class RelatorioText: PrintText<Relatorio>() {
     
 DOCUMENTO NAO FISCAL
  
-    """.trimIndent()
+    """.trimIndent().negrito()
   }
   
-  override fun titleLines(relatorio: Relatorio): List<String> {
-    val pedido = relatorio.ordno
-    val abreviacao = relatorio.localizacao.mid(0, 4)
+  override fun titleLines(bean: Relatorio): List<String> {
+    val pedido = bean.ordno
+    val abreviacao = bean.localizacao.mid(0, 4)
     val data =
       LocalDate.now()
         .format()
     val hora =
       LocalTime.now()
         .format()
-    return listOf("Ressuprimento Pedido $pedido $abreviacao",
-                  "Data: $data      Hora $hora",
+    return listOf("Ressuprimento Pedido $pedido $abreviacao".negrito(),
+                  "Data: $data      Hora $hora".negrito(),
                   "",
-                  "Pedido Loja: _________________ Separador: __________________",
-                  "")
+                  "Pedido Loja: _________________ Separador: __________________".negrito(),
+                  "",
+                  pedido.toString().barras())
   }
 }

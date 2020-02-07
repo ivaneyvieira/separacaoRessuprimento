@@ -3,6 +3,7 @@ package br.com.astrosoft.framework.viewmodel
 import br.com.astrosoft.framework.util.CupsUtils
 import br.com.astrosoft.framework.util.lpad
 import br.com.astrosoft.framework.util.rpad
+import br.com.astrosoft.separacao.model.QuerySaci
 import java.io.File
 import java.text.DecimalFormat
 
@@ -54,9 +55,12 @@ abstract class PrintText<T> {
         }
         sumary(text)
         finalize(text)
-        println(text.toString())
-        File("/tmp/relatorio.txt").writeText(text.toString())
-        CupsUtils.printCups(impressora, text.toString())
+        if(!QuerySaci.test)
+          CupsUtils.printCups(impressora, text.toString())
+        else {
+          println(text.toString())
+          File("/tmp/relatorio.txt").writeText(text.toString())
+        }
       }
   }
   
@@ -65,9 +69,29 @@ abstract class PrintText<T> {
   }
   
   private fun inicialize(text: StringBuilder) {
-    text.append(0x1b.toChar())
-      .append(0x21.toChar())
-      .append(0x01.toChar())
+    text.append(0x1B.toChar())
+      .append(0x40.toChar())
+      .append(0x0F.toChar())
+  }
+  
+  protected fun String.barras(): String {
+    val stringBuffer = StringBuilder()
+    stringBuffer.append(0x1d.toChar())
+      .append(0x6b.toChar())
+      .append(0x49.toChar())
+      .append(this.length.toChar())
+      .append(this)
+    return stringBuffer.toString()
+  }
+  
+  protected fun String.negrito(): String {
+    val stringBuffer = StringBuilder()
+    stringBuffer.append(0x1b.toChar())
+      .append(0x45.toChar())
+      .append(this)
+      .append(0x1b.toChar())
+      .append(0x46.toChar())
+    return stringBuffer.toString()
   }
   
   private fun finalize(text: StringBuilder) {
@@ -83,19 +107,7 @@ abstract class PrintText<T> {
   }
   
   private fun printHeader(text: StringBuilder) {
-    text.line(header())
-  }
-  
-  private fun StringBuilder.boldLine(line: String): StringBuilder {
-    this.append(0x1b.toChar())
-      .append(0x45.toChar())
-      .append(0x01.toChar())
-      .append(line)
-      .append(0x1b.toChar())
-      .append(0x45.toChar())
-      .append(0x00.toChar())
-      .appendln()
-    return this
+    text.line(header().negrito())
   }
   
   private fun printTitle(text: StringBuilder, bean: T) {
@@ -106,16 +118,17 @@ abstract class PrintText<T> {
   
   protected abstract fun titleLines(bean: T): List<String>
   
-  private fun StringBuilder.expandLine(line: String): StringBuilder {
-    this.append(0x1b.toChar())
+  private fun String.expandLine(): String {
+    val stringBuffer = StringBuilder()
+    stringBuffer.append(0x1b.toChar())
       .append(0x45.toChar())
       .append(0x01.toChar())
-      .append(line)
+      .append(this)
       .append(0x1b.toChar())
       .append(0x45.toChar())
       .append(0x00.toChar())
       .appendln()
-    return this
+    return stringBuffer.toString()
   }
   
   private fun StringBuilder.line(line: String): StringBuilder {
