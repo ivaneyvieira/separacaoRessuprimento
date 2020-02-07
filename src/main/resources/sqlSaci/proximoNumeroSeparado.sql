@@ -1,8 +1,5 @@
-SELECT (MAX(ordno) + 1) AS proximo
-FROM (SELECT ordno
-      FROM inv
-      UNION
-      SELECT no
-      FROM ords
-      WHERE storeno = :storeno) AS D
-WHERE ordno BETWEEN (:destino * 100000000) AND (:destino * 100000000 + 99999998);
+SELECT (MAX(no) + 1) AS proximo
+FROM lastno AS D
+WHERE se = 'RS'
+  AND storeno = :destino
+  AND dupse = 0
