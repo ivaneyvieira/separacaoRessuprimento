@@ -82,6 +82,9 @@ abstract class PrintText<T> {
   protected fun String.barras(): String {
     val stringBuffer = StringBuilder()
     stringBuffer.append(0x1d.toChar())
+      .append(0x68.toChar())
+      .append(0x50.toChar())
+      .append(0x1d.toChar())
       .append(0x6b.toChar())
       .append(0x49.toChar())
       .append(this.length.toChar())
