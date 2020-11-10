@@ -36,7 +36,10 @@ class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
   }
   
   fun pedidos(): List<Pedido> {
-    return Pedido.pedidos()
+    val userSaci = UserSaci.userAtual
+    return if(userSaci?.admin == true)
+      Pedido.pedidosTodos()
+    else Pedido.pedidos()
   }
 }
 
