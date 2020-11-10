@@ -48,10 +48,10 @@ abstract class PrintText<T> {
         val text = StringBuilder()
         inicialize(text)
         printTitle(text, bean)
-        
+  
         printHeader(text)
-        dados.forEach {bean ->
-          printDetail(text, bean)
+        dados.forEach {beanDetail ->
+          printDetail(text, beanDetail)
         }
         sumary(text)
         finalize(text)
@@ -69,14 +69,26 @@ abstract class PrintText<T> {
   }
   
   private fun inicialize(text: StringBuilder) {
+    /*
     text.append(0x1B.toChar())
       .append(0x40.toChar())
       .append(0x0F.toChar())
+     */
+    text.append(0x1b.toChar())
+      .append(0x21.toChar())
+      .append(0x01.toChar())
   }
   
   protected fun String.barras(): String {
     val stringBuffer = StringBuilder()
-    stringBuffer.append(0x1d.toChar())
+    stringBuffer
+      .append(0x1d.toChar())
+      .append(0x68.toChar())
+      .append(0x50.toChar())
+      .append(0x1d.toChar())
+      .append(0x77.toChar())
+      .append(0x04.toChar())
+      .append(0x1d.toChar())
       .append(0x6b.toChar())
       .append(0x49.toChar())
       .append(this.length.toChar())
@@ -91,7 +103,7 @@ abstract class PrintText<T> {
       .append(this)
       .append(0x1b.toChar())
       .append(0x46.toChar())
-    return stringBuffer.toString()
+    return this
   }
   
   private fun finalize(text: StringBuilder) {

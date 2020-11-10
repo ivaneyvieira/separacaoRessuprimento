@@ -60,6 +60,8 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
   
     fun pedidos() = saci.listaPedido().filter {it.storenoDestino in 2..5}
       .sortedWith(compareBy(Pedido::ordno, Pedido::ordno))
+    fun pedidosTodos() = saci.listaPedidoTodos()
+      .sortedWith(compareBy(Pedido::ordno, Pedido::ordno))
   
     fun listaRelatorio(ordno: Int): List<Relatorio> {
       return saci.listaRelatorio(ordno)

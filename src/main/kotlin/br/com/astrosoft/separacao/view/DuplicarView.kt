@@ -29,7 +29,8 @@ class DuplicarView: ViewLayout<DuplicarViewModel>(), IDuplicarView {
     form("Duplicar") {
       cmbPedidoOrigem = comboBox("Pedido origem") {
         colspan = 1
-        setItems(viewModel.pedidos())
+        val pedidos = viewModel.pedidos()
+        setItems(pedidos)
         setItemLabelGenerator {it.ordno.toString()}
         isAllowCustomValue = false
         isPreventInvalidInput = false

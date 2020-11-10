@@ -121,6 +121,16 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.executeAndFetch(Pedido::class.java)
     }
   }
+
+  fun listaPedidoTodos(): List<Pedido> {
+    val storeno = 1
+    val sql = "/sqlSaci/listaPedidosTodos.sql"
+    
+    return query(sql) {q ->
+      q.addParameter("storeno", storeno)
+      q.executeAndFetch(Pedido::class.java)
+    }
+  }
   
   fun duplicar(ordno: Int, ordnoNovo: Int) {
     val storeno = 1
