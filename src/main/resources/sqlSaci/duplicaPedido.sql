@@ -18,12 +18,12 @@ INSERT INTO oprd (storeno, ordno, mult, ipi, freight, icms, auxLong1, auxLong2, 
                   icmsSubst, auxLong3, auxLong4, auxMy3, auxMy4, qtty, qtty_src, qtty_xfr, cost,
                   qttyRcv, qttyCancel, qttyVendaMes, qttyVendaMesAnt, qttyVendaMedia, qttyPendente,
                   stkDisponivel, qttyAbc, seqno, status, bits, bits2, auxShort1, auxShort2,
-                  auxShort3, auxShort4, prdno, grade, remarks, padbyte, gradeFechada, obs)
+                  auxShort3, auxShort4, prdno, grade, remarks, padbyte, gradeFechada, obs, auxStr)
 SELECT :storeno AS storeno, :ordnoNovo AS ordno, mult, ipi, freight, icms, auxLong1, auxLong2,
        auxMy1, auxMy2, icmsSubst, ROUND(qtty * 1000) AS auxLong3, auxLong4, auxMy3, auxMy4, qtty,
        qtty_src, qtty_xfr, cost, qttyRcv, qttyCancel, qttyVendaMes, qttyVendaMesAnt, qttyVendaMedia,
        qttyPendente, stkDisponivel, qttyAbc, seqno, status, bits, bits2, auxShort1, auxShort2,
-       auxShort3, auxShort4, prdno, grade, remarks, padbyte, gradeFechada, obs
+       auxShort3, auxShort4, prdno, grade, remarks, padbyte, gradeFechada, obs, '' AS auxStr
 FROM oprd
 WHERE (storeno = :storeno) AND
       (ordno = :ordno)
