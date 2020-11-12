@@ -3,7 +3,7 @@ SELECT O.prdno,
        IFNULL(TRIM(MID(P.name, 1, 37)), '')                           AS descricao,
        P.mfno                                                         AS fornecedor,
        IFNULL(LPAD(P.clno, 6, '0'), '')                               AS centrodelucro,
-       IFNULL(L.localizacao, IF(LENGTH(O.auxStr) > 8, '', O.auxStr)) AS localizacao,
+       IFNULL(L.localizacao, IF(LENGTH(O.auxStr) > 20, '', O.auxStr)) AS localizacao,
        P.typeno                                                       AS tipo,
        IFNULL(ROUND(O.auxLong3 / 1000, 2), 0.00)                      AS qttyOriginal,
        IFNULL(ROUND(O.qtty, 2), 0.00)                                 AS qtty,
@@ -12,7 +12,7 @@ FROM sqldados.oprd           AS O
   INNER JOIN sqldados.prd    AS P
 	       ON (O.prdno = P.no)
   LEFT JOIN  sqldados.prdloc AS L
-	       ON (O.prdno = L.prdno AND O.grade = L.grade AND LENGTH(O.auxStr) <= 8)
+	       ON (O.prdno = L.prdno AND O.grade = L.grade AND LENGTH(O.auxStr) > 20)
   LEFT JOIN  sqldados.stk    AS S
 	       ON (O.prdno = S.prdno AND O.grade = S.grade AND S.storeno = 4)
 WHERE O.storeno = :storeno
