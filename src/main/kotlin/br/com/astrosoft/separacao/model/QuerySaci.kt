@@ -63,7 +63,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.executeScalarList(Int::class.java)
     }.firstOrNull() ?: 0
     return if(proximoNumero == 0)
-      destino * 1000 + 1
+      destino * 10000 + 1
     else proximoNumero
   }
   
