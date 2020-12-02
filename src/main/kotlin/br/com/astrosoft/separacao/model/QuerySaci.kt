@@ -57,7 +57,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   fun proximoNumeroDuplicado(destino: Int): Int {
     val storeno = 1
     val sql = "/sqlSaci/proximoNumero.sql"
-    val proximoNumero = query(sql) {q ->
+    val proximoNumero: Int = query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.addParameter("destino", destino)
       q.executeScalarList(Int::class.java)
@@ -115,13 +115,13 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   fun listaPedido(): List<Pedido> {
     val storeno = 1
     val sql = "/sqlSaci/listaPedidos.sql"
-    
-    return query(sql) {q ->
+    val ret = query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.executeAndFetch(Pedido::class.java)
     }
+    return ret
   }
-
+  
   fun listaPedidoTodos(): List<Pedido> {
     val storeno = 1
     val sql = "/sqlSaci/listaPedidosTodos.sql"
