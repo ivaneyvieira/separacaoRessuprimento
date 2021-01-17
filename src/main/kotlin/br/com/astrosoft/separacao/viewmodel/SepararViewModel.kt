@@ -53,7 +53,8 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
   
   fun pedidos(): List<Pedido> {
     val user = UserSaci.userAtual
-    return Pedido.pedidos(user)
+    val pedidos =Pedido.pedidos(user)
+    return pedidos
   }
 }
 

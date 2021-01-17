@@ -15,19 +15,14 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     login ?: return null
     val sql = "/sqlSaci/userSenha.sql"
     return query(sql) {q ->
-      q.addParameter("login", login)
-        .executeAndFetch(UserSaci::class.java)
-        .firstOrNull()
-        ?.initVars()
+      q.addParameter("login", login).executeAndFetch(UserSaci::class.java).firstOrNull()?.initVars()
     }
   }
   
   fun findAllUser(): List<UserSaci> {
     val sql = "/sqlSaci/userSenha.sql"
     return query(sql) {q ->
-      q.addParameter("login", "TODOS")
-        .executeAndFetch(UserSaci::class.java)
-        .map {user ->
+      q.addParameter("login", "TODOS").executeAndFetch(UserSaci::class.java).map {user ->
           user.initVars()
         }
     }
@@ -49,8 +44,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     return query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.addParameter("ordno", ordno)
-      q.executeAndFetch(Pedido::class.java)
-        .isNotEmpty()
+      q.executeAndFetch(Pedido::class.java).isNotEmpty()
     }
   }
   
@@ -62,8 +56,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addParameter("destino", destino)
       q.executeScalarList(Int::class.java)
     }.firstOrNull() ?: 0
-    return if(proximoNumero == 0)
-      destino * 10000 + 1
+    return if(proximoNumero == 0) destino * 10000 + 1
     else proximoNumero
   }
   
@@ -73,8 +66,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addParameter("destino", destino)
       q.executeScalarList(Int::class.java)
     }.firstOrNull() ?: 0
-    return if(proximoNumero == 0)
-      destino * 100000000 + 1
+    return if(proximoNumero == 0) destino * 100000000 + 1
     else proximoNumero
   }
   
@@ -132,13 +124,13 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun duplicar(ordno: Int, ordnoNovo: Int) {
-    val storeno = 1
+  fun duplicar(pedido: Pedido, pedidoNovo: Pedido) {
     val sql = "/sqlSaci/duplicaPedido.sql"
     script(sql) {q ->
-      q.addOptionalParameter("storeno", storeno)
-      q.addOptionalParameter("ordno", ordno)
-      q.addOptionalParameter("ordnoNovo", ordnoNovo)
+      q.addOptionalParameter("storeno", pedido.storeno)
+      q.addOptionalParameter("storenoNovo", pedidoNovo.storeno)
+      q.addOptionalParameter("ordno", pedido.ordno)
+      q.addOptionalParameter("ordnoNovo", pedidoNovo.ordno)
       q.executeUpdate()
     }
   }
@@ -154,8 +146,8 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun atualizarQuantidade(ordno: Int, ordnoNovo: Int, codigo: String, grade: String,
-                          localizacao: String, qtty: Int, tipo: ETipoOrigem) {
+  fun atualizarQuantidade(ordno: Int, ordnoNovo: Int, codigo: String, grade: String, localizacao: String, qtty: Int,
+                          tipo: ETipoOrigem) {
     val storeno = 1
     val sql = "/sqlSaci/atualizarQuantidade.sql"
     val prdno = codigo.lpad(16, " ")
@@ -174,8 +166,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     insertNewNumber(ordnoNovo)
   }
   
-  fun retornaSaldo(ordnoMae: Int, ordno: Int, codigo: String, grade: String,
-                   localizacao: String, qttyEdit: Int) {
+  fun retornaSaldo(ordnoMae: Int, ordno: Int, codigo: String, grade: String, localizacao: String, qttyEdit: Int) {
     val storeno = 1
     val sql = "/sqlSaci/retornaSaldo.sql"
     val prdno = codigo.lpad(16, " ")
@@ -239,9 +230,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     internal val username = db.username
     internal val password = db.password
     internal val test = db.test
-    val ipServer =
-      url.split("/")
-        .getOrNull(2)
+    val ipServer = url.split("/").getOrNull(2)
   }
 }
 
