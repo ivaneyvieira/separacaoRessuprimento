@@ -31,7 +31,7 @@ class DuplicarView: ViewLayout<DuplicarViewModel>(), IDuplicarView {
         colspan = 1
         val pedidos = viewModel.pedidos()
         setItems(pedidos)
-        setItemLabelGenerator {it.ordno.toString()}
+        setItemLabelGenerator {it.ordno.toString() + " Loja " + it.storeno.toString()}
         isAllowCustomValue = false
         isPreventInvalidInput = false
       }
