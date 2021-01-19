@@ -12,24 +12,24 @@ class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
   }
   
   fun proximoNumero(): Int? {
-    val pedidoOrigem = Pedido(1, view.numeroOrigem ?: 0, 0, "")
+    val pedidoOrigem = view.pedidoOrigem ?: return null
+    val loja = pedidoOrigem.storeno
+    val lojaDestino = pedidoOrigem.storenoDestino
     return run {
-      val loja = pedidoOrigem.storenoDestino
-      Pedido.proximoNumeroDuplicado(loja)
+      Pedido.proximoNumeroDuplicado(loja, lojaDestino)
     }
   }
   
   fun duplicar() = exec {
     val userSaci = UserSaci.userAtual
-    val pedidoOrigem = Pedido.findPedidos(view.numeroOrigem) ?: fail("Pedido de origem não encontrado")
+    val pedidoOrigem = Pedido.findPedidos(view.pedidoOrigem?.ordno ?: 0) ?: fail("Pedido de origem não encontrado")
     val pedidoDestino = Pedido.findPedidos(view.numeroDestino) ?: Pedido(1, view.numeroDestino ?: 0, 0, "")
     when {
       pedidoDestino.isNotEmpty(userSaci)      -> fail("O pedido de destino já existe")
       !pedidoDestino.compativel(pedidoOrigem) -> fail("O pedido de destino não é compatível com o pedido de Origem")
       else                                    -> {
         Pedido.duplicar(pedidoOrigem, pedidoDestino)
-        if(view.informarNumero == false)
-          view.numeroDestino = proximoNumero()
+        if(view.informarNumero == false) view.numeroDestino = proximoNumero()
       }
     }
     view.showInformation("Pedido duplicado com sucesso. Novo pedido: ${pedidoDestino.ordno}")
@@ -37,14 +37,13 @@ class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
   
   fun pedidos(): List<Pedido> {
     val userSaci = UserSaci.userAtual
-    return if(userSaci?.admin == true)
-      Pedido.pedidosTodos()
+    return if(userSaci?.admin == true) Pedido.pedidosTodos()
     else Pedido.pedidos()
   }
 }
 
 interface IDuplicarView: IView {
-  var numeroOrigem: Int?
+  var pedidoOrigem: Pedido?
   var numeroDestino: Int?
   var informarNumero: Boolean?
 }

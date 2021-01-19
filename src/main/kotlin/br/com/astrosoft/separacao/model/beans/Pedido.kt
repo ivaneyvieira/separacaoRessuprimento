@@ -15,7 +15,8 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
       .sortedWith(compareBy({it.localizacao}, {it.descricao}, {it.grade}))
   
   val storenoDestino
-    get() = ordno.toString().mid(0, 1).toIntOrNull() ?: 0
+    get() = if(storeno == 4 && ordno == 2) 5 /*Loja 5*/
+    else ordno.toString().mid(0, 1).toIntOrNull() ?: 0
   val tipoOrigem: ETipoOrigem
     get() = ETipoOrigem.value(tipo) ?: DUPLICADO
   
@@ -75,8 +76,8 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
       return saci.proximoNumeroPedidoLoja(storenoDestino, abreviacao)
     }
     
-    fun proximoNumeroDuplicado(storeno: Int): Int {
-      return saci.proximoNumeroDuplicado(storeno)
+    fun proximoNumeroDuplicado(storeno: Int, destino: Int): Int {
+      return saci.proximoNumeroDuplicado(storeno, destino)
     }
     
     fun duplicar(pedidoOrigem: Pedido, pedidoDestino: Pedido) {
@@ -102,11 +103,11 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
   
   private fun List<ProdutoPedido>.filtraLocalizacoes(): List<ProdutoPedido> {
     return this.groupBy {ProdutoKey(it.prdno, it.grade)}.flatMap {entry ->
-        val list = entry.value.filter {
-          (!it.localizacao.startsWith("EXP4")) && (!it.localizacao.startsWith("CD00"))
-        }
-        if(list.isEmpty()) entry.value else list
+      val list = entry.value.filter {
+        (!it.localizacao.startsWith("EXP4")) && (!it.localizacao.startsWith("CD00"))
       }
+      if(list.isEmpty()) entry.value else list
+    }
   }
 }
 
