@@ -14,9 +14,10 @@ class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
   fun proximoNumero(): Int? {
     val pedidoOrigem = view.pedidoOrigem ?: return null
     val loja = pedidoOrigem.storeno
+    val numero = pedidoOrigem.ordno
     val lojaDestino = pedidoOrigem.storenoDestino
     return run {
-      Pedido.proximoNumeroDuplicado(loja, lojaDestino)
+      Pedido.proximoNumeroDuplicado(loja, numero, lojaDestino)
     }
   }
   

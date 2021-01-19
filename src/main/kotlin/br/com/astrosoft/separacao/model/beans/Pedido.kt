@@ -76,8 +76,8 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
       return saci.proximoNumeroPedidoLoja(storenoDestino, abreviacao)
     }
     
-    fun proximoNumeroDuplicado(storeno: Int, destino: Int): Int {
-      return saci.proximoNumeroDuplicado(storeno, destino)
+    fun proximoNumeroDuplicado(storeno: Int, ordno : Int, destino: Int): Int {
+      return saci.proximoNumeroDuplicado(storeno, ordno, destino)
     }
     
     fun duplicar(pedidoOrigem: Pedido, pedidoDestino: Pedido) {
