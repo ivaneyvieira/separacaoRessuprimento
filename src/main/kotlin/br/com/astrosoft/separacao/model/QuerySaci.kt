@@ -48,8 +48,8 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun proximoNumeroDuplicado(storeno: Int, destino: Int): Int {
-    return if(storeno == 2) proximoNumeroDuplicadoLoja2(destino)
+  fun proximoNumeroDuplicado(storeno: Int, ordno : Int, destino: Int): Int {
+    return if(storeno == 4 && ordno == 2) proximoNumeroDuplicadoLoja4(destino)
     else {
       val sql = "/sqlSaci/proximoNumero.sql"
       val proximoNumero: Int = query(sql) {q ->
@@ -62,15 +62,15 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun proximoNumeroDuplicadoLoja2(destino: Int): Int {
+  fun proximoNumeroDuplicadoLoja4(destino: Int): Int {
     val storeno = 1
-    val sql = "/sqlSaci/proximoNumero.sql"
+    val sql = "/sqlSaci/proximoNumeroLoja4.sql"
     val proximoNumero: Int = query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.addParameter("destino", destino)
       q.executeScalarList(Int::class.java)
     }.firstOrNull() ?: 0
-    return if(proximoNumero < 50050) destino * 10000 + 50
+    return if(proximoNumero < 5050) destino * 1000 + 50
     else proximoNumero
   }
   
