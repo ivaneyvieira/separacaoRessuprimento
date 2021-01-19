@@ -31,7 +31,8 @@ class DuplicarView: ViewLayout<DuplicarViewModel>(), IDuplicarView {
         colspan = 1
         val pedidos = viewModel.pedidos()
         setItems(pedidos)
-        setItemLabelGenerator {it.ordno.toString() + " Loja " + it.storeno.toString()}
+        
+        setItemLabelGenerator {"Pedido ${it.ordno} Loja ${it.storeno}"}
         isAllowCustomValue = false
         isPreventInvalidInput = false
       }
@@ -60,12 +61,10 @@ class DuplicarView: ViewLayout<DuplicarViewModel>(), IDuplicarView {
     viewModel.init()
   }
   
-  override var numeroOrigem: Int?
-    get() = cmbPedidoOrigem.value.ordno
+  override var pedidoOrigem: Pedido?
+    get() = cmbPedidoOrigem.value
     set(value) {
-      cmbPedidoOrigem.value =
-        viewModel.pedidos()
-          .firstOrNull {it.storenoDestino == value}
+      cmbPedidoOrigem.value = value
     }
   override var numeroDestino: Int?
     get() = edtPedidoDestino.value

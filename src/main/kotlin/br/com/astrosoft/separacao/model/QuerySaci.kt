@@ -23,8 +23,8 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     val sql = "/sqlSaci/userSenha.sql"
     return query(sql) {q ->
       q.addParameter("login", "TODOS").executeAndFetch(UserSaci::class.java).map {user ->
-          user.initVars()
-        }
+        user.initVars()
+      }
     }
   }
   
@@ -48,7 +48,21 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun proximoNumeroDuplicado(destino: Int): Int {
+  fun proximoNumeroDuplicado(storeno: Int, destino: Int): Int {
+    return if(storeno == 2) proximoNumeroDuplicadoLoja2(destino)
+    else {
+      val sql = "/sqlSaci/proximoNumero.sql"
+      val proximoNumero: Int = query(sql) {q ->
+        q.addParameter("storeno", storeno)
+        q.addParameter("destino", destino)
+        q.executeScalarList(Int::class.java)
+      }.firstOrNull() ?: 0
+      if(proximoNumero == 0) destino * 10000 + 1
+      else proximoNumero
+    }
+  }
+  
+  fun proximoNumeroDuplicadoLoja2(destino: Int): Int {
     val storeno = 1
     val sql = "/sqlSaci/proximoNumero.sql"
     val proximoNumero: Int = query(sql) {q ->
@@ -56,7 +70,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addParameter("destino", destino)
       q.executeScalarList(Int::class.java)
     }.firstOrNull() ?: 0
-    return if(proximoNumero == 0) destino * 10000 + 1
+    return if(proximoNumero < 50050) destino * 10000 + 50
     else proximoNumero
   }
   
