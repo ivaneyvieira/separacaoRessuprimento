@@ -113,9 +113,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
         this.isAutoselect = true
         this.width = "100%"
         this.isAutofocus = true
-        this.element
-          .addEventListener("keydown") {this@grid.editor.cancel()}
-          .filter = "event.key === 'Enter'"
+        this.element.addEventListener("keydown") {this@grid.editor.cancel()}.filter = "event.key === 'Enter'"
       }
       
       binder.bind(edtQtty, ProdutoPedido::qttyEdit.name)
@@ -124,7 +122,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
         editor.editItem(event.item)
         edtQtty.focus()
       }
-  
+      
       binder.addValueChangeListener {
         editor.refresh()
       }
@@ -137,32 +135,27 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
         setHeader("Código")
         flexGrow = 1
         this.textAlign = ColumnTextAlign.END
-        filterRow.getCell(this)
-          .setComponent(edtCodigo)
+        filterRow.getCell(this).setComponent(edtCodigo)
       }
       addColumnFor(ProdutoPedido::descricao) {
         setHeader("Descrição")
         flexGrow = 8
-        filterRow.getCell(this)
-          .setComponent(edtDescricao)
+        filterRow.getCell(this).setComponent(edtDescricao)
       }
       addColumnFor(ProdutoPedido::grade) {
         setHeader("Grade")
         flexGrow = 1
-        filterRow.getCell(this)
-          .setComponent(edtGrade)
+        filterRow.getCell(this).setComponent(edtGrade)
       }
       addColumnFor(ProdutoPedido::fornecedor) {
         setHeader("Fornecedor")
         flexGrow = 1
-        filterRow.getCell(this)
-          .setComponent(edtFornecedor)
+        filterRow.getCell(this).setComponent(edtFornecedor)
       }
       addColumnFor(ProdutoPedido::localizacao) {
         setHeader("Localização")
         flexGrow = 3
-        filterRow.getCell(this)
-          .setComponent(edtLocalizacao)
+        filterRow.getCell(this).setComponent(edtLocalizacao)
       }
       addColumnFor(ProdutoPedido::qttyEdit, NumberRenderer(ProdutoPedido::qttyEdit, DecimalFormat("0"))) {
         setHeader("Quant")
@@ -175,11 +168,9 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
         flexGrow = 1
         this.textAlign = ColumnTextAlign.END
       }
-      sort(listOf(
-        GridSortOrder(getColumnBy(ProdutoPedido::localizacao), SortDirection.ASCENDING),
-        GridSortOrder(getColumnBy(ProdutoPedido::descricao), SortDirection.ASCENDING),
-        GridSortOrder(getColumnBy(ProdutoPedido::grade), SortDirection.ASCENDING)
-                 ))
+      sort(listOf(GridSortOrder(getColumnBy(ProdutoPedido::localizacao), SortDirection.ASCENDING),
+                  GridSortOrder(getColumnBy(ProdutoPedido::descricao), SortDirection.ASCENDING),
+                  GridSortOrder(getColumnBy(ProdutoPedido::grade), SortDirection.ASCENDING)))
       
       shiftSelect()
     }
@@ -234,27 +225,20 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
     }
   }
   
-  private fun updateFilter(edtCodigo: TextFieldFiltro,
-                           edtDescricao: TextFieldFiltro,
-                           edtGrade: TextFieldFiltro,
-                           edtFornecedor: TextFieldFiltro,
-                           edtLocalizacao: TextFieldFiltro) {
-    val filter = edtCodigo.filtro
-      .and(edtDescricao.filtro)
-      .and(edtGrade.filtro)
-      .and(edtFornecedor.filtro)
-      .and(edtLocalizacao.filtro)
+  private fun updateFilter(edtCodigo: TextFieldFiltro, edtDescricao: TextFieldFiltro, edtGrade: TextFieldFiltro,
+                           edtFornecedor: TextFieldFiltro, edtLocalizacao: TextFieldFiltro) {
+    val filter =
+      edtCodigo.filtro.and(edtDescricao.filtro).and(edtGrade.filtro).and(edtFornecedor.filtro)
+        .and(edtLocalizacao.filtro)
     dataProviderProdutos.filter = filter
   }
   
   private fun list(grade: Grid<ProdutoPedido>): List<ProdutoPedido> {
     val filter = dataProviderProdutos.filter
     val queryOrdem = comparator(grade)
-    return dataProviderProdutos.items.toList()
-      .filter {
+    return dataProviderProdutos.items.toList().filter {
         filter?.test(it) ?: true
-      }
-      .let {list ->
+      }.let {list ->
         if(queryOrdem == null) list
         else list.sortedWith<ProdutoPedido>(queryOrdem)
       }
@@ -263,27 +247,24 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
   private fun comparator(grade: Grid<ProdutoPedido>): Comparator<ProdutoPedido>? {
     if(grade.sortOrder.isEmpty()) return null
     return grade.sortOrder.mapNotNull {gridSort ->
-      val prop = ProdutoPedido::class.members.toList()
-        .filterIsInstance<KProperty1<ProdutoPedido, Comparable<*>>>()
-        .firstOrNull {prop ->
-          prop.name == gridSort.sorted.key
-        }
-      if(gridSort.direction == DESCENDING)
-        compareByDescending {
-          prop?.get(it)
-        }
-      else
-        compareBy<ProdutoPedido> {
-          prop?.get(it)
-        }
-    }
-      .reduce {acc, comparator ->
+      val prop =
+        ProdutoPedido::class.members.toList().filterIsInstance<KProperty1<ProdutoPedido, Comparable<*>>>()
+          .firstOrNull {prop ->
+            prop.name == gridSort.sorted.key
+          }
+      if(gridSort.direction == DESCENDING) compareByDescending {
+        prop?.get(it)
+      }
+      else compareBy<ProdutoPedido> {
+        prop?.get(it)
+      }
+    }.reduce {acc, comparator ->
         acc.thenComparing(comparator)
       }
   }
   
   override val pedido: Pedido?
-    get() = Pedido.findPedidos(cmbPedido.value?.ordno ?: 0)
+    get() = cmbPedido.value
   override val produtosSelecionados: List<ProdutoPedido>
     get() = gridProduto.selectedItems.toList()
   
@@ -307,9 +288,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
 class TextFieldFiltro(private val property: KProperty1<ProdutoPedido, Any>): TextField() {
   val filtro
     get() = SerializablePredicate<ProdutoPedido> {produto ->
-      property.get(produto)
-        .toString()
-        .startsWith(value, ignoreCase = true)
+      property.get(produto).toString().startsWith(value, ignoreCase = true)
     }
   
   init {
