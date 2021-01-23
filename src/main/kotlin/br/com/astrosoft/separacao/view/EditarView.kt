@@ -70,9 +70,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
       cmbPedido = comboBox("Numero do pedido") {
         colspan = 1
         setItems(viewModel.pedidosSeparacao)
-        setItemLabelGenerator {
-          "${it.ordno} - ${it.tipoOrigem.descricao}"
-        }
+        setItemLabelGenerator {it.label}
         isAllowCustomValue = false
         isPreventInvalidInput = false
         addValueChangeListener {evento ->

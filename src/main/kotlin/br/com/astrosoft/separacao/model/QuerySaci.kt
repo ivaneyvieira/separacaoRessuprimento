@@ -34,6 +34,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addParameter("login", user.login)
       q.addParameter("bitAcesso", user.bitAcesso())
       q.addParameter("abreviacoes", user.abreviacoes)
+      q.addParameter("storeno", user.storeno)
       q.executeUpdate()
     }
   }
@@ -49,20 +50,23 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   }
   
   fun proximoNumeroDuplicado(storeno: Int, ordno : Int, destino: Int): Int {
-    return if(storeno == 4 && ordno == 2) proximoNumeroDuplicadoLoja4(destino)
-    else {
-      val sql = "/sqlSaci/proximoNumero.sql"
-      val proximoNumero: Int = query(sql) {q ->
-        q.addParameter("storeno", storeno)
-        q.addParameter("destino", destino)
-        q.executeScalarList(Int::class.java)
-      }.firstOrNull() ?: 0
-      if(proximoNumero == 0) destino * 10000 + 1
-      else proximoNumero
+    return when {
+      storeno == 4 && ordno == 2 -> proximoNumeroDuplicadoLoja(destino)
+      storeno == 5 && ordno == 2 -> 54
+      else                       -> {
+        val sql = "/sqlSaci/proximoNumero.sql"
+        val proximoNumero: Int = query(sql) {q ->
+          q.addParameter("storeno", storeno)
+          q.addParameter("destino", destino)
+          q.executeScalarList(Int::class.java)
+        }.firstOrNull() ?: 0
+        if(proximoNumero == 0) destino * 10000 + 1
+        else proximoNumero
+      }
     }
   }
   
-  fun proximoNumeroDuplicadoLoja4(destino: Int): Int {
+  fun proximoNumeroDuplicadoLoja(destino: Int): Int {
     val storeno = 1
     val sql = "/sqlSaci/proximoNumeroLoja4.sql"
     val proximoNumero: Int = query(sql) {q ->
@@ -70,7 +74,8 @@ class QuerySaci: QueryDB(driver, url, username, password) {
       q.addParameter("destino", destino)
       q.executeScalarList(Int::class.java)
     }.firstOrNull() ?: 0
-    return if(proximoNumero < 50050) destino * 10000 + 50
+    val numeroInicial = destino * 10000 + 50
+    return if(proximoNumero < numeroInicial) numeroInicial
     else proximoNumero
   }
   
