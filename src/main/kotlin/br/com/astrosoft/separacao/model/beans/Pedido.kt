@@ -13,9 +13,15 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
   
   fun isNotEmpty(user: UserSaci?) = produtos(user).isNotEmpty()
   
-  fun produtos(user: UserSaci?) =
-    saci.listaProduto(ordno).filtraLocalizacoes().filter {user?.isLocalizacaoCompativel(it.localizacao) ?: false}
-      .sortedWith(compareBy({it.localizacao}, {it.descricao}, {it.grade}))
+  fun produtos(user: UserSaci?): List<ProdutoPedido> {
+    val loja = user?.storeno ?: return emptyList()
+    val lista = if(loja == 1) saci.listaProduto(storeno, ordno).filtraLocalizacoes().filter {
+      user.isLocalizacaoCompativel(it.localizacao)
+    }
+    else saci.listaProduto(storeno, ordno)
+    
+    return lista.sortedWith(compareBy({it.localizacao}, {it.descricao}, {it.grade}))
+  }
   
   val storenoDestino
     get() = when {
@@ -76,8 +82,7 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
     fun pedidos(): List<Pedido> {
       val user = UserSaci.userAtual ?: return emptyList()
       val loja = user.storeno ?: 0
-      return saci.listaPedido().filtroLoja(loja)
-        .sortedWith(compareBy(Pedido::ordno, Pedido::ordno))
+      return saci.listaPedido().filtroLoja(loja).sortedWith(compareBy(Pedido::ordno, Pedido::ordno))
     }
     
     private fun List<Pedido>.filtroLoja(loja: Int) = this.filter {it.filtroLoja(loja)}
@@ -102,11 +107,11 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
     fun duplicar(pedidoOrigem: Pedido, pedidoDestino: Pedido) {
       saci.duplicar(pedidoOrigem, pedidoDestino)
     }
-  
+    
     fun removePedido(pedidoIncial: Pedido, pedidoFinal: Pedido) {
       removePedido(pedidoIncial.ordno, pedidoFinal.ordno)
     }
-
+    
     fun removePedido(numeroI: Int, numeroF: Int) {
       saci.removePedido(numeroI, numeroF)
     }

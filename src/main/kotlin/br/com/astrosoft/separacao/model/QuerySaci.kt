@@ -49,7 +49,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun proximoNumeroDuplicado(storeno: Int, ordno : Int, destino: Int): Int {
+  fun proximoNumeroDuplicado(storeno: Int, ordno: Int, destino: Int): Int {
     return when {
       storeno == 4 && ordno == 2 -> proximoNumeroDuplicadoLoja(destino)
       storeno == 5 && ordno == 2 -> 54
@@ -109,8 +109,7 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
   }
   
-  fun listaProduto(ordno: Int): List<ProdutoPedido> {
-    val storeno = 1
+  fun listaProduto(storeno: Int, ordno: Int): List<ProdutoPedido> {
     val sql = "/sqlSaci/listaProdutos.sql"
     val lista = query(sql) {q ->
       q.addParameter("storeno", storeno)
