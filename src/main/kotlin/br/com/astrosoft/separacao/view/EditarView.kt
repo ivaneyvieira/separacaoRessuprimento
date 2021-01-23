@@ -220,7 +220,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
   }
   
   override val pedido: Pedido?
-    get() = Pedido.findPedidos(cmbPedido.value?.ordno ?: 0)
+    get() = cmbPedido.value
   override val produtos: List<ProdutoPedido>
     get() = dataProviderProdutos.getAll()
   

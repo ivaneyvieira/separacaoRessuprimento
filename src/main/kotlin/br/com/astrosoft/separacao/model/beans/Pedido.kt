@@ -9,7 +9,7 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
   val label
     get() = if(storeno == 1) "$ordno - ${tipoOrigem.descricao}" else "${storeno}.${ordno} - ${tipoOrigem.descricao}"
   
-  fun compativel(pedido: Pedido) = storenoDestino == pedido.storenoDestino
+  fun compativel(pedido: Pedido) = storenoDestino == pedido.storenoDestino || pedido.storeno != 1
   
   fun isNotEmpty(user: UserSaci?) = produtos(user).isNotEmpty()
   
@@ -31,11 +31,14 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
       .map {it.key}
   
   companion object {
-    fun findPedidos(numeroOrigem: Int?): Pedido? {
-      numeroOrigem ?: return null
-      val user = UserSaci.userAtual
-      val pedidos = pedidos(user)
-      return pedidos.firstOrNull {it.ordno == numeroOrigem}
+    fun findPedidos(pedido: Pedido?): Pedido? {
+      pedido ?: return null
+      return findPedidos(pedido.storeno, pedido.ordno)
+    }
+    
+    fun findPedidos(storeno: Int, ordno: Int): Pedido? {
+      val pedidos = pedidos()
+      return pedidos.firstOrNull {it.ordno == ordno && it.storeno == storeno}
     }
     
     fun proximoNumeroSeparado(storenoDestino: Int): Int {
@@ -65,20 +68,22 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
     fun pedidos(user: UserSaci?): List<Pedido> {
       val storeno = user?.storeno ?: 0
       val pedidos = saci.listaPedido()
-      val filtroLoja = pedidos.filter {it.storenoDestino in 2..5}
+      val filtroLoja = pedidos.filter {it.storenoDestino in 2..5 || it.storeno != 1}
       val filtrouser = filtroLoja.filter {it.isNotEmpty(user) || it.filtroLoja(storeno)}
       return filtrouser.sortedWith(compareBy(Pedido::ordno, Pedido::ordno))
     }
     
     fun pedidos(): List<Pedido> {
       val user = UserSaci.userAtual ?: return emptyList()
-      val storeno = user.storeno ?: 0
-      return saci.listaPedido().filtroLoja(storeno).filter {it.storenoDestino in 2..5}
+      val loja = user.storeno ?: 0
+      return saci.listaPedido().filtroLoja(loja)
         .sortedWith(compareBy(Pedido::ordno, Pedido::ordno))
     }
     
     private fun List<Pedido>.filtroLoja(loja: Int) = this.filter {it.filtroLoja(loja)}
-    private fun Pedido.filtroLoja(loja: Int) = loja == 0 || storeno == 1 || storeno == loja
+    private fun Pedido.filtroLoja(loja: Int) =
+      if(loja == 5) (storeno == 1 && ordno == 54) || ((storeno == 5 && ordno == 2))
+      else loja == 0 || storeno == 1
     
     fun pedidosTodos() = saci.listaPedidoTodos().sortedWith(compareBy(Pedido::ordno, Pedido::ordno))
     
@@ -97,9 +102,13 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
     fun duplicar(pedidoOrigem: Pedido, pedidoDestino: Pedido) {
       saci.duplicar(pedidoOrigem, pedidoDestino)
     }
-    
+  
     fun removePedido(pedidoIncial: Pedido, pedidoFinal: Pedido) {
-      saci.removePedido(pedidoIncial.ordno, pedidoFinal.ordno)
+      removePedido(pedidoIncial.ordno, pedidoFinal.ordno)
+    }
+
+    fun removePedido(numeroI: Int, numeroF: Int) {
+      saci.removePedido(numeroI, numeroF)
     }
     
     fun findProduto(prdno: String): List<Produto> {
