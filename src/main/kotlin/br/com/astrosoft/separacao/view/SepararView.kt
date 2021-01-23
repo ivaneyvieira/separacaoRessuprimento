@@ -57,9 +57,7 @@ class SepararView: ViewLayout<SepararViewModel>(), ISepararView {
       cmbPedido = comboBox("Pedido origem") {
         colspan = 1
         setItems(viewModel.pedidos())
-        setItemLabelGenerator {
-          "${it.ordno} - ${it.tipoOrigem.descricao}"
-        }
+        setItemLabelGenerator {it.label}
         isAllowCustomValue = false
         isPreventInvalidInput = false
         addValueChangeListener {evento ->

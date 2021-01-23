@@ -70,40 +70,7 @@ class UsuarioView: ViewLayout<UsuarioViewModel>(), IUsuarioView {
     crud.grid.addThemeVariants(LUMO_COMPACT)
   
     crud.crudFormFactory = UserCrudFormFactory(viewModel)
-    /*
-    crud.crudFormFactory
-      .setUseBeanValidation(true)
-    val allFields = listOf(UserSaci::no.name,
-                           UserSaci::login.name,
-                           UserSaci::name.name,
-                           UserSaci::duplicar.name,
-                           UserSaci::separar.name,
-                           UserSaci::editar.name,
-                           UserSaci::remover.name,
-                           UserSaci::listAbreviacoes.name)
-    crud.crudFormFactory.setVisibleProperties(*allFields.toTypedArray())
-    crud.crudFormFactory.setDisabledProperties(UPDATE, UserSaci::no.name, UserSaci::login.name, UserSaci::name.name)
-    crud.crudFormFactory.setFieldCaptions(UPDATE, * captionFields.toTypedArray())
-    crud.crudFormFactory.setDisabledProperties(READ, *allFields.toTypedArray())
-    crud.crudFormFactory.setFieldCaptions(READ, * captionFields.toTypedArray())
-    crud.crudFormFactory.setDisabledProperties(DELETE, *allFields.toTypedArray())
-    crud.crudFormFactory.setFieldCaptions(DELETE, * captionFields.toTypedArray())
-    crud.crudFormFactory.setDisabledProperties(ADD, UserSaci::no.name,
-                                               UserSaci::name.name)
-    crud.crudFormFactory.setVisibleProperties(ADD,
-                                              UserSaci::login.name,
-                                              UserSaci::duplicar.name,
-                                              UserSaci::separar.name,
-                                              UserSaci::editar.name,
-                                              UserSaci::editar.name,
-                                              UserSaci::listAbreviacoes.name)
-    crud.crudFormFactory.setFieldCaptions(ADD, "Login", "Duplicar", "Separar", "Editar", "Remover", "Localizações")
-    crud.crudFormFactory.setFieldProvider(UserSaci::listAbreviacoes.name) {
-      TwinColSelect<String>().apply {
-        this.setItems(viewModel.abreviacoes())
-      }
-    }
-    */
+
     crud.setSizeFull()
     return crud
   }
@@ -151,15 +118,17 @@ class UserCrudFormFactory(private val viewModel: UsuarioViewModel): AbstractCrud
             isReadOnly = true
             binder.bind(this, UserSaci::name.name)
           }
-        if(operation in listOf(ADD, READ, DELETE, UPDATE))
+        if(operation in listOf(ADD, READ, DELETE, UPDATE)) {
           multiselectComboBox<String> {
             this.label = "Localização"
-            this.setItems(viewModel.abreviacoes())
-            //placeholder = "Escolha as localizações"
+            this.setItems(viewModel.abreviacoes()) //placeholder = "Escolha as localizações"
             // isClearButtonVisible = true
             binder.bind(this, UserSaci::listAbreviacoes.name)
           }
-        
+          integerField("Loja"){
+            binder.bind(this, UserSaci::storeno.name)
+          }
+        }
         if(operation in listOf(ADD, READ, DELETE, UPDATE)) {
           checkBox("Duplicar") {
             binder.bind(this, UserSaci::duplicar.name)

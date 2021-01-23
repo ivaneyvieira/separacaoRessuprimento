@@ -19,4 +19,5 @@ FROM sqldados.oprd           AS O
 WHERE O.storeno = :storeno
   AND O.ordno = :ordno
   AND NOT (O.storeno = 4 AND O.ordno = 2 AND O.prdno = 19)
+  AND NOT (O.storeno = 5 AND O.ordno = 2 AND O.prdno = 19)
 GROUP BY prdno, grade, IFNULL(L.localizacao, IF(LENGTH(O.auxStr) > 20, '', O.auxStr))

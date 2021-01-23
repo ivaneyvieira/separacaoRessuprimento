@@ -27,7 +27,7 @@ class RemoverView: ViewLayout<RemoverViewModel>(), IRemoverView {
       cmbNumeroInicial = comboBox("Pedido incial") {
         colspan = 1
         setItems(viewModel.pedidos())
-        setItemLabelGenerator {it.ordno.toString()}
+        setItemLabelGenerator {it.label}
         isAllowCustomValue = false
         isPreventInvalidInput = false
       }

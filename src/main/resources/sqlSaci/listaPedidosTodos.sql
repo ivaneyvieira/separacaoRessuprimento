@@ -17,3 +17,14 @@ FROM sqldados.ords         AS O
 WHERE O.storeno = 4
   AND O.no = 2
 GROUP BY O.storeno, O.no
+UNION
+SELECT O.storeno,
+       O.no AS ordno,
+       O.l2 AS ordnoMae,
+       'L'  AS tipo
+FROM sqldados.ords         AS O
+  inner join sqldados.oprd AS P
+	       ON O.storeno = P.storeno AND O.no = P.ordno AND P.prdno <> LPAD('19', 16, ' ')
+WHERE O.storeno = 5
+  AND O.no = 2
+GROUP BY O.storeno, O.no

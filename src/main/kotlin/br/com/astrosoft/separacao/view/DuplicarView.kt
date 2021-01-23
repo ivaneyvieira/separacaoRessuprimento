@@ -32,7 +32,7 @@ class DuplicarView: ViewLayout<DuplicarViewModel>(), IDuplicarView {
         val pedidos = viewModel.pedidos()
         setItems(pedidos)
         
-        setItemLabelGenerator {if(it.storeno == 1) "${it.ordno}" else "${it.storeno}.${it.ordno}"}
+        setItemLabelGenerator {it.label}
         isAllowCustomValue = false
         isPreventInvalidInput = false
       }
