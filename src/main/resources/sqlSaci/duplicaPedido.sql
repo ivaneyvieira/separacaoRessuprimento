@@ -130,6 +130,7 @@ SELECT :storenoNovo       AS storeno,
 FROM sqldados.oprd
 WHERE (storeno = :storeno)
   AND (ordno = :ordno)
+  AND (prdno != LPAD('19', 16, ' '))
 GROUP BY prdno, grade;
 
 delete

@@ -21,10 +21,7 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
       if(produto.estoqueLoja == true) {
         val abreviacao = produto.localizacao.mid(0, 4)
         val proximoNumero = Pedido.proximoNumeroPedidoLoja(pedido.storenoDestino, abreviacao)
-        Pedido.atualizarQuantidade(ordno = pedido.ordno,
-                                   proximoNumero = proximoNumero,
-                                   produto = produto,
-                                   tipo = LOJA)
+        Pedido.atualizarQuantidade(ordno = pedido.ordno, proximoNumero = proximoNumero, produto = produto, tipo = LOJA)
         setPedidosLoja.add(PedidosLojaAbreviacao(proximoNumero, abreviacao))
       }
       else {
@@ -58,8 +55,9 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
     val grade = produto.grade
     val localizacao = produto.localizacao
     val qtty = produto.qtty ?: fail("Quantidade não informada")
-    if(pedido.produtos(userSaci).any {it.prdno == produto.codigo && it.grade == produto.grade})
-      fail("O produto já está adicionado")
+    if(pedido.produtos(userSaci)
+        .any {it.prdno == produto.codigo && it.grade == produto.grade}
+    ) fail("O produto já está adicionado")
     Pedido.adicionarProduto(pedido, codigo, grade, qtty, localizacao)
     view.updateGrid()
   }
@@ -77,10 +75,9 @@ class EditarViewModel(view: IEditarView): ViewModel<IEditarView>(view) {
     return Pedido.pedidos(user)
   }
   
-  val pedidosSeparacao: List<Pedido>
-    get() = pedidos().filter {
-      it.tipoOrigem == SEPARADO || it.tipoOrigem == LOJA
-    }
+  fun pedidosSeparacao(): List<Pedido> = pedidos().filter {
+    it.tipoOrigem == SEPARADO || it.tipoOrigem == LOJA
+  }
 }
 
 interface IEditarView: IView {
@@ -100,14 +97,11 @@ class ProdutoDlg(val pedido: Pedido) {
   
   fun validadialog() {
     val userSaci = UserSaci.userAtual
-    if(produtos.isEmpty())
-      fail("Produto inválido")
+    if(produtos.isEmpty()) fail("Produto inválido")
     val quantidade = qtty ?: 0
-    if(quantidade <= 0)
-      fail("Quantidade inválida")
+    if(quantidade <= 0) fail("Quantidade inválida")
     val abreviacao = localizacao.mid(0, 4)
-    if(!pedido.abreviacoes(userSaci).contains(abreviacao))
-      fail("A localização $abreviacao não é compativel")
+    if(!pedido.abreviacoes(userSaci).contains(abreviacao)) fail("A localização $abreviacao não é compativel")
   }
 }
 
