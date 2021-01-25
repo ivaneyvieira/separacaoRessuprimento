@@ -75,7 +75,8 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
       val storeno = user?.storeno ?: 0
       val pedidos = saci.listaPedido()
       val filtroLoja = pedidos.filter {it.storenoDestino in 2..5 || it.storeno != 1}
-      val filtrouser = filtroLoja.filter {it.isNotEmpty(user) || it.filtroLoja(storeno)}
+      val filtrouser = if(storeno == 5) filtroLoja.filter {it.filtroLoja(storeno)}
+      else filtroLoja.filter {it.isNotEmpty(user) || it.filtroLoja(storeno)}
       return filtrouser.sortedWith(compareBy(Pedido::ordno, Pedido::ordno))
     }
     
@@ -88,7 +89,7 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
     private fun List<Pedido>.filtroLoja(loja: Int) = this.filter {it.filtroLoja(loja)}
     private fun Pedido.filtroLoja(loja: Int) =
       if(loja == 5) (storeno == 1 && ordno == 54) || ((storeno == 5 && ordno == 2))
-      else loja == 0 || storeno == 1
+      else loja == 0 || (storeno == 1 && ordno >= 10000)
     
     fun pedidosTodos() = saci.listaPedidoTodos().sortedWith(compareBy(Pedido::ordno, Pedido::ordno))
     
