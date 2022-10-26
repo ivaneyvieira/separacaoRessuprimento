@@ -57,7 +57,7 @@ dependencies {
   compile("ch.qos.logback:logback-classic:1.2.3")
   compile("org.slf4j:slf4j-api:1.7.25")
   compile("org.slf4j:jul-to-slf4j:1.7.25")
-  
+
   compile("org.sql2o:sql2o:1.6.0")
   compile("mysql:mysql-connector-java:5.1.48")
   compile("com.zaxxer:HikariCP:3.4.1")
@@ -85,4 +85,3 @@ dependencies {
 tasks.withType<KotlinCompile> {
   kotlinOptions.jvmTarget = "1.8"
 }
-
