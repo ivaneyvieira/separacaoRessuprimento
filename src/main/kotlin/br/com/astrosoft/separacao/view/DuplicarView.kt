@@ -33,8 +33,8 @@ class DuplicarView: ViewLayout<DuplicarViewModel>(), IDuplicarView {
         setItems(pedidos)
         
         setItemLabelGenerator {it.label}
-        isAllowCustomValue = false
-        isPreventInvalidInput = false
+        this.isAllowCustomValue = false
+        this.isPreventInvalidInput = false
       }
       br()
       chkInformarPedidoDestino = checkBox("Informar pedido destino") {

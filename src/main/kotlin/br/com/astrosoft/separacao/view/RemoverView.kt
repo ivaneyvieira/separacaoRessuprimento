@@ -28,16 +28,16 @@ class RemoverView: ViewLayout<RemoverViewModel>(), IRemoverView {
         colspan = 1
         setItems(viewModel.pedidos())
         setItemLabelGenerator {it.label}
-        isAllowCustomValue = false
-        isPreventInvalidInput = false
+        this.isAllowCustomValue = false
+        this.isPreventInvalidInput = false
       }
       br()
       cmbNumeroFinal = comboBox("Pedido final") {
         colspan = 1
         setItems(viewModel.pedidos())
         setItemLabelGenerator {it.ordno.toString()}
-        isAllowCustomValue = false
-        isPreventInvalidInput = false
+        this.isAllowCustomValue = false
+        this.isPreventInvalidInput = false
       }
     }
     toolbar {
