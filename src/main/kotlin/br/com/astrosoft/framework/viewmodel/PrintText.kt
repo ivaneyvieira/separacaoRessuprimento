@@ -64,7 +64,6 @@ abstract class PrintText<T> {
       }
   }
 
-
   private fun sumary(text: StringBuilder) {
     text.line(sumaryLine())
   }
