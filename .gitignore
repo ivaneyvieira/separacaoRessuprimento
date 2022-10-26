@@ -19,4 +19,17 @@ Procfile
 deploy.sh
 .gradle
 ebean.properties
+<<<<<<< HEAD
 node_modules
+=======
+.directory
+execute.sh
+logs
+node
+node_modules
+target
+package-lock.json
+package.json
+webpack.config.js
+webpack.generated.js
+>>>>>>> master

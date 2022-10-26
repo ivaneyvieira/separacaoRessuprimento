@@ -71,11 +71,11 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
         colspan = 1
         setItems(viewModel.pedidosSeparacao())
         setItemLabelGenerator {it.label}
-        isAllowCustomValue = false
-        isPreventInvalidInput = false
+        this.isAllowCustomValue = false
+        this.isPreventInvalidInput = false
         addValueChangeListener {evento ->
           if(evento.isFromClient) {
-            updateGrid(value)
+            updateGrid(this.value)
           }
         }
       }
@@ -85,24 +85,24 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
     }
     gridProduto = grid(dataProvider = dataProviderProdutos) {
       isExpand = true
-      isMultiSort = true
+      this.isMultiSort = true
       addThemeVariants(LUMO_COMPACT)
       setSelectionMode(SelectionMode.SINGLE)
       val binder = Binder<ProdutoPedido>(ProdutoPedido::class.java)
-      editor.binder = binder
-      editor.isBuffered = true
+      this.editor.binder = binder
+      this.editor.isBuffered = true
       val edtQtty = IntegerField().apply {
         this.isAutoselect = true
         this.width = "100%"
         this.isAutofocus = true
         this.element
           .addEventListener("keydown") {
-            editor.save()
+            this@grid.editor.save()
           }
           .filter = "event.key === 'Enter'"
         this.element
           .addEventListener("keydown") {
-            editor.cancel()
+            this@grid.editor.cancel()
           }
           .filter = "event.key === 'Escape'"
       }
@@ -110,21 +110,21 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
       
       addItemClickListener {event ->
         when {
-          editor.isOpen                           -> {
-            editor.save()
+          this.editor.isOpen                           -> {
+            this.editor.save()
           }
           event.column.id.orElse("") == "colLoja" -> {
             event.item.estoqueLoja = !(event.item.estoqueLoja ?: false)
             this@grid.refresh()
           }
           else                                    -> {
-            editor.editItem(event.item)
+            this.editor.editItem(event.item)
             edtQtty.focus()
           }
         }
       }
   
-      editor.addSaveListener {event ->
+      this.editor.addSaveListener { event ->
         val produto = event.item
         if(produto.quantidadeValida) {
           binder.writeBean(produto)
