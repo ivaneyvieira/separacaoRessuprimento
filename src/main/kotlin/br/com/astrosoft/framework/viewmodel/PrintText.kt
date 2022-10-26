@@ -69,14 +69,9 @@ abstract class PrintText<T> {
   }
   
   private fun inicialize(text: StringBuilder) {
-    /*
-    text.append(0x1B.toChar())
-      .append(0x40.toChar())
-      .append(0x0F.toChar())
-     */
     text.append(0x1b.toChar())
       .append(0x21.toChar())
-      .append(0x01.toChar())
+      .append(0x04.toChar())
   }
   
   protected fun String.barras(): String {
