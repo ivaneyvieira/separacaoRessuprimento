@@ -69,8 +69,8 @@ abstract class PrintText<T> {
 
   private fun inicialize(text: StringBuilder) {
     //.append(0x1d).append(0xf9).append(0x35).append(0x01) // set o modo esc/pos
-    text.append(0x1b.toChar()).append(0x40.toChar()) // Iniciazlia ESC @
-      //.append(0x1b.toChar()).append(0x21.toChar()).append(0x01.toChar()) // Fonte menor ESC M
+    //text.append(0x1b.toChar()).append(0x40.toChar()) // Iniciazlia ESC @
+      text.append(0x1b.toChar()).append(0x21.toChar()).append(0x01.toChar()) // Fonte menor ESC M
       //.append(0x1b.toChar()).append(0x4d.toChar()).append(0x01.toChar()) // Fonte menor ESC M
       //.append(0x1b.toChar()).append(0x57.toChar()).append(0x00.toChar()) // Fonte menor ESC M
       //.append(0x0f.toChar()) // condeçado
@@ -135,6 +135,7 @@ abstract class PrintText<T> {
 
   private fun StringBuilder.line(line: String): StringBuilder {
     //this.append(0x0f.toChar())
+    this.append(0x1b.toChar()).append(0x21.toChar()).append(0x01.toChar())
     this.append(line).appendLine()
     return this
   }
