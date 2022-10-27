@@ -70,7 +70,7 @@ abstract class PrintText<T> {
   private fun inicialize(text: StringBuilder) {
     text.append(0x1b.toChar()).append(0x40.toChar()) // Iniciazlia ESC @
       .append(0x1b.toChar()).append(0x4d.toChar()).append(0x01.toChar()) // Fonte menor ESC M
-      .append(0x1b.toChar()).append(0x0f.toChar())
+      .append(0x0f.toChar()) // condeçado
   }
 
   protected fun String.barras(): String {
