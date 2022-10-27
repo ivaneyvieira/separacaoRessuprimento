@@ -69,7 +69,7 @@ abstract class PrintText<T> {
 
   private fun inicialize(text: StringBuilder) {
     text.append(0x1b.toChar()).append(0x40.toChar()) // Iniciazlia ESC @
-      .append(0x1b.toChar()).append(0x4d.toChar()).append(0x01.toChar()) // Fonte menor ESC M
+      .append(0x1b.toChar()).append(0x4d.toChar()).append(0x00.toChar()) // Fonte menor ESC M
       .append(0x0f.toChar()) // condeçado
   }
 
@@ -131,6 +131,7 @@ abstract class PrintText<T> {
   }
 
   private fun StringBuilder.line(line: String): StringBuilder {
+    this.append(0x0f.toChar())
     this.append(line).appendLine()
     return this
   }
