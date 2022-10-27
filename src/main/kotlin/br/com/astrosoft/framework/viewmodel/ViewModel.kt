@@ -25,4 +25,6 @@ interface IView {
   fun showError(msg: String)
   fun showWarning(msg: String)
   fun showInformation(msg: String)
+  fun showQuestion(msg: String, execYes: () -> Unit)
+  fun showQuestion(msg: String, execYes: () -> Unit, execNo: () -> Unit)
 }

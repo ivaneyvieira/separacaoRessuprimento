@@ -37,7 +37,9 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
   
   fun imprimir() = exec {
     val pedido = view.pedido ?: fail("Pedido inválido")
-    print(pedido.ordno)
+    view.showQuestion("Confirma a impressão?") {
+      print(pedido.ordno)
+    }
   }
   
   private fun print(ordno: Int) {

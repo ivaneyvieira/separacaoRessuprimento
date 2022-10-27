@@ -54,11 +54,11 @@ abstract class ViewLayout<VM: ViewModel<*>>: VerticalLayout(), IView, BeforeLeav
       .open()
   }
   
-  fun showQuestion(msg: String, execYes: () -> Unit) {
-    showQuestion(msg, execYes, {})
+  override fun showQuestion(msg: String, execYes: () -> Unit) {
+    showQuestion(msg, execYes= execYes, execNo = {})
   }
   
-  private fun showQuestion(msg: String, execYes: () -> Unit, execNo: () -> Unit) {
+  override fun showQuestion(msg: String, execYes: () -> Unit, execNo: () -> Unit) {
     ConfirmDialog.createQuestion()
       .withCaption("Confirmação")
       .withMessage(msg)
