@@ -58,7 +58,6 @@ class UsuarioView: ViewLayout<UsuarioViewModel>(), IUsuarioView {
   }
   
   private fun gridCrud(): GridCrud<UserSaci> {
-    val captionFields = listOf("Numero", "Login", "Nome", "Duplicar", "Separar", "Editar", "Remover", "")
     val crud: GridCrud<UserSaci> = GridCrud<UserSaci>(UserSaci::class.java)
     crud.grid
       .setColumns(UserSaci::no.name, UserSaci::login.name, UserSaci::name.name)
