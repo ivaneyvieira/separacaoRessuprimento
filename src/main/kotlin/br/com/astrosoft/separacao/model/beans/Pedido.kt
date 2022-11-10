@@ -4,22 +4,33 @@ import br.com.astrosoft.framework.util.mid
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem.DUPLICADO
 import br.com.astrosoft.separacao.model.saci
+import java.time.LocalDate
 
-data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val tipo: String) {
+data class Pedido(val storeno: Int = 1, val ordno: Int, val data: LocalDate?, val ordnoMae: Int, val tipo: String) {
   val label
     get() = if(storeno == 1) "$ordno - ${tipoOrigem.descricao}" else "${storeno}.${ordno} - ${tipoOrigem.descricao}"
   
   fun compativel(pedido: Pedido) = storenoDestino == pedido.storenoDestino || pedido.storeno != 1
   
   fun isNotEmpty(user: UserSaci?) = produtos(user).isNotEmpty()
-  
+
   fun produtos(user: UserSaci?): List<ProdutoPedido> {
     val loja = user?.storeno ?: return emptyList()
     val lista = if(loja == 1) saci.listaProduto(storeno, ordno).filtraLocalizacoes().filter {
       user.isLocalizacaoCompativel(it.localizacao)
     }
     else saci.listaProduto(storeno, ordno)
-    
+
+    return lista.sortedWith(compareBy({it.localizacao}, {it.descricao}, {it.grade}))
+  }
+
+  fun produtosPendente(user: UserSaci?): List<ProdutoPedido> {
+    val loja = user?.storeno ?: return emptyList()
+    val lista = if(loja == 1) saci.listaProdutoPendente(storeno, ordno, data).filtraLocalizacoes().filter {
+      user.isLocalizacaoCompativel(it.localizacao)
+    }
+    else saci.listaProdutoPendente(storeno, ordno, data)
+
     return lista.sortedWith(compareBy({it.localizacao}, {it.descricao}, {it.grade}))
   }
   
@@ -70,7 +81,7 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
                         qttyEdit = produto.qttyEdit,
                         localizacao = produto.localizacao)
     }
-    
+
     fun pedidos(user: UserSaci?): List<Pedido> {
       val storeno = user?.storeno ?: 0
       val pedidos = saci.listaPedido()
@@ -79,7 +90,16 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val ordnoMae: Int, val t
       else filtroLoja.filter {it.isNotEmpty(user) || it.filtroLoja(storeno)}
       return filtrouser.sortedWith(compareBy(Pedido::ordno, Pedido::ordno))
     }
-    
+
+    fun pedidosPendente(user: UserSaci?): List<Pedido> {
+      val storeno = user?.storeno ?: 0
+      val pedidos = saci.listaPedidoPendente()
+      val filtroLoja = pedidos.filter {it.storenoDestino in 2..5 || it.storeno != 1}
+      val filtrouser = if(storeno == 5) filtroLoja.filter {it.filtroLoja(storeno)}
+      else filtroLoja.filter {it.isNotEmpty(user) || it.filtroLoja(storeno)}
+      return filtrouser.sortedWith(compareBy(Pedido::ordno, Pedido::ordno))
+    }
+
     fun pedidos(): List<Pedido> {
       val user = UserSaci.userAtual ?: return emptyList()
       val loja = user.storeno ?: 0

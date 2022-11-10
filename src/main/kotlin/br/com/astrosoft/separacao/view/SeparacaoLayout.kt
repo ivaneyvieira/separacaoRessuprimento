@@ -74,6 +74,7 @@ class SeparacaoLayout: AppLayoutRouterLayout() {
     private var menuUsuario: LeftNavigationItem? = null
     private var menuRemover: LeftNavigationItem? = null
     private var menuEditar: LeftNavigationItem? = null
+    private var menuPendencia: LeftNavigationItem? = null
     private var menuSeparar: LeftNavigationItem? = null
     private var menuDuplicar: LeftNavigationItem? = null
   
@@ -99,10 +100,12 @@ class SeparacaoLayout: AppLayoutRouterLayout() {
       menuDuplicar = addMenu("Duplicar", COPY, DuplicarView::class)
       menuSeparar = addMenu("Separar", SPLIT, SepararView::class)
       menuEditar = addMenu("Editar", EDIT, EditarView::class)
+      menuPendencia = addMenu("Pendencia", EDIT, PendenciaView::class)
       menuRemover = addMenu("Remover", ERASER, RemoverView::class)
       menuUsuario = addMenu("Usuários", USER, UsuarioView::class)
       appMenu.add(menuDuplicar)
       appMenu.add(menuSeparar)
+      appMenu.add(menuPendencia)
       appMenu.add(menuEditar)
       appMenu.add(menuRemover)
       appMenu.add(menuUsuario)

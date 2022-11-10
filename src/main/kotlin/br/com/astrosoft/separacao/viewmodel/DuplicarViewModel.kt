@@ -6,6 +6,7 @@ import br.com.astrosoft.framework.viewmodel.fail
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.Pedido.Companion.removePedido
 import br.com.astrosoft.separacao.model.beans.UserSaci
+import java.time.LocalDate
 
 class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
   override fun init() {
@@ -28,7 +29,7 @@ class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
     if(ordnoDestino == 54)
       removePedido(54, 54)
     val pedidoOrigem = Pedido.findPedidos(view.pedidoOrigem) ?: fail("Pedido de origem não encontrado")
-    val pedidoDestino = Pedido.findPedidos(1, ordnoDestino) ?: Pedido(1, view.numeroDestino ?: 0, 0, "")
+    val pedidoDestino = Pedido.findPedidos(1, ordnoDestino) ?: Pedido(1, view.numeroDestino ?: 0, data = view.data, 0, "")
     when {
       pedidoDestino.isNotEmpty(userSaci)      -> fail("O pedido de destino já existe")
       !pedidoDestino.compativel(pedidoOrigem) -> fail("O pedido de destino não é compatível com o pedido de Origem")
@@ -50,5 +51,6 @@ class DuplicarViewModel(view: IDuplicarView): ViewModel<IDuplicarView>(view) {
 interface IDuplicarView: IView {
   var pedidoOrigem: Pedido?
   var numeroDestino: Int?
+  val data: LocalDate?
   var informarNumero: Boolean?
 }
