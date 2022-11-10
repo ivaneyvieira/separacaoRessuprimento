@@ -3,12 +3,14 @@ package br.com.astrosoft.separacao.model
 import br.com.astrosoft.framework.model.QueryDB
 import br.com.astrosoft.framework.util.DB
 import br.com.astrosoft.framework.util.lpad
+import br.com.astrosoft.framework.util.toSaciDate
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.Produto
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
 import br.com.astrosoft.separacao.model.beans.Relatorio
 import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem
+import java.time.LocalDate
 
 class QuerySaci: QueryDB(driver, url, username, password) {
   fun findUser(login: String?): UserSaci? {
@@ -111,9 +113,22 @@ class QuerySaci: QueryDB(driver, url, username, password) {
   
   fun listaProduto(storeno: Int, ordno: Int): List<ProdutoPedido> {
     val sql = "/sqlSaci/listaProdutos.sql"
+    val lista = query2(sql, ProdutoPedido::class) {
+      addOptionalParameter("storeno", storeno)
+      addOptionalParameter("ordno", ordno)
+    }
+    lista.forEach {produto ->
+      produto.qttyEdit = produto.qtty.toInt()
+    }
+    return lista
+  }
+
+  fun listaProdutoPendente(storeno: Int, ordno: Int, data: LocalDate?): List<ProdutoPedido> {
+    val sql = "/sqlSaci/listaProdutosPendente.sql"
     val lista = query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.addParameter("ordno", ordno)
+      q.addParameter("data", data?.toSaciDate() ?: 0)
       q.executeAndFetch(ProdutoPedido::class.java)
     }
     lista.forEach {produto ->
@@ -121,7 +136,6 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
     return lista
   }
-  
   fun listaPedido(): List<Pedido> {
     val storeno = 1
     val sql = "/sqlSaci/listaPedidos.sql"
@@ -131,7 +145,16 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     }
     return ret
   }
-  
+
+  fun listaPedidoPendente(): List<Pedido> {
+    val storeno = 1
+    val sql = "/sqlSaci/listaPedidosPendente.sql"
+    val ret = query2(sql, Pedido::class) {
+      addOptionalParameter("storeno", storeno)
+    }
+    return ret
+  }
+
   fun listaPedidoTodos(): List<Pedido> {
     val storeno = 1
     val sql = "/sqlSaci/listaPedidosTodos.sql"

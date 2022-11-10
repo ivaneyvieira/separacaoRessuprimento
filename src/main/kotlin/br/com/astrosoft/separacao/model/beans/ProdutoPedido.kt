@@ -1,10 +1,12 @@
 package br.com.astrosoft.separacao.model.beans
 
 import br.com.astrosoft.framework.util.lpad
+import java.time.LocalDate
 
 data class ProdutoPedido(
   val prdno: String,
   val grade: String,
+  val data: LocalDate? = null,
   val descricao: String,
   val fornecedor: Int,
   val centrodelucro: String,

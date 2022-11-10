@@ -16,6 +16,7 @@ import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.textfield.IntegerField
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
+import java.time.LocalDate
 
 @Route(layout = SeparacaoLayout::class)
 @PageTitle("Duplicar")
@@ -71,6 +72,8 @@ class DuplicarView: ViewLayout<DuplicarViewModel>(), IDuplicarView {
     set(value) {
       edtPedidoDestino.value = value
     }
+  override val data: LocalDate?
+    get() = null
   override var informarNumero: Boolean?
     get() = chkInformarPedidoDestino.value
     set(value) {
