@@ -67,7 +67,11 @@ WHERE storeno = :storeno
   AND no BETWEEN :numeroI AND :numeroF;
 
 REPLACE INTO oprdPendente(date, ordno, mult, ipi, freight, icms, auxLong1, auxLong2, auxMy1,
-                          auxMy2, icmsSubst, auxLong3, auxLong4, auxMy3, auxMy4, qtty, qtty_src, qtty_xfr, cost, qttyRcv, qttyCancel, qttyVendaMes, qttyVendaMesAnt, qttyVendaMedia, qttyPendente, stkDisponivel, qttyAbc, storeno, seqno, status, bits, bits2, auxShort1, auxShort2, auxShort3, auxShort4, prdno, grade, remarks, padbyte, gradeFechada, obs, auxStr)
+			  auxMy2, icmsSubst, auxLong3, auxLong4, auxMy3, auxMy4, qtty, qtty_src,
+			  qtty_xfr, cost, qttyRcv, qttyCancel, qttyVendaMes, qttyVendaMesAnt,
+			  qttyVendaMedia, qttyPendente, stkDisponivel, qttyAbc, storeno, seqno,
+			  status, bits, bits2, auxShort1, auxShort2, auxShort3, auxShort4, prdno,
+			  grade, remarks, padbyte, gradeFechada, obs, auxStr)
 SELECT O.date,
        ordno,
        mult,
@@ -111,9 +115,9 @@ SELECT O.date,
        gradeFechada,
        obs,
        auxStr
-FROM ords       AS O
-INNER JOIN oprd AS P
-	     ON O.no = P.ordno AND P.storeno = O.storeno
+FROM ords         AS O
+  INNER JOIN oprd AS P
+	       ON O.no = P.ordno AND P.storeno = O.storeno
 WHERE O.storeno = :storeno
   AND O.no BETWEEN :numeroI AND :numeroF;
 
