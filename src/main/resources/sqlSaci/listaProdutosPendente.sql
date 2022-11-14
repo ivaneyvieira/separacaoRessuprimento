@@ -27,5 +27,5 @@ WHERE O.storeno = :storeno
   AND O.date = :data
   AND NOT (O.storeno = 4 AND O.ordno = 2 AND O.prdno = 19)
   AND NOT (O.storeno = 5 AND O.ordno = 2 AND O.prdno = 19)
-  AND (E.ordno IS NULL OR O.qtty != E.qtty)
+  AND (E.ordno IS NULL)
 GROUP BY data, prdno, grade, IFNULL(L.localizacao, IF(LENGTH(O.auxStr) > 20, '', O.auxStr))

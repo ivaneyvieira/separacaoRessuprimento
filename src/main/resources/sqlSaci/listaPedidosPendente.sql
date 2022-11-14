@@ -33,5 +33,5 @@ FROM T_ORDS                                                              AS P
 	       INNER JOIN sqldados.oprd AS E
 			    ON O.storeno = E.storeno AND O.no = E.ordno) AS D
 	      USING (storeno, ordno, data, prdno, grade)
-WHERE (D.ordno IS NULL OR P.qtty != D.qtty)
+WHERE (D.ordno IS NULL)
 GROUP BY P.storeno, P.ordno, P.data
