@@ -6,7 +6,8 @@ SELECT O.storeno,
        O.l2         AS ordnoMae,
        O.C4         AS tipo,
        P.prdno,
-       P.grade
+       P.grade,
+       qtty
 FROM sqldados.ordsPendente            O
   INNER JOIN sqldados.oprdPendente AS P
 	       ON O.storeno = P.storeno AND O.no = P.ordno AND P.date = O.date AND
@@ -26,10 +27,11 @@ FROM T_ORDS                                                              AS P
 		    O.no   AS ordno,
 		    O.date AS data,
 		    prdno,
-		    grade
+		    grade,
+		    qtty
 	     FROM sqldados.ords         AS O
 	       INNER JOIN sqldados.oprd AS E
 			    ON O.storeno = E.storeno AND O.no = E.ordno) AS D
 	      USING (storeno, ordno, data, prdno, grade)
-WHERE D.ordno IS NULL
-GROUP BY P.storeno, P.ordno
+WHERE (D.ordno IS NULL OR P.qtty != D.qtty)
+GROUP BY P.storeno, P.ordno, P.data

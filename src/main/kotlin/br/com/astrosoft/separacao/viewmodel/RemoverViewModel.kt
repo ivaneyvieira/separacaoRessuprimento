@@ -5,10 +5,13 @@ import br.com.astrosoft.framework.viewmodel.ViewModel
 import br.com.astrosoft.framework.viewmodel.fail
 import br.com.astrosoft.separacao.model.beans.Pedido
 
-class RemoverViewModel(view: IRemoverView): ViewModel<IRemoverView>(view) {
-  fun remover() {
+class RemoverViewModel(view: IRemoverView): ViewModel<IRemoverView>(view)  {
+  fun remover() = exec {
     val pedidoIncial = view.numeroPedidoInicial ?: fail("Pedido inicial não encontrado")
     val pedidoFinal = view.numeroPedidoFinal ?: fail("Pedido final não encontrado")
+    if(pedidoIncial.ordno.toString().length != pedidoFinal.ordno.toString().length){
+      fail("O pedido de destino não é compatível com o pedido de Origem")
+    }
     if(!pedidoIncial.compativel(pedidoFinal)) {
       fail("O pedido de destino não é compatível com o pedido de Origem")
     }
