@@ -21,6 +21,4 @@ FROM sqldados.oprd           AS O
 	       ON (O.prdno = S.prdno AND O.grade = S.grade AND S.storeno = 4)
 WHERE O.storeno = :storeno
   AND O.ordno = :ordno
-  AND NOT (O.storeno = 4 AND O.ordno = 2 AND O.prdno = 19)
-  AND NOT (O.storeno = 5 AND O.ordno = 2 AND O.prdno = 19)
 GROUP BY prdno, grade, IFNULL(L.localizacao, IF(LENGTH(O.auxStr) > 20, '', O.auxStr))
