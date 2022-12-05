@@ -25,7 +25,5 @@ FROM sqldados.oprdPendente   AS    O
 WHERE O.storeno = :storeno
   AND O.ordno = :ordno
   AND O.date = :data
-  AND NOT (O.storeno = 4 AND O.ordno = 2 AND O.prdno = 19)
-  AND NOT (O.storeno = 5 AND O.ordno = 2 AND O.prdno = 19)
   AND (E.ordno IS NULL)
 GROUP BY data, prdno, grade, IFNULL(L.localizacao, IF(LENGTH(O.auxStr) > 20, '', O.auxStr))
