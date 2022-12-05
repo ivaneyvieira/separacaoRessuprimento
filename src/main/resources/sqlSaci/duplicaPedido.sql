@@ -1,9 +1,9 @@
-delete
-from sqldados.oprd
-where storeno = :storenoNovo
-  and ordno = :ordnoNovo
-  and storeno = 1
-  and ordno = 54;
+DELETE
+FROM sqldados.oprd
+WHERE storeno = :storenoNovo
+  AND ordno = :ordnoNovo
+  AND storeno = 1
+  AND ordno = 54;
 
 INSERT INTO sqldados.ords (no, date, vendno, discount, amt, package, custo_fin, others, eord_ordno,
 			   dataFaturamento, invno, freightAmt, auxLong1, auxLong2, amtOrigem,
@@ -71,7 +71,7 @@ SELECT :ordnoNovo                       AS no,
        c1,
        c2,
        c3,
-       if(:ordnoNovo IN (54), 'S', 'D') AS c4
+       IF(:ordnoNovo IN (54), 'S', 'D') AS c4
 FROM sqldados.ords
 WHERE storeno = :storeno
   AND no = :ordno;
