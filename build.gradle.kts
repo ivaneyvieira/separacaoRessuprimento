@@ -15,7 +15,6 @@ repositories {
   }
 }
 
-
 vaadin {
   version = "14.1.3"
   // submitStatistics=true
