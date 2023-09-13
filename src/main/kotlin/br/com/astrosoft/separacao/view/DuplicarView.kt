@@ -5,14 +5,10 @@ import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.viewmodel.DuplicarViewModel
 import br.com.astrosoft.separacao.viewmodel.IDuplicarView
-import com.github.mvysny.karibudsl.v10.br
-import com.github.mvysny.karibudsl.v10.button
-import com.github.mvysny.karibudsl.v10.checkBox
-import com.github.mvysny.karibudsl.v10.comboBox
-import com.github.mvysny.karibudsl.v10.integerField
+import com.github.mvysny.karibudsl.v10.*
 import com.vaadin.flow.component.checkbox.Checkbox
-import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.select.Select
 import com.vaadin.flow.component.textfield.IntegerField
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
@@ -23,19 +19,24 @@ import java.time.LocalDate
 class DuplicarView: ViewLayout<DuplicarViewModel>(), IDuplicarView {
   private lateinit var chkInformarPedidoDestino: Checkbox
   private lateinit var edtPedidoDestino: IntegerField
-  private lateinit var cmbPedidoOrigem: ComboBox<Pedido>
+  private lateinit var cmbPedidoOrigem: Select<Pedido>
   override val viewModel = DuplicarViewModel(this)
   
   init {
     form("Duplicar") {
-      cmbPedidoOrigem = comboBox("Pedido origem") {
+      cmbPedidoOrigem = select("Pedido origem") {
         colspan = 1
-        val pedidos = viewModel.pedidos()
-        setItems(pedidos)
-        
+        update()
+
         setItemLabelGenerator {it.label}
-        this.isAllowCustomValue = false
-        this.isPreventInvalidInput = false
+
+        addValueChangeListener {event ->
+          if(event.isFromClient) {
+            if(chkInformarPedidoDestino.value == false) {
+              edtPedidoDestino.value = viewModel.proximoNumero()
+            }
+          }
+        }
       }
       br()
       chkInformarPedidoDestino = checkBox("Informar pedido destino") {
@@ -56,12 +57,20 @@ class DuplicarView: ViewLayout<DuplicarViewModel>(), IDuplicarView {
         icon = VaadinIcon.COPY.create()
         addClickListener {
           viewModel.duplicar()
+          cmbPedidoOrigem.update()
         }
       }
     }
     viewModel.init()
   }
-  
+
+  private fun @VaadinDsl Select<Pedido>.update() {
+    val pedido = this.value
+    val pedidos = viewModel.pedidos()
+    setItems(pedidos)
+    this.value = pedido
+  }
+
   override var pedidoOrigem: Pedido?
     get() = cmbPedidoOrigem.value
     set(value) {

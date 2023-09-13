@@ -5,29 +5,10 @@ import br.com.astrosoft.framework.view.ViewLayout
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
 import br.com.astrosoft.separacao.model.beans.UserSaci
-import br.com.astrosoft.separacao.viewmodel.PendenciaViewModel
 import br.com.astrosoft.separacao.viewmodel.IPendenciaView
-import br.com.astrosoft.separacao.viewmodel.ProdutoDlg
-import com.github.mvysny.karibudsl.v10.addColumnFor
-import com.github.mvysny.karibudsl.v10.button
-import com.github.mvysny.karibudsl.v10.comboBox
-import com.github.mvysny.karibudsl.v10.em
-import com.github.mvysny.karibudsl.v10.formLayout
-import com.github.mvysny.karibudsl.v10.getAll
-import com.github.mvysny.karibudsl.v10.getColumnBy
-import com.github.mvysny.karibudsl.v10.grid
-import com.github.mvysny.karibudsl.v10.horizontalLayout
-import com.github.mvysny.karibudsl.v10.integerField
-import com.github.mvysny.karibudsl.v10.isExpand
-import com.github.mvysny.karibudsl.v10.refresh
-import com.github.mvysny.karibudsl.v10.responsiveSteps
-import com.github.mvysny.karibudsl.v10.textField
-import com.vaadin.flow.component.button.Button
-import com.vaadin.flow.component.button.ButtonVariant
-import com.vaadin.flow.component.button.ButtonVariant.LUMO_PRIMARY
-import com.vaadin.flow.component.combobox.ComboBox
+import br.com.astrosoft.separacao.viewmodel.PendenciaViewModel
+import com.github.mvysny.karibudsl.v10.*
 import com.vaadin.flow.component.dependency.HtmlImport
-import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.grid.ColumnTextAlign.CENTER
 import com.vaadin.flow.component.grid.ColumnTextAlign.END
 import com.vaadin.flow.component.grid.Grid
@@ -37,18 +18,12 @@ import com.vaadin.flow.component.grid.GridVariant.LUMO_COMPACT
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon.CHECK_CIRCLE_O
 import com.vaadin.flow.component.icon.VaadinIcon.CIRCLE_THIN
-import com.vaadin.flow.component.icon.VaadinIcon.INSERT
-import com.vaadin.flow.component.icon.VaadinIcon.SPLIT
-import com.vaadin.flow.component.icon.VaadinIcon.TRASH
+import com.vaadin.flow.component.select.Select
 import com.vaadin.flow.component.textfield.IntegerField
-import com.vaadin.flow.component.textfield.TextField
-import com.vaadin.flow.component.textfield.TextFieldVariant.LUMO_ALIGN_RIGHT
-import com.vaadin.flow.data.binder.Binder
 import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.data.provider.SortDirection.ASCENDING
 import com.vaadin.flow.data.renderer.ComponentRenderer
 import com.vaadin.flow.data.renderer.NumberRenderer
-import com.vaadin.flow.data.value.ValueChangeMode.EAGER
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import java.text.DecimalFormat
@@ -59,7 +34,7 @@ import java.text.DecimalFormat
 class PendenciaView: ViewLayout<PendenciaViewModel>(), IPendenciaView {
   private lateinit var pedidoMae: IntegerField
   private var gridProduto: Grid<ProdutoPedido>
-  private lateinit var cmbPedido: ComboBox<Pedido>
+  private lateinit var cmbPedido: Select<Pedido>
   override val viewModel: PendenciaViewModel = PendenciaViewModel(this)
   private val dataProviderProdutos = ListDataProvider<ProdutoPedido>(mutableListOf())
   
@@ -68,14 +43,12 @@ class PendenciaView: ViewLayout<PendenciaViewModel>(), IPendenciaView {
   init {
     form("Pendencia pedidos") {
       isExpand = false
-      cmbPedido = comboBox("Numero do pedido") {
+      cmbPedido = select("Numero do pedido") {
         colspan = 1
-        setItems(viewModel.pedidosSeparacao())
+        update()
         setItemLabelGenerator {
           "${it.ordno} - ${it.tipoOrigem.descricao} - ${it.data.format()}"
         }
-        this.isAllowCustomValue = false
-        this.isPreventInvalidInput = false
         addValueChangeListener {evento ->
           if(evento.isFromClient) {
             updateGrid(this.value)
@@ -142,7 +115,13 @@ class PendenciaView: ViewLayout<PendenciaViewModel>(), IPendenciaView {
                  ))
     }
   }
-  
+
+  private fun @VaadinDsl Select<Pedido>.update() {
+    val pedido = this.value
+    setItems(viewModel.pedidosSeparacao())
+    this.value = pedido
+  }
+
   override val pedido: Pedido?
     get() = cmbPedido.value
   override val produtos: List<ProdutoPedido>

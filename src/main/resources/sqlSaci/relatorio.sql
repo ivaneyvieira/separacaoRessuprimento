@@ -22,6 +22,6 @@ FROM sqldados.ords           AS O
   LEFT JOIN  sqldados.prdloc AS LOC
 	       ON LOC.prdno = I.prdno AND LOC.grade = I.grade AND LOC.storeno = 4
 WHERE O.no = :ordno
-  AND (O.storeno = :storeno || O.storeno = 10)
+  AND O.storeno = :storeno
 GROUP BY prdno, grade
 ORDER BY localizacao, name, grade
