@@ -7,7 +7,6 @@ import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.viewmodel.ISepararView
 import br.com.astrosoft.separacao.viewmodel.SepararViewModel
 import com.github.mvysny.karibudsl.v10.*
-import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.grid.ColumnTextAlign
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.Grid.SelectionMode
@@ -15,6 +14,7 @@ import com.vaadin.flow.component.grid.GridSortOrder
 import com.vaadin.flow.component.grid.GridVariant.LUMO_COMPACT
 import com.vaadin.flow.component.grid.HeaderRow
 import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.select.Select
 import com.vaadin.flow.component.textfield.Autocapitalize
 import com.vaadin.flow.component.textfield.IntegerField
 import com.vaadin.flow.component.textfield.TextField
@@ -37,7 +37,7 @@ import kotlin.reflect.KProperty1
 class SepararView : ViewLayout<SepararViewModel>(), ISepararView {
   private lateinit var proximoNumero: IntegerField
   private var gridProduto: Grid<ProdutoPedido>
-  private lateinit var cmbPedido: ComboBox<Pedido>
+  private lateinit var cmbPedido: Select<Pedido>
   override val viewModel = SepararViewModel(this)
   private val dataProviderProdutos = ListDataProvider<ProdutoPedido>(mutableListOf())
   private var produtoInicial: ProdutoPedido? = null
@@ -47,12 +47,10 @@ class SepararView : ViewLayout<SepararViewModel>(), ISepararView {
   init {
     form("Separar Pedidos") {
       isExpand = false
-      cmbPedido = comboBox("Pedido origem") {
+      cmbPedido = select("Pedido origem") {
         colspan = 1
-        setItems(viewModel.pedidos())
+        update()
         setItemLabelGenerator { it.label }
-        this.isAllowCustomValue = false
-        this.isPreventInvalidInput = false
         addValueChangeListener { evento ->
           if (evento.isFromClient) {
             updateGrid(this.value)
@@ -172,6 +170,7 @@ class SepararView : ViewLayout<SepararViewModel>(), ISepararView {
         icon = VaadinIcon.SPLIT.create()
         addClickListener {
           viewModel.separar()
+          cmbPedido.update()
         }
       }
       button("Imprimir") {
@@ -181,6 +180,12 @@ class SepararView : ViewLayout<SepararViewModel>(), ISepararView {
         }
       }
     }
+  }
+
+  private fun @VaadinDsl Select<Pedido>.update() {
+    val pedido = this.value
+    setItems(viewModel.pedidos())
+    this.value = pedido
   }
 
   private fun @VaadinDsl Grid<ProdutoPedido>.shiftSelect() {

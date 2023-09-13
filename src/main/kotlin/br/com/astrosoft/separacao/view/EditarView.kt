@@ -7,24 +7,10 @@ import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.viewmodel.EditarViewModel
 import br.com.astrosoft.separacao.viewmodel.IEditarView
 import br.com.astrosoft.separacao.viewmodel.ProdutoDlg
-import com.github.mvysny.karibudsl.v10.addColumnFor
-import com.github.mvysny.karibudsl.v10.button
-import com.github.mvysny.karibudsl.v10.comboBox
-import com.github.mvysny.karibudsl.v10.em
-import com.github.mvysny.karibudsl.v10.formLayout
-import com.github.mvysny.karibudsl.v10.getAll
-import com.github.mvysny.karibudsl.v10.getColumnBy
-import com.github.mvysny.karibudsl.v10.grid
-import com.github.mvysny.karibudsl.v10.horizontalLayout
-import com.github.mvysny.karibudsl.v10.integerField
-import com.github.mvysny.karibudsl.v10.isExpand
-import com.github.mvysny.karibudsl.v10.refresh
-import com.github.mvysny.karibudsl.v10.responsiveSteps
-import com.github.mvysny.karibudsl.v10.textField
+import com.github.mvysny.karibudsl.v10.*
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.button.ButtonVariant.LUMO_PRIMARY
-import com.vaadin.flow.component.combobox.ComboBox
 import com.vaadin.flow.component.dependency.HtmlImport
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.grid.ColumnTextAlign.CENTER
@@ -34,11 +20,8 @@ import com.vaadin.flow.component.grid.Grid.SelectionMode
 import com.vaadin.flow.component.grid.GridSortOrder
 import com.vaadin.flow.component.grid.GridVariant.LUMO_COMPACT
 import com.vaadin.flow.component.icon.Icon
-import com.vaadin.flow.component.icon.VaadinIcon.CHECK_CIRCLE_O
-import com.vaadin.flow.component.icon.VaadinIcon.CIRCLE_THIN
-import com.vaadin.flow.component.icon.VaadinIcon.INSERT
-import com.vaadin.flow.component.icon.VaadinIcon.SPLIT
-import com.vaadin.flow.component.icon.VaadinIcon.TRASH
+import com.vaadin.flow.component.icon.VaadinIcon.*
+import com.vaadin.flow.component.select.Select
 import com.vaadin.flow.component.textfield.IntegerField
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.textfield.TextFieldVariant.LUMO_ALIGN_RIGHT
@@ -58,7 +41,7 @@ import java.text.DecimalFormat
 class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
   private lateinit var pedidoMae: IntegerField
   private var gridProduto: Grid<ProdutoPedido>
-  private lateinit var cmbPedido: ComboBox<Pedido>
+  private lateinit var cmbPedido: Select<Pedido>
   override val viewModel: EditarViewModel = EditarViewModel(this)
   private val dataProviderProdutos = ListDataProvider<ProdutoPedido>(mutableListOf())
   
@@ -67,12 +50,10 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
   init {
     form("Editar pedidos") {
       isExpand = false
-      cmbPedido = comboBox("Numero do pedido") {
+      cmbPedido = select("Numero do pedido") {
         colspan = 1
-        setItems(viewModel.pedidosSeparacao())
+        update()
         setItemLabelGenerator {it.label}
-        this.isAllowCustomValue = false
-        this.isPreventInvalidInput = false
         addValueChangeListener {evento ->
           if(evento.isFromClient) {
             updateGrid(this.value)
@@ -206,6 +187,7 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
           if(gridProduto.editor.isOpen)
             gridProduto.editor.save()
           viewModel.processar()
+          cmbPedido.update()
         }
       }
       button("Novo produto") {
@@ -218,7 +200,13 @@ class EditarView: ViewLayout<EditarViewModel>(), IEditarView {
       }
     }
   }
-  
+
+  private fun @VaadinDsl Select<Pedido>.update() {
+    val pedido = this.value
+    setItems(viewModel.pedidosSeparacao())
+    this.value = pedido
+  }
+
   override val pedido: Pedido?
     get() = cmbPedido.value
   override val produtos: List<ProdutoPedido>
@@ -251,8 +239,8 @@ class ProdutoDialog(private val viewModel: EditarViewModel, val pedido: Pedido):
   private var produto: ProdutoDlg = ProdutoDlg(pedido)
   private lateinit var edtQtty: IntegerField
   private lateinit var edtDescricao: TextField
-  private lateinit var edtGrade: ComboBox<String>
-  private lateinit var edtLocalizacao: ComboBox<String>
+  private lateinit var edtGrade: Select<String>
+  private lateinit var edtLocalizacao: Select<String>
   private lateinit var edtCodigo: TextField
   
   init {
@@ -290,10 +278,8 @@ class ProdutoDialog(private val viewModel: EditarViewModel, val pedido: Pedido):
         value = ""
         isReadOnly = true
       }
-      edtGrade = comboBox("Grade") {
+      edtGrade = select("Grade") {
         colspan = 1
-        isRequired = false
-        isAllowCustomValue = false
       }
       edtQtty = integerField("Quantidade") {
         colspan = 1
@@ -301,10 +287,8 @@ class ProdutoDialog(private val viewModel: EditarViewModel, val pedido: Pedido):
         addThemeVariants(LUMO_ALIGN_RIGHT)
         value = produto.qtty
       }
-      edtLocalizacao = comboBox("Localização") {
+      edtLocalizacao = select("Localização") {
         colspan = 2
-        isRequired = false
-        isAllowCustomValue = false
       }
     }
     horizontalLayout {
