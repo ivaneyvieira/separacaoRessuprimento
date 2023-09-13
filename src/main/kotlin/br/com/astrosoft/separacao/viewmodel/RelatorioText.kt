@@ -21,7 +21,7 @@ class RelatorioText: PrintText<Relatorio>() {
         .lpad(6, " ")
     }
     columText("Local", 19) {localizacao}
-    columText("Referencia", 27) {mfno_ref}
+    columText("Referencia", 27) {fornecedorRef}
   }
   
   override fun sumaryLine() : String {
