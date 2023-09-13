@@ -181,12 +181,10 @@ class SepararView : ViewLayout<SepararViewModel>(), ISepararView {
           viewModel.imprimir()
         }
       }
-      if (UserSaci.userAtual?.admin == true) {
-        button("Imprimir Selecionado") {
-          icon = VaadinIcon.PRINT.create()
-          addClickListener {
-            viewModel.imprimirSelecionado()
-          }
+      button("Imprimir Selecionado") {
+        icon = VaadinIcon.PRINT.create()
+        addClickListener {
+          viewModel.imprimirSelecionado()
         }
       }
     }
