@@ -76,7 +76,7 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
   fun pedidos(): List<Pedido> {
     val user = UserSaci.userAtual
     val pedidos =Pedido.pedidos(user)
-    return pedidos.filter {it.storeno == 1}
+    return pedidos.filter {it.storeno == 1 || it.storeno == 10}
   }
 }
 
