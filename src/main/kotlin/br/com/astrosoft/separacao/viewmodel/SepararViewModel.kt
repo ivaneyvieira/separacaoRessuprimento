@@ -1,13 +1,12 @@
 package br.com.astrosoft.separacao.viewmodel
 
 import br.com.astrosoft.framework.util.ECupsPrinter
-import br.com.astrosoft.framework.util.Ssh
-import br.com.astrosoft.framework.util.execCommand
 import br.com.astrosoft.framework.viewmodel.IView
 import br.com.astrosoft.framework.viewmodel.ViewModel
 import br.com.astrosoft.framework.viewmodel.fail
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
+import br.com.astrosoft.separacao.model.beans.Relatorio
 import br.com.astrosoft.separacao.model.beans.UserSaci
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem.SEPARADO
 
@@ -41,15 +40,36 @@ class SepararViewModel(view: ISepararView): ViewModel<ISepararView>(view) {
       print(pedido.ordno)
     }
   }
-  
-  private fun print(ordno: Int) {
+
+  fun imprimirSelecionado() = exec {
+    val pedido = view.pedido ?: fail("Pedido inválido")
+    val produtosSelecionados = view.produtosSelecionados
+    view.showQuestion("Confirma a impressão?") {
+      printSelecionado(pedido, produtosSelecionados)
+    }
+  }
+
+  private fun printSelecionado(pedido: Pedido, produtos: List<ProdutoPedido>) {
     try {
-      RelatorioText().print("RESSUPRIMENTO", Pedido.listaRelatorio(ordno))
-    } catch(e: ECupsPrinter) {
-      view.showError(e.message ?: "Erro de impressão")
-      Ssh("172.20.47.1", "ivaney", "ivaney").shell {
-        execCommand("/u/saci/shells/printRessuprimento.sh $ordno")
+      val relatorio = produtos.map{prd ->
+        Relatorio(
+          ordno = pedido.ordno,
+          storeno = pedido.storeno,
+          prdno = prd.prdno,
+          localizacao = prd.localizacao,
+          name = prd.descricao,
+          grade = prd.grade,
+          fornecedorRef = prd.fornecedorRef,
+          tipo = prd.tipo.toString(),
+          qtty = prd.qtty,
+          fornecedor = prd.fornecedor,
+          estoque = prd.estoque,
+          embalagem = prd.embalagem
+                  )
       }
+      RelatorioText().print("RESSUPRIMENTO", relatorio)
+    } catch(e: ECupsPrinter) {
+      view.showError(e.message ?: "")
     }
   }
   

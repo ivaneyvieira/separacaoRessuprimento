@@ -7,7 +7,7 @@ data class Relatorio(
   val localizacao: String,
   val name: String,
   val grade: String,
-  val mfno_ref: String,
+  val fornecedorRef: String,
   val tipo: String,
   val qtty: Double,
   val fornecedor: Int,

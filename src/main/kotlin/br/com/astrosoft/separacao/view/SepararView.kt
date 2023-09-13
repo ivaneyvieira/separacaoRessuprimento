@@ -29,7 +29,6 @@ import com.vaadin.flow.function.SerializablePredicate
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 import java.text.DecimalFormat
-import java.util.*
 import kotlin.reflect.KProperty1
 
 @Route(layout = SeparacaoLayout::class)
@@ -92,8 +91,7 @@ class SepararView : ViewLayout<SepararViewModel>(), ISepararView {
       binder.withValidator { value, _ ->
         if (value.quantidadeValida) {
           ValidationResult.ok()
-        }
-        else {
+        } else {
           val msg = "A quantidade deveria está entre ${value.qttyMin} e ${value.qttyMax}"
           showError(msg)
           ValidationResult.error(msg)
@@ -159,9 +157,13 @@ class SepararView : ViewLayout<SepararViewModel>(), ISepararView {
         this.flexGrow = 1
         this.textAlign = ColumnTextAlign.END
       }
-      sort(listOf(GridSortOrder(this.getColumnBy(ProdutoPedido::localizacao), SortDirection.ASCENDING),
-                  GridSortOrder(this.getColumnBy(ProdutoPedido::descricao), SortDirection.ASCENDING),
-                  GridSortOrder(this.getColumnBy(ProdutoPedido::grade), SortDirection.ASCENDING)))
+      sort(
+        listOf(
+          GridSortOrder(this.getColumnBy(ProdutoPedido::localizacao), SortDirection.ASCENDING),
+          GridSortOrder(this.getColumnBy(ProdutoPedido::descricao), SortDirection.ASCENDING),
+          GridSortOrder(this.getColumnBy(ProdutoPedido::grade), SortDirection.ASCENDING)
+        )
+      )
 
       shiftSelect()
     }
@@ -177,6 +179,14 @@ class SepararView : ViewLayout<SepararViewModel>(), ISepararView {
         icon = VaadinIcon.PRINT.create()
         addClickListener {
           viewModel.imprimir()
+        }
+      }
+      if (UserSaci.userAtual?.admin == true) {
+        button("Imprimir Selecionado") {
+          icon = VaadinIcon.PRINT.create()
+          addClickListener {
+            viewModel.imprimirSelecionado()
+          }
         }
       }
     }
@@ -196,8 +206,7 @@ class SepararView : ViewLayout<SepararViewModel>(), ISepararView {
         if (produtoInicial == null) {
           produtoInicial = pedido
           grade.select(pedido)
-        }
-        else {
+        } else {
           if (produtoFinal == null) {
             val itens = list(grade)
             produtoFinal = pedido
@@ -209,31 +218,31 @@ class SepararView : ViewLayout<SepararViewModel>(), ISepararView {
             }
             produtoFinal = null
             produtoInicial = null
-          }
-          else {
+          } else {
             produtoFinal = null
             produtoInicial = null
           }
         }
-      }
-      else {
+      } else {
         produtoFinal = null
         produtoInicial = null
       }
     }
   }
 
-  private fun updateFilter(edtCodigo: TextFieldFiltro,
-                           edtDescricao: TextFieldFiltro,
-                           edtGrade: TextFieldFiltro,
-                           edtFornecedor: TextFieldFiltro,
-                           edtLocalizacao: TextFieldFiltro) {
+  private fun updateFilter(
+    edtCodigo: TextFieldFiltro,
+    edtDescricao: TextFieldFiltro,
+    edtGrade: TextFieldFiltro,
+    edtFornecedor: TextFieldFiltro,
+    edtLocalizacao: TextFieldFiltro
+  ) {
     val filter =
-      edtCodigo.filtro
-        .and(edtDescricao.filtro)
-        .and(edtGrade.filtro)
-        .and(edtFornecedor.filtro)
-        .and(edtLocalizacao.filtro)
+        edtCodigo.filtro
+          .and(edtDescricao.filtro)
+          .and(edtGrade.filtro)
+          .and(edtFornecedor.filtro)
+          .and(edtLocalizacao.filtro)
     dataProviderProdutos.filter = filter
   }
 
@@ -252,12 +261,12 @@ class SepararView : ViewLayout<SepararViewModel>(), ISepararView {
     if (grade.sortOrder.isEmpty()) return null
     return grade.sortOrder.mapNotNull { gridSort ->
       val prop =
-        ProdutoPedido::class.members
-          .toList()
-          .filterIsInstance<KProperty1<ProdutoPedido, Comparable<*>>>()
-          .firstOrNull { prop ->
-            prop.name == gridSort.sorted.key
-          }
+          ProdutoPedido::class.members
+            .toList()
+            .filterIsInstance<KProperty1<ProdutoPedido, Comparable<*>>>()
+            .firstOrNull { prop ->
+              prop.name == gridSort.sorted.key
+            }
       if (gridSort.direction == DESCENDING) compareByDescending {
         prop?.get(it)
       }
