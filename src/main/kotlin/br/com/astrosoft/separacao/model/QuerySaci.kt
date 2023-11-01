@@ -4,11 +4,7 @@ import br.com.astrosoft.framework.model.QueryDB
 import br.com.astrosoft.framework.util.DB
 import br.com.astrosoft.framework.util.lpad
 import br.com.astrosoft.framework.util.toSaciDate
-import br.com.astrosoft.separacao.model.beans.Pedido
-import br.com.astrosoft.separacao.model.beans.Produto
-import br.com.astrosoft.separacao.model.beans.ProdutoPedido
-import br.com.astrosoft.separacao.model.beans.Relatorio
-import br.com.astrosoft.separacao.model.beans.UserSaci
+import br.com.astrosoft.separacao.model.beans.*
 import br.com.astrosoft.separacao.model.enum.ETipoOrigem
 import java.time.LocalDate
 
@@ -91,13 +87,13 @@ class QuerySaci: QueryDB(driver, url, username, password) {
     else proximoNumero
   }
   
-  fun proximoNumeroPedidoLoja(destino: Int, abreviacao: String): Int {
+  fun proximoNumeroPedidoLoja(destino: Int, data: LocalDate?): Int {
     val storeno = 1
     val sql = "/sqlSaci/proximoNumeroLoja.sql"
     val proximoNumero = query(sql) {q ->
       q.addParameter("storeno", storeno)
       q.addParameter("destino", destino)
-      q.addParameter("abreviacao", abreviacao)
+      q.addParameter("data", data?.toSaciDate() ?: 0)
       q.executeScalarList(Int::class.java)
     }.firstOrNull() ?: 0
     return if(proximoNumero == 0) proximoNumeroSeparado(destino) else proximoNumero
