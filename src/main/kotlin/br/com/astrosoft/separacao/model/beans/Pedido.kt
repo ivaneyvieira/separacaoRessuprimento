@@ -117,8 +117,8 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val data: LocalDate?, va
       return saci.listaRelatorio(ordno)
     }
     
-    fun proximoNumeroPedidoLoja(storenoDestino: Int, abreviacao: String): Int {
-      return saci.proximoNumeroPedidoLoja(storenoDestino, abreviacao)
+    fun proximoNumeroPedidoLoja(storenoDestino: Int, data: LocalDate?): Int {
+      return saci.proximoNumeroPedidoLoja(storenoDestino, data)
     }
     
     fun proximoNumeroDuplicado(storeno: Int, ordno: Int, destino: Int): Int {
