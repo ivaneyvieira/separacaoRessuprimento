@@ -4,6 +4,7 @@ import br.com.astrosoft.framework.util.ECupsPrinter
 import br.com.astrosoft.framework.util.Ssh
 import br.com.astrosoft.framework.util.execCommand
 import br.com.astrosoft.framework.viewmodel.IView
+import br.com.astrosoft.framework.viewmodel.SortDados
 import br.com.astrosoft.framework.viewmodel.ViewModel
 import br.com.astrosoft.framework.viewmodel.fail
 import br.com.astrosoft.separacao.model.beans.Pedido
@@ -44,7 +45,9 @@ class SepararViewModel(view: ISepararView) : ViewModel<ISepararView>(view) {
 
   private fun print(ordno: Int) {
     try {
-      RelatorioText().print("RESSUPRIMENTO", Pedido.listaRelatorio(ordno))
+      val order = view.orderGrid().map { it.property }
+      val list = Pedido.listaRelatorio(ordno)
+      RelatorioText().print("RESSUPRIMENTO", list)
     } catch (e: ECupsPrinter) {
       view.showError(e.message ?: "Erro de impressão")
       Ssh("172.20.47.1", "ivaney", "ivaney").shell {
@@ -104,4 +107,5 @@ interface ISepararView : IView {
   val produtosSelecionados: List<ProdutoPedido>
 
   fun updateGrid()
+  fun orderGrid(): List<SortDados<ProdutoPedido>>
 }

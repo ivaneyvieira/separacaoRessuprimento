@@ -1,6 +1,7 @@
 package br.com.astrosoft.separacao.view
 
 import br.com.astrosoft.framework.view.ViewLayout
+import br.com.astrosoft.framework.viewmodel.SortDados
 import br.com.astrosoft.separacao.model.beans.Pedido
 import br.com.astrosoft.separacao.model.beans.ProdutoPedido
 import br.com.astrosoft.separacao.model.beans.UserSaci
@@ -286,6 +287,19 @@ class SepararView : ViewLayout<SepararViewModel>(), ISepararView {
     updateGrid(pedidoAtual)
     cmbPedido.setItems(viewModel.pedidos())
     cmbPedido.value = pedidoAtual
+  }
+
+  override fun orderGrid(): List<SortDados<ProdutoPedido>> {
+    return gridProduto.sortOrder.mapNotNull { sort ->
+      val propertyName = sort.sorted.key
+      val property = ProdutoPedido::class.members
+        .toList()
+        .filterIsInstance<KProperty1<ProdutoPedido, Comparable<*>>>()
+        .firstOrNull { prop ->
+          prop.name == propertyName
+        } ?: return@mapNotNull null
+      SortDados(property, sort.direction == DESCENDING)
+    }
   }
 
   private fun updateGrid(pedidoNovo: Pedido?) {
