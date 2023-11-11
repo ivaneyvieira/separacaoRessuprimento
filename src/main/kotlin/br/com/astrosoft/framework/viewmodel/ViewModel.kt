@@ -1,6 +1,7 @@
 package br.com.astrosoft.framework.viewmodel
 
 import br.com.astrosoft.framework.view.log
+import kotlin.reflect.KProperty1
 
 open class ViewModel<V: IView>(val view: V) {
   fun exec(block: () -> Unit) {
@@ -28,3 +29,5 @@ interface IView {
   fun showQuestion(msg: String, execYes: () -> Unit)
   fun showQuestion(msg: String, execYes: () -> Unit, execNo: () -> Unit)
 }
+
+data class SortDados<T>(val property: KProperty1<T, Comparable<*>>, val isAscending: Boolean)

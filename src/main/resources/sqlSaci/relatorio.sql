@@ -24,4 +24,4 @@ FROM sqldados.ords           AS O
 WHERE O.no = :ordno
   AND O.storeno = :storeno
 GROUP BY prdno, grade
-ORDER BY localizacao, name, grade
+ORDER BY name, grade, localizacao
