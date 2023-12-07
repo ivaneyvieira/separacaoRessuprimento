@@ -47,7 +47,7 @@ class SepararViewModel(view: ISepararView) : ViewModel<ISepararView>(view) {
     try {
       val order = view.orderGrid().map { it.property }
       val list = Pedido.listaRelatorio(ordno)
-      RelatorioText().print("RESSUPRIMENTO", list)
+      RelatorioText().print("Ressu4.Termica", list)
     } catch (e: ECupsPrinter) {
       view.showError(e.message ?: "Erro de impressão")
       Ssh("172.20.47.1", "ivaney", "ivaney").shell {
