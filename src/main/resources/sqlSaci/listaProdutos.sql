@@ -19,6 +19,7 @@ FROM sqldados.oprd AS O
                   ON (O.prdno = P.no)
        LEFT JOIN sqldados.prdloc AS L
                  ON (O.prdno = L.prdno AND O.grade = L.grade AND
+                     L.storeno = 4 AND
                      (LENGTH(O.auxStr) > 20 OR O.auxStr = ''))
        LEFT JOIN sqldados.stk AS S
                  ON (O.prdno = S.prdno AND O.grade = S.grade AND S.storeno = 4)
