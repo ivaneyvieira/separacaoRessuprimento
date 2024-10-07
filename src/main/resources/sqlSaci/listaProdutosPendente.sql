@@ -17,8 +17,9 @@ FROM sqldados.oprdPendente AS O
                   ON oP.no = O.ordno AND O.storeno = oP.storeno AND O.date = oP.date
        INNER JOIN sqldados.prd AS P
                   ON (O.prdno = P.no)
-       LEFT JOIN sqldados.prdloc AS L
-                 ON (O.prdno = L.prdno AND O.grade = L.grade AND
+       LEFT JOIN sqldados.prdAdicional AS L
+                 ON (O.prdno = L.prdno AND
+                     O.grade = L.grade AND
                      L.storeno = 4 AND
                      (LENGTH(O.auxStr) > 20 OR O.auxStr = ''))
        LEFT JOIN sqldados.stk AS S
