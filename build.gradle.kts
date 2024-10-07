@@ -4,7 +4,7 @@ val karibudsl_version = "0.7.4"
 
 plugins {
   kotlin("jvm") version "1.6.10"
-  id("org.gretty") version "2.3.1"
+  //id("org.gretty") version "2.3.1"
   id("com.devsoap.vaadin-flow") version "1.2"
 }
 
@@ -37,10 +37,10 @@ repositories {
 }
 
 
-gretty {
-  contextPath = "/"
-  servletContainer = "jetty9.4"
-}
+//gretty {
+//  contextPath = "/"
+//  servletContainer = "jetty9.4"
+//}
 val staging by configurations.creating
 
 dependencies {
