@@ -20,7 +20,7 @@ class RelatorioText: PrintText<Relatorio>() {
       fornecedor.toString()
         .lpad(6, " ")
     }
-    columText("Local", 19) {localizacao}
+    columText("Local", 19) {localizacaoSaci}
     columText("Referencia", 27) {fornecedorRef}
   }
   

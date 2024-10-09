@@ -5,6 +5,7 @@ data class Relatorio(
   val storeno: Int,
   val prdno: String,
   val localizacao: String,
+  val localizacaoSaci: String,
   val name: String,
   val grade: String,
   val fornecedorRef: String,

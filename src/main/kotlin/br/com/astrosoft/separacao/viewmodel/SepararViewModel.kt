@@ -79,6 +79,7 @@ class SepararViewModel(view: ISepararView) : ViewModel<ISepararView>(view) {
           storeno = pedido.storeno,
           prdno = prd.prdno,
           localizacao = prd.localizacao,
+          localizacaoSaci = prd.localizacaoSaci,
           name = prd.descricao,
           grade = prd.grade,
           fornecedorRef = prd.fornecedorRef,

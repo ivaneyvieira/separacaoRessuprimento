@@ -77,8 +77,8 @@ dependencies {
   compile(kotlin("reflect"))
   //compile("org.jetbrains.kotlin:kotlin-reflect")
   // test support
-  testCompile("com.github.mvysny.kaributesting:karibu-testing-v10:1.1.16")
-  testCompile("com.github.mvysny.dynatest:dynatest-engine:0.15")
+  //testCompile("com.github.mvysny.kaributesting:karibu-testing-v10:1.1.16")
+  //testCompile("com.github.mvysny.dynatest:dynatest-engine:0.15")
 }
 
 tasks.withType<KotlinCompile> {
