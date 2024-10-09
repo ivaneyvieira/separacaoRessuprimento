@@ -153,7 +153,7 @@ data class Column<T, V>(val header: String,
                         val size: Int,
                         val lineBreak: Boolean,
                         val process: T.() -> V,
-                        val posProcess: (V) -> String) {
+                        val posProcess: (V?) -> String) {
   val columnText
     get() = header.rpad(size, "_")
 

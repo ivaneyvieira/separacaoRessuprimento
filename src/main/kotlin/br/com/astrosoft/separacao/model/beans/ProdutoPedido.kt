@@ -12,7 +12,7 @@ data class ProdutoPedido(
   val fornecedor: Int,
   val centrodelucro: String,
   val localizacao: String,
-  val localizacaoSaci: String,
+  val localizacaoSaci: String?,
   val tipo: Int,
   val qtty: Double,
   val qttyOriginal: Double,

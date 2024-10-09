@@ -17,7 +17,7 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val data: LocalDate?, va
   fun produtos(user: UserSaci?): List<ProdutoPedido> {
     val loja = user?.storeno ?: return emptyList()
     val lista = if(loja == 1) saci.listaProduto(storeno, ordno).filtraLocalizacoes().filter {
-      user.isLocalizacaoCompativel(it.localizacao)
+      user.isLocalizacaoCompativel(it.localizacao ?: "")
     }
     else saci.listaProduto(storeno, ordno)
 
@@ -27,7 +27,7 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val data: LocalDate?, va
   fun produtosPendente(user: UserSaci?): List<ProdutoPedido> {
     val loja = user?.storeno ?: return emptyList()
     val lista = if(loja == 1) saci.listaProdutoPendente(storeno, ordno, data).filtraLocalizacoes().filter {
-      user.isLocalizacaoCompativel(it.localizacao)
+      user.isLocalizacaoCompativel(it.localizacao ?: "")
     }
     else saci.listaProdutoPendente(storeno, ordno, data)
 
@@ -44,7 +44,7 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val data: LocalDate?, va
     get() = ETipoOrigem.value(tipo) ?: DUPLICADO
   
   fun abreviacoes(user: UserSaci?) =
-    produtos(user).filtraLocalizacoes().groupBy {it.localizacao.mid(0, 4)}.entries.sortedBy {-it.value.size}
+    produtos(user).filtraLocalizacoes().groupBy {(it.localizacao ?: "").mid(0, 4)}.entries.sortedBy {-it.value.size}
       .map {it.key}
   
   companion object {
@@ -68,7 +68,7 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val data: LocalDate?, va
                                proximoNumero,
                                produto.prdno,
                                produto.grade,
-                               produto.localizacao,
+                               produto.localizacao ?: "",
                                produto.qttyEdit,
                                tipo)
     }
@@ -79,7 +79,7 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val data: LocalDate?, va
                         codigo = produto.prdno,
                         grade = produto.grade,
                         qttyEdit = produto.qttyEdit,
-                        localizacao = produto.localizacao)
+                        localizacao = produto.localizacao ?: "")
     }
 
     fun pedidos(user: UserSaci?): List<Pedido> {
@@ -153,9 +153,9 @@ data class Pedido(val storeno: Int = 1, val ordno: Int, val data: LocalDate?, va
   private fun List<ProdutoPedido>.filtraLocalizacoes(): List<ProdutoPedido> {
     return this.groupBy {ProdutoKey(it.prdno, it.grade)}.flatMap {entry ->
       val list = entry.value.filter {
-        (!it.localizacao.startsWith("EXP4")) && (!it.localizacao.startsWith("CD00"))
+        (!(it.localizacao ?: "").startsWith("EXP4")) && (!(it.localizacao ?: "").startsWith("CD00"))
       }
-      if(list.isEmpty()) entry.value else list
+      list.ifEmpty { entry.value }
     }
   }
 }
